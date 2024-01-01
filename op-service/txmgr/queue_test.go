@@ -206,24 +206,16 @@ func TestSend(t *testing.T) {
 
 			// make all the queue calls given in the test case
 			start := time.Now()
+			receiptChs := make([]chan TxReceipt[int], len(test.calls))
 			for i, c := range test.calls {
 				msg := fmt.Sprintf("Call %d", i)
-				c := c
-				receiptCh := make(chan TxReceipt[int], 1)
 				candidate := TxCandidate{
 					TxData: []byte{byte(i)},
 					To:     &common.Address{},
 				}
-				queued := c.call(i, candidate, receiptCh, queue)
+				receiptChs[i] = make(chan TxReceipt[int], 1)
+				queued := c.call(i, candidate, receiptChs[i], queue)
 				require.Equal(t, c.queued, queued, msg)
-				go func() {
-					r := <-receiptCh
-					if c.txErr {
-						require.Error(t, r.Err, msg)
-					} else {
-						require.NoError(t, r.Err, msg)
-					}
-				}()
 			}
 			// wait for the queue to drain (all txs complete or failed)
 			queue.Wait()
@@ -234,6 +226,16 @@ func TestSend(t *testing.T) {
 			// check that the nonces match
 			slices.Sort(nonces)
 			require.Equal(t, test.nonces, nonces, "expected nonces do not match")
+			// check reecipts
+			for i, c := range test.calls {
+				msg := fmt.Sprintf("Receipt %d", i)
+				r := <-receiptChs[i]
+				if c.txErr {
+					require.Error(t, r.Err, msg)
+				} else {
+					require.NoError(t, r.Err, msg)
+				}
+			}
 		})
 	}
 }
