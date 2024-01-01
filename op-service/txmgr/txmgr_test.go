@@ -203,7 +203,12 @@ func (b *mockBackend) CallContract(ctx context.Context, call ethereum.CallMsg, b
 }
 
 func (b *mockBackend) HeaderByNumber(ctx context.Context, number *big.Int) (*types.Header, error) {
+	num := new(big.Int)
+	if number != nil {
+		num.Set(number)
+	}
 	return &types.Header{
+		Number:  num,
 		BaseFee: b.g.basefee(),
 	}, nil
 }
