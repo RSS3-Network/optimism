@@ -260,8 +260,7 @@ func l2ImmutableDeployer(backend *backends.SimulatedBackend, opts *bind.Transact
 		if !ok {
 			return nil, fmt.Errorf("invalid type for bridge")
 		}
-		fmt.Println("==================", "bridge", bridge, "remoteToken", remoteToken, "==========================")
-		_, tx, _, err = bindings.DeployRSS3Token(opts, backend, bridge, remoteToken, "", "")
+		_, tx, _, err = bindings.DeployRSS3Token(opts, backend, bridge, remoteToken)
 
 	default:
 		return tx, fmt.Errorf("unknown contract: %s", deployment.Name)
