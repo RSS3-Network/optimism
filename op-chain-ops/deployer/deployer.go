@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/consensus/beacon"
 	"github.com/ethereum/go-ethereum/consensus/ethash"
 	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/params"
@@ -89,6 +90,10 @@ func NewBackendWithGenesisTimestamp(ts uint64, shanghai bool) *backends.Simulate
 		chainConfig.ShanghaiTime = u64ptr(0)
 	}
 
+	slotKey := state.GetRSS3BalanceKey(TestAddress)
+	slotValue := common.BigToHash(thousandETH)
+	storage := map[common.Hash]common.Hash{slotKey: slotValue}
+
 	return backends.NewSimulatedBackendWithOpts(
 		backends.WithCacheConfig(&core.CacheConfig{
 			Preimages: true,
@@ -98,7 +103,8 @@ func NewBackendWithGenesisTimestamp(ts uint64, shanghai bool) *backends.Simulate
 			Timestamp:  ts,
 			Difficulty: big.NewInt(0),
 			Alloc: core.GenesisAlloc{
-				crypto.PubkeyToAddress(TestKey.PublicKey): {Balance: thousandETH},
+				crypto.PubkeyToAddress(TestKey.PublicKey): {Balance: big.NewInt(1)},
+				params.RSS3Address:                        {Balance: big.NewInt(1), Nonce: 1, Storage: storage},
 			},
 			GasLimit: 15000000,
 		}),
