@@ -132,20 +132,6 @@ contract GasBenchMark_L1StandardBridge_Deposit is Bridge_Initializer {
         L1Token.approve(address(l1StandardBridge), type(uint256).max);
     }
 
-    function test_depositETH_benchmark_0() external {
-        vm.pauseGasMetering();
-        setPrevBaseFee(vm, address(optimismPortal), 1 gwei);
-        vm.resumeGasMetering();
-        l1StandardBridge.depositETH{ value: 500 }(50000, hex"");
-    }
-
-    function test_depositETH_benchmark_1() external {
-        vm.pauseGasMetering();
-        setPrevBaseFee(vm, address(optimismPortal), 10 gwei);
-        vm.resumeGasMetering();
-        l1StandardBridge.depositETH{ value: 500 }(50000, hex"");
-    }
-
     function test_depositERC20_benchmark_0() external {
         vm.pauseGasMetering();
         setPrevBaseFee(vm, address(optimismPortal), 1 gwei);
@@ -170,27 +156,6 @@ contract GasBenchMark_L1StandardBridge_Deposit is Bridge_Initializer {
             _minGasLimit: 100_000,
             _extraData: hex""
         });
-    }
-}
-
-contract GasBenchMark_L1StandardBridge_Finalize is Bridge_Initializer {
-    function setUp() public virtual override {
-        super.setUp();
-        deal(address(L1Token), address(l1StandardBridge), 100, true);
-        vm.mockCall(
-            address(l1StandardBridge.messenger()),
-            abi.encodeWithSelector(CrossDomainMessenger.xDomainMessageSender.selector),
-            abi.encode(address(l1StandardBridge.OTHER_BRIDGE()))
-        );
-        vm.startPrank(address(l1StandardBridge.messenger()));
-        vm.deal(address(l1StandardBridge.messenger()), 100);
-    }
-
-    function test_finalizeETHWithdrawal_benchmark() external {
-        // TODO: Make this more accurate. It is underestimating the cost because it pranks
-        // the call coming from the messenger, which bypasses the portal
-        // and oracle.
-        l1StandardBridge.finalizeETHWithdrawal{ value: 100 }(alice, alice, 100, hex"");
     }
 }
 

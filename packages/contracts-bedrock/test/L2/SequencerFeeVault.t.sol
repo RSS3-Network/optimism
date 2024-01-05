@@ -73,15 +73,6 @@ contract SequencerFeeVault_Test is CommonTest {
             FeeVault.WithdrawalNetwork.L1
         );
 
-        // The entire vault's balance is withdrawn
-        vm.expectCall(
-            Predeploys.L2_STANDARD_BRIDGE,
-            address(sequencerFeeVault).balance,
-            abi.encodeWithSelector(
-                StandardBridge.bridgeETHTo.selector, sequencerFeeVault.l1FeeWallet(), 35_000, bytes("")
-            )
-        );
-
         sequencerFeeVault.withdraw();
 
         // The withdrawal was successful
