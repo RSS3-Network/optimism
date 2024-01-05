@@ -3,6 +3,7 @@ package sources
 import (
 	"context"
 	"fmt"
+	"github.com/ethereum/go-ethereum/log"
 
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum/go-ethereum/common"
@@ -29,11 +30,17 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 			return fmt.Errorf("no transactions, but got non-empty receipt trie root: %s", receiptHash)
 		}
 	}
+
+	// debug
+	log.Info("validateReceipts", "block", block, "blockHash", block.Hash, "receiptHash", receiptHash)
+
 	// We don't trust the RPC to provide consistent cached receipt info that we use for critical rollup derivation work.
 	// Let's check everything quickly.
 	logIndex := uint(0)
 	cumulativeGas := uint64(0)
 	for i, r := range receipts {
+		log.Info("receipt", "tx", txHashes[i], "receiptHash", r.TxHash, "transactionIndex", r.TransactionIndex, "blockNumber", r.BlockNumber, "blockHash", r.BlockHash, "cumulativeGasUsed", r.CumulativeGasUsed, "gasUsed", r.GasUsed, "logs", r.Logs)
+
 		if r == nil { // on reorgs or other cases the receipts may disappear before they can be retrieved.
 			return fmt.Errorf("receipt of tx %d returns nil on retrieval", i)
 		}
@@ -52,24 +59,26 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 		if expected := r.CumulativeGasUsed - cumulativeGas; r.GasUsed != expected {
 			return fmt.Errorf("receipt %d has invalid gas used metadata: %d, expected %d", i, r.GasUsed, expected)
 		}
-		for j, log := range r.Logs {
-			if log.Index != logIndex {
-				return fmt.Errorf("log %d (%d of tx %d) has unexpected log index %d", logIndex, j, i, log.Index)
+		for j, lg := range r.Logs {
+			log.Info("log", "logIndex", lg.Index, "txIndex", lg.TxIndex, "blockHash", lg.BlockHash, "blockNumber", lg.BlockNumber, "txHash", lg.TxHash, "removed", lg.Removed, "topics", lg.Topics, "data", lg.Data)
+
+			if lg.Index != logIndex {
+				return fmt.Errorf("log %d (%d of tx %d) has unexpected log index %d", logIndex, j, i, lg.Index)
 			}
-			if log.TxIndex != uint(i) {
-				return fmt.Errorf("log %d has unexpected tx index %d", log.Index, log.TxIndex)
+			if lg.TxIndex != uint(i) {
+				return fmt.Errorf("log %d has unexpected tx index %d", lg.Index, lg.TxIndex)
 			}
-			if log.BlockHash != block.Hash {
-				return fmt.Errorf("log %d of block %s has unexpected block hash %s", log.Index, block.Hash, log.BlockHash)
+			if lg.BlockHash != block.Hash {
+				return fmt.Errorf("log %d of block %s has unexpected block hash %s", lg.Index, block.Hash, lg.BlockHash)
 			}
-			if log.BlockNumber != block.Number {
-				return fmt.Errorf("log %d of block %d has unexpected block number %d", log.Index, block.Number, log.BlockNumber)
+			if lg.BlockNumber != block.Number {
+				return fmt.Errorf("log %d of block %d has unexpected block number %d", lg.Index, block.Number, lg.BlockNumber)
 			}
-			if log.TxHash != txHashes[i] {
-				return fmt.Errorf("log %d of tx %s has unexpected tx hash %s", log.Index, txHashes[i], log.TxHash)
+			if lg.TxHash != txHashes[i] {
+				return fmt.Errorf("log %d of tx %s has unexpected tx hash %s", lg.Index, txHashes[i], lg.TxHash)
 			}
-			if log.Removed {
-				return fmt.Errorf("canonical log (%d) must never be removed due to reorg", log.Index)
+			if lg.Removed {
+				return fmt.Errorf("canonical log (%d) must never be removed due to reorg", lg.Index)
 			}
 			logIndex++
 		}
