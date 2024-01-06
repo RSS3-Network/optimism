@@ -72,6 +72,8 @@ func NewRPCReceiptsFetcher(client rpcClient, log log.Logger, config RPCReceiptsC
 
 func (f *RPCReceiptsFetcher) FetchReceipts(ctx context.Context, block eth.BlockID, txHashes []common.Hash) (result types.Receipts, err error) {
 	m := f.PickReceiptsMethod(len(txHashes))
+	log.Info("RPCReceiptsFetcher", "block", block.Number, "blockHash", block.Hash, "tx count", len(txHashes), "method", m)
+
 	switch m {
 	case EthGetTransactionReceiptBatch:
 		result, err = f.basic.FetchReceipts(ctx, block, txHashes)
