@@ -33,6 +33,10 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 
 	// debug
 	log.Info("validateReceipts", "block", block, "blockHash", block.Hash, "receiptHash", receiptHash)
+	for i, r := range receipts {
+		log.Info("txHashes", "index", i, "txHash", txHashes[i])
+		log.Info("receipts", "index", i, "receipt", r)
+	}
 
 	// We don't trust the RPC to provide consistent cached receipt info that we use for critical rollup derivation work.
 	// Let's check everything quickly.
