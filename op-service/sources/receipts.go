@@ -36,7 +36,7 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 	for i, r := range receipts {
 		log.Info("txHashes", "index", i, "txHash", txHashes[i])
 		rJson, _ := r.MarshalJSON()
-		log.Info("receipts", "index", i, "receipt", rJson)
+		log.Info("receipts", "index", i, "receipt", string(rJson))
 	}
 
 	// We don't trust the RPC to provide consistent cached receipt info that we use for critical rollup derivation work.
