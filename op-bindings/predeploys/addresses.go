@@ -39,7 +39,6 @@ var (
 	L1BlockNumberAddr                 = common.HexToAddress(L1BlockNumber)
 	GasPriceOracleAddr                = common.HexToAddress(GasPriceOracle)
 	L1BlockAddr                       = common.HexToAddress(L1Block)
-	GovernanceTokenAddr               = common.HexToAddress(GovernanceToken)
 	LegacyMessagePasserAddr           = common.HexToAddress(LegacyMessagePasser)
 	L2ERC721BridgeAddr                = common.HexToAddress(L2ERC721Bridge)
 	OptimismMintableERC721FactoryAddr = common.HexToAddress(OptimismMintableERC721Factory)
@@ -66,13 +65,6 @@ func init() {
 	Predeploys["L1BlockNumber"] = &Predeploy{Address: L1BlockNumberAddr}
 	Predeploys["GasPriceOracle"] = &Predeploy{Address: GasPriceOracleAddr}
 	Predeploys["L1Block"] = &Predeploy{Address: L1BlockAddr}
-	Predeploys["GovernanceToken"] = &Predeploy{
-		Address:       GovernanceTokenAddr,
-		ProxyDisabled: true,
-		Enabled: func(config DeployConfig) bool {
-			return config.GovernanceEnabled()
-		},
-	}
 	Predeploys["LegacyMessagePasser"] = &Predeploy{Address: LegacyMessagePasserAddr}
 	Predeploys["L2ERC721Bridge"] = &Predeploy{Address: L2ERC721BridgeAddr}
 	Predeploys["OptimismMintableERC721Factory"] = &Predeploy{Address: OptimismMintableERC721FactoryAddr}

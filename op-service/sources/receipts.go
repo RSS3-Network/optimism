@@ -2,7 +2,6 @@ package sources
 
 import (
 	"context"
-	"encoding/hex"
 	"fmt"
 	"github.com/ethereum/go-ethereum/log"
 
@@ -35,9 +34,9 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 	// debug
 	log.Info("validateReceipts", "block", block, "blockHash", block.Hash, "receiptHash", receiptHash)
 	for i, r := range receipts {
-		log.Info("txHashes", "index", i, "txHash", txHashes[i])
+		log.Debug("txHashes", "index", i, "txHash", txHashes[i])
 		rJson, _ := r.MarshalJSON()
-		log.Info("receipts", "index", i, "receipt", string(rJson))
+		log.Debug("receipts", "index", i, "receipt", string(rJson))
 	}
 
 	// We don't trust the RPC to provide consistent cached receipt info that we use for critical rollup derivation work.
@@ -45,7 +44,7 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 	logIndex := uint(0)
 	cumulativeGas := uint64(0)
 	for i, r := range receipts {
-		log.Info("receipt", "index", i, "tx", txHashes[i], "receiptHash", r.TxHash, "transactionIndex", r.TransactionIndex, "blockNumber", r.BlockNumber, "blockHash", r.BlockHash, "cumulativeGasUsed", r.CumulativeGasUsed, "gasUsed", r.GasUsed, "logs", r.Logs)
+		log.Debug("receipt", "index", i, "tx", txHashes[i], "receiptHash", r.TxHash, "transactionIndex", r.TransactionIndex, "blockNumber", r.BlockNumber, "blockHash", r.BlockHash, "cumulativeGasUsed", r.CumulativeGasUsed, "gasUsed", r.GasUsed)
 
 		if r == nil { // on reorgs or other cases the receipts may disappear before they can be retrieved.
 			return fmt.Errorf("receipt of tx %d returns nil on retrieval", i)
@@ -66,8 +65,6 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 			return fmt.Errorf("receipt %d has invalid gas used metadata: %d, expected %d", i, r.GasUsed, expected)
 		}
 		for j, lg := range r.Logs {
-			log.Info("receipt log", "logIndex", lg.Index, "txIndex", lg.TxIndex, "blockHash", lg.BlockHash, "blockNumber", lg.BlockNumber, "txHash", lg.TxHash, "removed", lg.Removed, "topics", lg.Topics, "data", hex.EncodeToString(lg.Data))
-
 			if lg.Index != logIndex {
 				return fmt.Errorf("log %d (%d of tx %d) has unexpected log index %d", logIndex, j, i, lg.Index)
 			}
