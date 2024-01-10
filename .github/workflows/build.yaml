@@ -5,6 +5,9 @@ on:
       - rss3-dev
       - rss3-main
 
+env:
+  GIT_COMMIT: ${{ github.sha }}
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -43,9 +46,6 @@ jobs:
           push: true
           files: docker-bake.hcl
           targets: op-stack-go
-          set: |
-            op-stack-go.args.GIT_COMMIT=${{ github.sha }}
-            op-stack-go.args.IMAGE_TAGS=${{ github.sha }}
 
   validate:
     runs-on: ubuntu-latest
@@ -79,5 +79,3 @@ jobs:
           files: docker-bake.hcl
           set: |
             ${{ matrix.target }}.args.OP_STACK_GO_BUILDER=rss3/op-stack-go:${{ github.sha }}
-            ${{ matrix.target }}.args.GIT_COMMIT=${{ github.sha }}
-            ${{ matrix.target }}.args.IMAGE_TAGS=${{ github.sha }}
