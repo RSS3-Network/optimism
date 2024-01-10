@@ -24,7 +24,7 @@ jobs:
         uses: docker/bake-action@v4
         with:
           push: true
-          files: docker-bake.hcl
+          files: ./docker-bake.hcl
           targets: op-stack-go
 #  prepare:
 #    runs-on: ubuntu-latest
