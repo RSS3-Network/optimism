@@ -43,7 +43,9 @@ jobs:
           push: true
           files: docker-bake.hcl
           targets: op-stack-go
-          set: op-stack-go.args.GIT_COMMIT=${{ github.sha }}
+          set: |
+            op-stack-go.args.GIT_COMMIT=${{ github.sha }}
+            op-stack-go.args.IMAGE_TAGS=${{ github.sha }}
 
   validate:
     runs-on: ubuntu-latest
@@ -78,3 +80,4 @@ jobs:
           set: |
             ${{ matrix.target }}.args.OP_STACK_GO_BUILDER=rss3/op-stack-go:${{ github.sha }}
             ${{ matrix.target }}.args.GIT_COMMIT=${{ github.sha }}
+            ${{ matrix.target }}.args.IMAGE_TAGS=${{ github.sha }}

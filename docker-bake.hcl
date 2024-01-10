@@ -51,9 +51,9 @@ target "op-node" {
   args = {
     OP_STACK_GO_BUILDER = "op-stack-go"
   }
-  contexts = {
-    op-stack-go: "target:op-stack-go"
-  }
+#  contexts = {
+#    op-stack-go: "target:op-stack-go"
+#  }
   platforms = split(",", PLATFORMS)
   tags = [for tag in split(",", IMAGE_TAGS) : "${REGISTRY}/${REPOSITORY}/op-node:${tag}"]
 }
@@ -64,9 +64,9 @@ target "op-batcher" {
   args = {
     OP_STACK_GO_BUILDER = "op-stack-go"
   }
-  contexts = {
-    op-stack-go: "target:op-stack-go"
-  }
+#  contexts = {
+#    op-stack-go: "target:op-stack-go"
+#  }
   platforms = split(",", PLATFORMS)
   tags = [for tag in split(",", IMAGE_TAGS) : "${REGISTRY}/${REPOSITORY}/op-batcher:${tag}"]
 }
@@ -77,9 +77,9 @@ target "op-proposer" {
   args = {
     OP_STACK_GO_BUILDER = "op-stack-go"
   }
-  contexts = {
-    op-stack-go: "target:op-stack-go"
-  }
+#  contexts = {
+#    op-stack-go: "target:op-stack-go"
+#  }
   platforms = split(",", PLATFORMS)
   tags = [for tag in split(",", IMAGE_TAGS) : "${REGISTRY}/${REPOSITORY}/op-proposer:${tag}"]
 }
