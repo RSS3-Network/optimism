@@ -4,7 +4,7 @@ pragma solidity 0.8.15;
 import { OptimismMintableERC20 as ERC20 } from "src/universal/OptimismMintableERC20.sol";
 
 /// @custom:proxied
-/// @custom:predeploy 0x4200000000000000000000000000000000000301
+/// @custom:predeploy 0x4200000000000000000000000000000000000042
 /// @title RSS3Token
 contract RSS3Token is ERC20 {
     /// @param _l2Bridge    Address of the L2 standard bridge.
