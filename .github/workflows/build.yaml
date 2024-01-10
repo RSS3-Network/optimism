@@ -29,6 +29,7 @@ jobs:
           push: true
           files: docker-bake.hcl
           targets: op-stack-go
+          set: target.args.GIT_COMMIT=${{ github.sha }}
 #  prepare:
 #    runs-on: ubuntu-latest
 #    outputs:
