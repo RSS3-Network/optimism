@@ -1,9 +1,9 @@
 variable "REGISTRY" {
-  default = "us-docker.pkg.dev"
+  default = "docker.io"
 }
 
 variable "REPOSITORY" {
-  default = "oplabs-tools-artifacts/images"
+  default = "rss3"
 }
 
 variable "GIT_COMMIT" {
