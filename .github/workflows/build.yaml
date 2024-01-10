@@ -1,0 +1,20 @@
+name: Build Docker Image
+on:
+  push:
+    branches:
+      - rss3-dev
+      - rss3-main
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: List targets
+        id: generate
+        uses: docker/bake-action/subaction/list-targets@v4
+        with:
+          target: validate
+
