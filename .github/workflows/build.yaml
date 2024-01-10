@@ -9,8 +9,11 @@ jobs:
   stack:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: all
 
@@ -24,7 +27,7 @@ jobs:
         uses: docker/bake-action@v4
         with:
           push: true
-          files: ./docker-bake.hcl
+          files: docker-bake.hcl
           targets: op-stack-go
 #  prepare:
 #    runs-on: ubuntu-latest
