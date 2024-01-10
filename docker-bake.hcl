@@ -30,6 +30,10 @@ variable "PLATFORMS" {
   default = "linux/amd64"
 }
 
+group "validate" {
+  targets = ["op-node", "op-batcher", "op-proposer"]
+}
+
 target "op-stack-go" {
   dockerfile = "ops/docker/op-stack-go/Dockerfile"
   context = "."
