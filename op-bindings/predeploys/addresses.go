@@ -16,7 +16,6 @@ const (
 	L1BlockNumber                 = "0x4200000000000000000000000000000000000013"
 	GasPriceOracle                = "0x420000000000000000000000000000000000000F"
 	L1Block                       = "0x4200000000000000000000000000000000000015"
-	GovernanceToken               = "0x4200000000000000000000000000000000000042"
 	LegacyMessagePasser           = "0x4200000000000000000000000000000000000000"
 	L2ERC721Bridge                = "0x4200000000000000000000000000000000000014"
 	OptimismMintableERC721Factory = "0x4200000000000000000000000000000000000017"
@@ -26,7 +25,7 @@ const (
 	SchemaRegistry                = "0x4200000000000000000000000000000000000020"
 	EAS                           = "0x4200000000000000000000000000000000000021"
 	Create2Deployer               = "0x13b0D85CcB8bf860b6b79AF3029fCA081AE9beF2"
-	RSS3Token                     = "0x4200000000000000000000000000000000000301"
+	RSS3Token                     = "0x4200000000000000000000000000000000000042"
 )
 
 var (
@@ -40,7 +39,6 @@ var (
 	L1BlockNumberAddr                 = common.HexToAddress(L1BlockNumber)
 	GasPriceOracleAddr                = common.HexToAddress(GasPriceOracle)
 	L1BlockAddr                       = common.HexToAddress(L1Block)
-	GovernanceTokenAddr               = common.HexToAddress(GovernanceToken)
 	LegacyMessagePasserAddr           = common.HexToAddress(LegacyMessagePasser)
 	L2ERC721BridgeAddr                = common.HexToAddress(L2ERC721Bridge)
 	OptimismMintableERC721FactoryAddr = common.HexToAddress(OptimismMintableERC721Factory)
@@ -67,13 +65,6 @@ func init() {
 	Predeploys["L1BlockNumber"] = &Predeploy{Address: L1BlockNumberAddr}
 	Predeploys["GasPriceOracle"] = &Predeploy{Address: GasPriceOracleAddr}
 	Predeploys["L1Block"] = &Predeploy{Address: L1BlockAddr}
-	Predeploys["GovernanceToken"] = &Predeploy{
-		Address:       GovernanceTokenAddr,
-		ProxyDisabled: true,
-		Enabled: func(config DeployConfig) bool {
-			return config.GovernanceEnabled()
-		},
-	}
 	Predeploys["LegacyMessagePasser"] = &Predeploy{Address: LegacyMessagePasserAddr}
 	Predeploys["L2ERC721Bridge"] = &Predeploy{Address: L2ERC721BridgeAddr}
 	Predeploys["OptimismMintableERC721Factory"] = &Predeploy{Address: OptimismMintableERC721FactoryAddr}
