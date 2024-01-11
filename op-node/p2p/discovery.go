@@ -283,7 +283,7 @@ func (n *NodeP2P) DiscoveryProcess(ctx context.Context, log log.Logger, cfg *rol
 			err := n.Host().Connect(ctx, peer.AddrInfo{ID: id, Addrs: addrs})
 			cancel()
 			if err != nil {
-				log.Debug("failed connection attempt", "peer", id, "err", err)
+				log.Info("failed connection attempt", "peer", id, "err", err)
 			}
 		}
 	}

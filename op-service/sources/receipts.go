@@ -44,8 +44,6 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 	logIndex := uint(0)
 	cumulativeGas := uint64(0)
 	for i, r := range receipts {
-		log.Debug("receipt", "index", i, "tx", txHashes[i], "receiptHash", r.TxHash, "transactionIndex", r.TransactionIndex, "blockNumber", r.BlockNumber, "blockHash", r.BlockHash, "cumulativeGasUsed", r.CumulativeGasUsed, "gasUsed", r.GasUsed)
-
 		if r == nil { // on reorgs or other cases the receipts may disappear before they can be retrieved.
 			return fmt.Errorf("receipt of tx %d returns nil on retrieval", i)
 		}
@@ -64,24 +62,24 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 		if expected := r.CumulativeGasUsed - cumulativeGas; r.GasUsed != expected {
 			return fmt.Errorf("receipt %d has invalid gas used metadata: %d, expected %d", i, r.GasUsed, expected)
 		}
-		for j, lg := range r.Logs {
-			if lg.Index != logIndex {
-				return fmt.Errorf("log %d (%d of tx %d) has unexpected log index %d", logIndex, j, i, lg.Index)
+		for j, log := range r.Logs {
+			if log.Index != logIndex {
+				return fmt.Errorf("log %d (%d of tx %d) has unexpected log index %d", logIndex, j, i, log.Index)
 			}
-			if lg.TxIndex != uint(i) {
-				return fmt.Errorf("log %d has unexpected tx index %d", lg.Index, lg.TxIndex)
+			if log.TxIndex != uint(i) {
+				return fmt.Errorf("log %d has unexpected tx index %d", log.Index, log.TxIndex)
 			}
-			if lg.BlockHash != block.Hash {
-				return fmt.Errorf("log %d of block %s has unexpected block hash %s", lg.Index, block.Hash, lg.BlockHash)
+			if log.BlockHash != block.Hash {
+				return fmt.Errorf("log %d of block %s has unexpected block hash %s", log.Index, block.Hash, log.BlockHash)
 			}
-			if lg.BlockNumber != block.Number {
-				return fmt.Errorf("log %d of block %d has unexpected block number %d", lg.Index, block.Number, lg.BlockNumber)
+			if log.BlockNumber != block.Number {
+				return fmt.Errorf("log %d of block %d has unexpected block number %d", log.Index, block.Number, log.BlockNumber)
 			}
-			if lg.TxHash != txHashes[i] {
-				return fmt.Errorf("log %d of tx %s has unexpected tx hash %s", lg.Index, txHashes[i], lg.TxHash)
+			if log.TxHash != txHashes[i] {
+				return fmt.Errorf("log %d of tx %s has unexpected tx hash %s", log.Index, txHashes[i], log.TxHash)
 			}
-			if lg.Removed {
-				return fmt.Errorf("canonical log (%d) must never be removed due to reorg", lg.Index)
+			if log.Removed {
+				return fmt.Errorf("canonical log (%d) must never be removed due to reorg", log.Index)
 			}
 			logIndex++
 		}
