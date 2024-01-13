@@ -22,6 +22,8 @@ type ReceiptsProvider interface {
 // Warning: contractAddress is not verified, since it is a more expensive operation for data we do not use.
 // See go-ethereum/crypto.CreateAddress to verify contract deployment address data based on sender and tx nonce.
 func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []common.Hash, receipts []*types.Receipt) error {
+	log.Info("validateReceipts", "block", block, "blockHash", block.Hash, "receiptHash", receiptHash)
+
 	if len(receipts) != len(txHashes) {
 		return fmt.Errorf("got %d receipts but expected %d", len(receipts), len(txHashes))
 	}
@@ -31,26 +33,22 @@ func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []com
 		}
 	}
 
-	// debug
-	log.Info("validateReceipts", "block", block, "blockHash", block.Hash, "receiptHash", receiptHash)
-	for i, r := range receipts {
-		log.Debug("txHashes", "index", i, "txHash", txHashes[i])
-		rJson, _ := r.MarshalJSON()
-		log.Debug("receipts", "index", i, "receipt", string(rJson))
-	}
-
 	// We don't trust the RPC to provide consistent cached receipt info that we use for critical rollup derivation work.
 	// Let's check everything quickly.
 	logIndex := uint(0)
 	cumulativeGas := uint64(0)
 	for i, r := range receipts {
+		rJson, _ := r.MarshalJSON()
+
 		if r == nil { // on reorgs or other cases the receipts may disappear before they can be retrieved.
 			return fmt.Errorf("receipt of tx %d returns nil on retrieval", i)
 		}
 		if r.TransactionIndex != uint(i) {
+			log.Info("receipts", "index", i, "txHash", txHashes[i], "receipt", string(rJson))
 			return fmt.Errorf("receipt %d has unexpected tx index %d", i, r.TransactionIndex)
 		}
 		if r.BlockNumber == nil {
+			log.Info("receipts", "index", i, "txHash", txHashes[i], "receipt", string(rJson))
 			return fmt.Errorf("receipt %d has unexpected nil block number, expected %d", i, block.Number)
 		}
 		if r.BlockNumber.Uint64() != block.Number {
