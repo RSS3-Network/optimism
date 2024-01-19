@@ -78,7 +78,8 @@ contract SequencerFeeVault_Test is CommonTest {
         // The withdrawal was successful
         assertEq(sequencerFeeVault.totalProcessed(), amount);
         assertEq(address(sequencerFeeVault).balance, 0);
-        assertEq(Predeploys.L2_TO_L1_MESSAGE_PASSER.balance, amount);
+        // withdrawal to L1 is disabled , so the recipient in L2 received the withdrawal immediately
+        assertEq(recipient.balance, amount);
     }
 }
 

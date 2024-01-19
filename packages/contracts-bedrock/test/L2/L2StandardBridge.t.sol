@@ -34,43 +34,13 @@ contract L2StandardBridge_Test is Bridge_Initializer {
         assertFalse(l2StandardBridge.paused());
     }
 
-    /// @dev Tests that `withdraw` reverts if the amount is not equal to the value sent.
-    function test_withdraw_insufficientValue_reverts() external {
+    /// @dev Tests that `withdraw` reverts.
+    function test_withdraw_legacy_eth_reverts() external {
         assertEq(address(l2ToL1MessagePasser).balance, 0);
 
-        vm.expectRevert("StandardBridge: bridging ETH must include sufficient ETH value");
+        vm.expectRevert();
         vm.prank(alice, alice);
         l2StandardBridge.withdraw(address(Predeploys.LEGACY_ERC20_ETH), 100, 1000, hex"");
-    }
-
-    /// @dev Tests that the legacy `withdraw` interface on the L2StandardBridge
-    ///      successfully initiates a withdrawal.
-    function test_withdraw_ether_succeeds() external {
-        assertTrue(alice.balance >= 100);
-        assertEq(Predeploys.L2_TO_L1_MESSAGE_PASSER.balance, 0);
-
-        vm.expectEmit(true, true, true, true, address(l2StandardBridge));
-        emit WithdrawalInitiated({
-            l1Token: address(0),
-            l2Token: Predeploys.LEGACY_ERC20_ETH,
-            from: alice,
-            to: alice,
-            amount: 100,
-            data: hex""
-        });
-
-        vm.expectEmit(true, true, true, true, address(l2StandardBridge));
-        emit ETHBridgeInitiated({ from: alice, to: alice, amount: 100, data: hex"" });
-
-        vm.prank(alice, alice);
-        l2StandardBridge.withdraw{ value: 100 }({
-            _l2Token: Predeploys.LEGACY_ERC20_ETH,
-            _amount: 100,
-            _minGasLimit: 1000,
-            _extraData: hex""
-        });
-
-        assertEq(Predeploys.L2_TO_L1_MESSAGE_PASSER.balance, 100);
     }
 }
 
@@ -348,29 +318,10 @@ contract L2StandardBridge_Bridge_Test is Bridge_Initializer {
         l2StandardBridge.finalizeDeposit(address(L1Token), address(L2Token), alice, alice, 100, hex"");
     }
 
-    /// @dev Tests that `finalizeDeposit` succeeds when depositing ETH.
-    function test_finalizeDeposit_depositingETH_succeeds() external {
-        vm.mockCall(
-            address(l2StandardBridge.messenger()),
-            abi.encodeWithSelector(CrossDomainMessenger.xDomainMessageSender.selector),
-            abi.encode(address(l2StandardBridge.OTHER_BRIDGE()))
-        );
-
-        // Should emit both the bedrock and legacy events
-        vm.expectEmit(true, true, true, true, address(l2StandardBridge));
-        emit DepositFinalized(address(L1Token), address(L2Token), alice, alice, 100, hex"");
-
-        vm.expectEmit(true, true, true, true, address(l2StandardBridge));
-        emit ERC20BridgeFinalized(
-            address(L2Token), // localToken
-            address(L1Token), // remoteToken
-            alice,
-            alice,
-            100,
-            hex""
-        );
-
+    /// @dev Tests that `deposit` reverts.
+    function test_finalizeDeposit_depositingLegacyETH_reverts() external {
+        vm.expectRevert();
         vm.prank(address(l2CrossDomainMessenger));
-        l2StandardBridge.finalizeDeposit(address(L1Token), address(L2Token), alice, alice, 100, hex"");
+        l2StandardBridge.finalizeDeposit(address(0), address(Predeploys.LEGACY_ERC20_ETH), alice, alice, 100, hex"");
     }
 }

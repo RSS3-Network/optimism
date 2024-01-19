@@ -132,11 +132,7 @@ contract L2StandardBridge is StandardBridge, ISemver {
         payable
         virtual
     {
-        if (_l1Token == address(0) && _l2Token == Predeploys.LEGACY_ERC20_ETH) {
-            revert("L2StandardBridge: ether deposits not supported");
-        } else {
-            finalizeBridgeERC20(_l2Token, _l1Token, _from, _to, _amount, _extraData);
-        }
+        finalizeBridgeERC20(_l2Token, _l1Token, _from, _to, _amount, _extraData);
     }
 
     /// @custom:legacy
@@ -164,12 +160,8 @@ contract L2StandardBridge is StandardBridge, ISemver {
     )
         internal
     {
-        if (_l2Token == address(0) || _l2Token == Predeploys.LEGACY_ERC20_ETH) {
-            revert("L2StandardBridge: ether withdrawals not supported");
-        } else {
-            address l1Token = OptimismMintableERC20(_l2Token).l1Token();
-            _initiateBridgeERC20(_l2Token, l1Token, _from, _to, _amount, _minGasLimit, _extraData);
-        }
+        address l1Token = OptimismMintableERC20(_l2Token).l1Token();
+        _initiateBridgeERC20(_l2Token, l1Token, _from, _to, _amount, _minGasLimit, _extraData);
     }
 
     /// @notice Emits the legacy WithdrawalInitiated event followed by the ERC20BridgeInitiated

@@ -59,5 +59,4 @@ When the Pause is activated, the following methods are disabled:
 1. `OptimismPortal.finalizeWithdrawalTransaction()`
 1. `L1CrossDomainMessenger.relayMessage()`
 1. `StandardBridge.finalizeBridgeERC20()`
-1. `StandardBridge.finalizeBridgeETH()`
 1. `L1ERC721Bridge.finalizeBridgeERC721()`

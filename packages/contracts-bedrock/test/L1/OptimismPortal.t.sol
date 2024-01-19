@@ -101,26 +101,15 @@ contract OptimismPortal_Test is CommonTest {
         assertEq(optimismPortal.paused(), true);
     }
 
-    /// @dev Tests that `receive` successdully deposits ETH.
-    function testFuzz_receive_succeeds(uint256 _value) external {
-        vm.expectEmit(address(optimismPortal));
-        emitTransactionDeposited({
-            _from: alice,
-            _to: alice,
-            _value: _value,
-            _mint: _value,
-            _gasLimit: 100_000,
-            _isCreation: false,
-            _data: hex""
-        });
-
+    /// @dev Tests that `receive` reverts when receiving ETH.
+    function testFuzz_receive_reverts(uint256 _value) external {
         // give alice money and send as an eoa
         vm.deal(alice, _value);
         vm.prank(alice, alice);
         (bool s,) = address(optimismPortal).call{ value: _value }(hex"");
 
-        assertTrue(s);
-        assertEq(address(optimismPortal).balance, _value);
+        assertFalse(s);
+        assertEq(address(optimismPortal).balance, 0);
     }
 
     /// @dev Tests that `depositTransaction` reverts when the destination address is non-zero
