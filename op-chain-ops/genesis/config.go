@@ -228,6 +228,10 @@ type DeployConfig struct {
 	// nodes are recommended to adopt, to stay in sync with the network.
 	RecommendedProtocolVersion params.ProtocolVersion `json:"recommendedProtocolVersion"`
 
+	RSS3TokenName   string         `json:"rss3TokenName"`
+	RSS3TokenSymbol string         `json:"rss3TokenSymbol"`
+	L1RSS3TokenAddr common.Address `json:"l1Rss3TokenAddr"`
+
 	// When Cancun activates. Relative to L1 genesis.
 	L1CancunTimeOffset *uint64 `json:"l1CancunTimeOffset,omitempty"`
 }
@@ -371,6 +375,17 @@ func (d *DeployConfig) Check() error {
 	if d.RecommendedProtocolVersion == (params.ProtocolVersion{}) {
 		log.Warn("RecommendedProtocolVersion is empty")
 	}
+
+	if d.RSS3TokenSymbol == "" {
+		return fmt.Errorf("%w: RSS3TokenSymbol cannot be empty", ErrInvalidDeployConfig)
+	}
+	if d.RSS3TokenSymbol == "" {
+		return fmt.Errorf("%w: RSS3TokenSymbol cannot be empty", ErrInvalidDeployConfig)
+	}
+	if d.L1RSS3TokenAddr == (common.Address{}) {
+		return fmt.Errorf("%w: L1RSS3TokenAddr cannot be address(0)", ErrInvalidDeployConfig)
+	}
+
 	return nil
 }
 
@@ -801,6 +816,13 @@ func NewL2ImmutableConfig(config *DeployConfig, block *types.Block) (*immutables
 			Name: "EAS",
 		},
 		Create2Deployer: struct{}{},
+		RSS3Token: struct {
+			Bridge      common.Address
+			RemoteToken common.Address
+		}{
+			Bridge:      predeploys.L2StandardBridgeAddr,
+			RemoteToken: config.L1RSS3TokenAddr,
+		},
 	}
 
 	if err := cfg.Check(); err != nil {
@@ -866,6 +888,10 @@ func NewL2StorageConfig(config *DeployConfig, block *types.Block) (state.Storage
 	}
 	storage["ProxyAdmin"] = state.StorageValues{
 		"_owner": config.ProxyAdminOwner,
+	}
+	storage["RSS3Token"] = state.StorageValues{
+		"_name":   config.RSS3TokenName,
+		"_symbol": config.RSS3TokenSymbol,
 	}
 	return storage, nil
 }

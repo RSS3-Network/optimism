@@ -68,6 +68,10 @@ type PredeploysImmutableConfig struct {
 		Name string
 	}
 	Create2Deployer struct{}
+	RSS3Token       struct {
+		Bridge      common.Address
+		RemoteToken common.Address
+	}
 }
 
 // Check will ensure that the required fields are set on the config.
@@ -247,6 +251,17 @@ func l2ImmutableDeployer(backend *backends.SimulatedBackend, opts *bind.Transact
 		_, tx, _, err = bindings.DeployOptimismMintableERC721Factory(opts, backend, bridge, remoteChainId)
 	case "EAS":
 		_, tx, _, err = bindings.DeployEAS(opts, backend)
+	case "RSS3Token":
+		bridge, ok := deployment.Args[0].(common.Address)
+		if !ok {
+			return nil, fmt.Errorf("invalid type for bridge")
+		}
+		remoteToken, ok := deployment.Args[1].(common.Address)
+		if !ok {
+			return nil, fmt.Errorf("invalid type for bridge")
+		}
+		_, tx, _, err = bindings.DeployRSS3Token(opts, backend, bridge, remoteToken)
+
 	default:
 		return tx, fmt.Errorf("unknown contract: %s", deployment.Name)
 	}

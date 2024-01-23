@@ -145,9 +145,9 @@ contract Setup {
         vm.loadAllocs(allocsPath);
 
         // Set the governance token's owner to be the final system owner
-        address finalSystemOwner = cfg.finalSystemOwner();
-        vm.prank(governanceToken.owner());
-        governanceToken.transferOwnership(finalSystemOwner);
+        // address finalSystemOwner = cfg.finalSystemOwner();
+        // vm.prank(governanceToken.owner());
+        // governanceToken.transferOwnership(finalSystemOwner);
 
         vm.label(Predeploys.OPTIMISM_MINTABLE_ERC20_FACTORY, "OptimismMintableERC20Factory");
         vm.label(Predeploys.LEGACY_ERC20_ETH, "LegacyERC20ETH");

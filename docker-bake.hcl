@@ -1,9 +1,9 @@
 variable "REGISTRY" {
-  default = "us-docker.pkg.dev"
+  default = "docker.io"
 }
 
 variable "REPOSITORY" {
-  default = "oplabs-tools-artifacts/images"
+  default = "rss3"
 }
 
 variable "GIT_COMMIT" {
@@ -30,6 +30,10 @@ variable "PLATFORMS" {
   default = "linux/amd64"
 }
 
+group "validate" {
+  targets = ["op-node", "op-batcher", "op-proposer"]
+}
+
 target "op-stack-go" {
   dockerfile = "ops/docker/op-stack-go/Dockerfile"
   context = "."
@@ -47,9 +51,9 @@ target "op-node" {
   args = {
     OP_STACK_GO_BUILDER = "op-stack-go"
   }
-  contexts = {
-    op-stack-go: "target:op-stack-go"
-  }
+#  contexts = {
+#    op-stack-go: "target:op-stack-go"
+#  }
   platforms = split(",", PLATFORMS)
   tags = [for tag in split(",", IMAGE_TAGS) : "${REGISTRY}/${REPOSITORY}/op-node:${tag}"]
 }
@@ -60,9 +64,9 @@ target "op-batcher" {
   args = {
     OP_STACK_GO_BUILDER = "op-stack-go"
   }
-  contexts = {
-    op-stack-go: "target:op-stack-go"
-  }
+#  contexts = {
+#    op-stack-go: "target:op-stack-go"
+#  }
   platforms = split(",", PLATFORMS)
   tags = [for tag in split(",", IMAGE_TAGS) : "${REGISTRY}/${REPOSITORY}/op-batcher:${tag}"]
 }
@@ -73,9 +77,9 @@ target "op-proposer" {
   args = {
     OP_STACK_GO_BUILDER = "op-stack-go"
   }
-  contexts = {
-    op-stack-go: "target:op-stack-go"
-  }
+#  contexts = {
+#    op-stack-go: "target:op-stack-go"
+#  }
   platforms = split(",", PLATFORMS)
   tags = [for tag in split(",", IMAGE_TAGS) : "${REGISTRY}/${REPOSITORY}/op-proposer:${tag}"]
 }

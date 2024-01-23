@@ -55,8 +55,7 @@ func testBuildL2Genesis(t *testing.T, config *genesis.DeployConfig) *core.Genesi
 		require.Greater(t, len(account.Code), 0)
 
 		adminSlot, ok := account.Storage[genesis.AdminSlot]
-		isProxy := !predeploy.ProxyDisabled ||
-			(!config.EnableGovernance && addr == predeploys.GovernanceTokenAddr)
+		isProxy := !predeploy.ProxyDisabled
 		if isProxy {
 			require.Equal(t, true, ok, name)
 			require.Equal(t, eth.AddressAsLeftPaddedHash(predeploys.ProxyAdminAddr), adminSlot)

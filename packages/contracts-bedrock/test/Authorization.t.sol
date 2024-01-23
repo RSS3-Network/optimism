@@ -91,21 +91,15 @@ contract Authorization_Test is CommonTest {
         _addSpec("L1StandardBridge", _getSel("OTHER_BRIDGE()"), false);
         _addSpec("L1StandardBridge", _getSel("bridgeERC20(address,address,uint256,uint32,bytes)"), false);
         _addSpec("L1StandardBridge", _getSel("bridgeERC20To(address,address,address,uint256,uint32,bytes)"), false);
-        _addSpec("L1StandardBridge", _getSel("bridgeETH(uint32,bytes)"), false);
-        _addSpec("L1StandardBridge", _getSel("bridgeETHTo(address,uint32,bytes)"), false);
         _addSpec("L1StandardBridge", _getSel("depositERC20(address,address,uint256,uint32,bytes)"), false);
         _addSpec("L1StandardBridge", _getSel("depositERC20To(address,address,address,uint256,uint32,bytes)"), false);
-        _addSpec("L1StandardBridge", _getSel("depositETH(uint32,bytes)"), false);
-        _addSpec("L1StandardBridge", _getSel("depositETHTo(address,uint32,bytes)"), false);
         _addSpec("L1StandardBridge", _getSel("deposits(address,address)"), false);
         _addSpec(
             "L1StandardBridge", _getSel("finalizeBridgeERC20(address,address,address,address,uint256,bytes)"), true
         );
-        _addSpec("L1StandardBridge", _getSel("finalizeBridgeETH(address,address,uint256,bytes)"), true);
         _addSpec(
             "L1StandardBridge", _getSel("finalizeERC20Withdrawal(address,address,address,address,uint256,bytes)"), true
         );
-        _addSpec("L1StandardBridge", _getSel("finalizeETHWithdrawal(address,address,uint256,bytes)"), true);
         _addSpec("L1StandardBridge", _getSel("initialize(address)"), false);
         _addSpec("L1StandardBridge", _getSel("l2TokenBridge()"), false);
         _addSpec("L1StandardBridge", _getSel("messenger()"), false);
@@ -145,7 +139,6 @@ contract Authorization_Test is CommonTest {
         _addSpec("OptimismPortal", _getSel("L2_ORACLE()"), false);
         _addSpec("OptimismPortal", _getSel("SYSTEM_CONFIG()"), false);
         _addSpec("OptimismPortal", _getSel("depositTransaction(address,uint256,uint64,bool,bytes)"), false);
-        _addSpec("OptimismPortal", _getSel("donateETH()"), false);
         _addSpec("OptimismPortal", OptimismPortal.finalizeWithdrawalTransaction.selector, true); // pauseable
         _addSpec("OptimismPortal", _getSel("finalizedWithdrawals(bytes32)"), false);
         _addSpec("OptimismPortal", _getSel("guardian()"), false);

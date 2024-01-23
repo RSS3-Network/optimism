@@ -70,13 +70,7 @@ abstract contract FeeVault {
         emit Withdrawal(value, RECIPIENT, msg.sender);
         emit Withdrawal(value, RECIPIENT, msg.sender, WITHDRAWAL_NETWORK);
 
-        if (WITHDRAWAL_NETWORK == WithdrawalNetwork.L2) {
-            (bool success,) = RECIPIENT.call{ value: value }(hex"");
-            require(success, "FeeVault: failed to send ETH to L2 fee recipient");
-        } else {
-            L2StandardBridge(payable(Predeploys.L2_STANDARD_BRIDGE)).bridgeETHTo{ value: value }(
-                RECIPIENT, WITHDRAWAL_MIN_GAS, bytes("")
-            );
-        }
+        (bool success,) = RECIPIENT.call{ value: value }(hex"");
+        require(success, "FeeVault: failed to send ETH to L2 fee recipient");
     }
 }
