@@ -135,6 +135,12 @@ contract OptimismPortal_Test is CommonTest {
         });
     }
 
+    /// @dev Tests that `depositTransaction` reverts when transferring ETH to contract.
+    function test_deposit_ETH_reverts() external {
+        vm.expectRevert("ETH_NOT_SUPPORTED");
+        address(optimismPortal).call{value: 1}("");
+    }
+
     /// @dev Tests that `depositTransaction` reverts when the gas limit is too small.
     function test_depositTransaction_smallGasLimit_reverts() external {
         vm.expectRevert("OptimismPortal: gas limit too small");
