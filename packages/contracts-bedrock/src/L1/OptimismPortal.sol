@@ -105,6 +105,11 @@ contract OptimismPortal is Initializable, ResourceMetering, ISemver {
         initialize(SuperchainConfig(address(0)));
     }
 
+    /// @notice Deposit ETH is not supported.
+    receive() external payable {
+        revert("ETH_NOT_SUPPORTED");
+    }
+
     /// @notice Initializer.
     /// @param _superchainConfig Address of the SuperchainConfig contract.
     function initialize(SuperchainConfig _superchainConfig) public initializer {
