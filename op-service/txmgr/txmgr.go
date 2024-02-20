@@ -2,7 +2,6 @@ package txmgr
 
 import (
 	"context"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/big"
@@ -207,6 +206,7 @@ func (m *SimpleTxManager) craftTx(ctx context.Context, candidate TxCandidate) (*
 		return nil, fmt.Errorf("failed to get gas price info: %w", err)
 	}
 	gasFeeCap := calcGasFeeCap(basefee, gasTipCap)
+	m.l.Debug("Suggested gas price", "tip", gasTipCap, "fee", gasFeeCap, "basefee", basefee)
 
 	rawTx := &types.DynamicFeeTx{
 		ChainID:   m.chainID,
@@ -217,7 +217,7 @@ func (m *SimpleTxManager) craftTx(ctx context.Context, candidate TxCandidate) (*
 		Value:     candidate.Value,
 	}
 
-	m.l.Info("Creating tx", "to", rawTx.To, "from", m.cfg.From, "gasTipCap", gasTipCap, "gasFeeCap", gasFeeCap, "data", hex.EncodeToString(candidate.TxData), "value", candidate.Value)
+	m.l.Info("Creating tx", "to", rawTx.To, "from", m.cfg.From, "gasTipCap", gasTipCap, "gasFeeCap", gasFeeCap, "value", candidate.Value)
 
 	// If the gas limit is set, we can use that as the gas
 	if candidate.GasLimit != 0 {
@@ -272,6 +272,7 @@ func (m *SimpleTxManager) signWithNextNonce(ctx context.Context, rawTx *types.Dy
 		// decrement the nonce, so we can retry signing with the same nonce next time
 		// signWithNextNonce is called
 		*m.nonce--
+		log.Error("failed to sign transaction", "err", err)
 	} else {
 		m.metr.RecordNonce(*m.nonce)
 	}
