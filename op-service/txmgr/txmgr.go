@@ -252,7 +252,7 @@ func (m *SimpleTxManager) craftTx(ctx context.Context, candidate TxCandidate) (*
 		return nil, fmt.Errorf("failed to get gas price info: %w", err)
 	}
 	gasFeeCap := calcGasFeeCap(baseFee, gasTipCap)
-  m.l.Debug("Suggested gas price", "tip", gasTipCap, "fee", gasFeeCap, "basefee", basefee)
+	m.l.Debug("Suggested gas price", "tip", gasTipCap, "fee", gasFeeCap, "basefee", baseFee)
 	gasLimit := candidate.GasLimit
 
 	// If the gas limit is set, we can use that as the gas
