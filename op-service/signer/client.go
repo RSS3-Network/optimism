@@ -96,6 +96,8 @@ func (s *SignerClient) SignTransaction(ctx context.Context, chainId *big.Int, fr
 	sidecar := tx.BlobTxSidecar()
 	args := NewTransactionArgsFromTransaction(chainId, &from, tx.WithoutBlobTxSidecar())
 
+	log.Debug("request to sign transaction", "from", from, "txHash", tx.Hash().String(), "txNonce", tx.Nonce(), "txGas", tx.Gas(), "txValue", tx.Value(), "txTo", tx.To(), "txAccessList", tx.AccessList(), "txChainId", tx.ChainId(), "txGasFeeCap", tx.GasFeeCap(), "txGasTipCap", tx.GasTipCap())
+
 	var result hexutil.Bytes
 	if err := s.client.CallContext(ctx, &result, "eth_signTransaction", args); err != nil {
 		return nil, fmt.Errorf("eth_signTransaction failed: %w", err)
@@ -111,5 +113,6 @@ func (s *SignerClient) SignTransaction(ctx context.Context, chainId *big.Int, fr
 		}
 	}
 
+	log.Debug("signed transaction", "txHash", signed.Hash().String(), "txNonce", signed.Nonce(), "txGas", signed.Gas(), "txValue", signed.Value(), "txTo", signed.To(), "txAccessList", signed.AccessList(), "txChainId", signed.ChainId(), "txGasFeeCap", signed.GasFeeCap(), "txGasTipCap", signed.GasTipCap())
 	return &signed, nil
 }

@@ -252,7 +252,7 @@ func (m *SimpleTxManager) craftTx(ctx context.Context, candidate TxCandidate) (*
 		return nil, fmt.Errorf("failed to get gas price info: %w", err)
 	}
 	gasFeeCap := calcGasFeeCap(baseFee, gasTipCap)
-
+  m.l.Debug("Suggested gas price", "tip", gasTipCap, "fee", gasFeeCap, "basefee", basefee)
 	gasLimit := candidate.GasLimit
 
 	// If the gas limit is set, we can use that as the gas
@@ -376,6 +376,7 @@ func (m *SimpleTxManager) signWithNextNonce(ctx context.Context, txMessage types
 		// decrement the nonce, so we can retry signing with the same nonce next time
 		// signWithNextNonce is called
 		*m.nonce--
+		log.Error("failed to sign transaction", "err", err)
 	} else {
 		m.metr.RecordNonce(*m.nonce)
 	}
