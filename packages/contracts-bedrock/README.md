@@ -59,6 +59,11 @@ For all information about working on and contributing to Optimism's smart contra
 The smart contracts are deployed using `foundry` with a `hardhat-deploy` compatibility layer. When the contracts are deployed,
 they will write a temp file to disk that can then be formatted into a `hardhat-deploy` style artifact by calling another script.
 
+The addresses in the `deployments` directory will be read into the script based on the backend's chain id.
+To manually define the set of addresses used in the script, set the `CONTRACT_ADDRESSES_PATH` env var to a path on the local
+filesystem that points to a JSON file full of key value pairs where the keys are names of contracts and the
+values are addresses. This works well with the JSON files in `superchain-ops`.
+
 ### Configuration
 
 Create or modify a file `<network-name>.json` inside of the [`deploy-config`](./deploy-config/) folder.
@@ -89,3 +94,20 @@ to reduce the overhead of maintaining multiple ways to set up the state as well 
 The L1 contract addresses are held in `deployments/hardhat/.deploy` and the L2 test state is held in a `.testdata` directory. The L1 addresses are used to create the L2 state
 and it is possible for stale addresses to be pulled into the L2 state, causing tests to fail. Stale addresses may happen if the order of the L1 deployments happen differently
 since some contracts are deployed using `CREATE`. Run `pnpm clean` and rerun the tests if they are failing for an unknown reason.
+
+### Static Analysis
+
+`contracts-bedrock` uses [slither](https://github.com/crytic/slither) as its primary static analysis tool.
+Slither will be run against PRs as part of CI, and new findings will be reported as a comment on the PR.
+CI will fail if there are any new findings of medium or higher severity, as configured in the repo's Settings > Code Security and Analysis > Code Scanning > Protection rules setting.
+
+There are two corresponding jobs in CI: one calls "Slither Analysis" and one called "Code scanning results / Slither".
+The former will always pass if Slither runs successfully, and the latter will fail if there are any new findings of medium or higher severity.
+
+Existing findings can be found in the repo's Security tab > [Code Scanning](https://github.com/ethereum-optimism/optimism/security/code-scanning) section.
+You can view findings for a specific PR using the `pr:{number}` filter, such [`pr:9405`](https://github.com/ethereum-optimism/optimism/security/code-scanning?query=is:open+pr:9405).
+
+For each finding, either fix it locally and push a new commit, or dismiss it through the PR comment's UI.
+
+Note that you can run slither locally by running `slither .`, but because it does not contain the triaged results from GitHub, it will be noisy.
+Instead, you should run `slither ./path/to/contract.sol` to run it against a specific file.
