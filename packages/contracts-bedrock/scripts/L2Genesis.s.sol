@@ -162,7 +162,7 @@ contract L2Genesis is Script, Artifacts {
         _setOptimismMintableERC20Factory();
         _setL1BlockNumber();
         _setGasPriceOracle();
-        _setGovernanceToken();
+        _setRSS3Token();
         _setL1Block();
     }
 
@@ -295,27 +295,16 @@ contract L2Genesis is Script, Artifacts {
     }
 
     /// @notice This predeploy is following the saftey invariant #3.
-    function _setGovernanceToken() internal {
-        if (!cfg.enableGovernance()) {
-            console.log("Governance not enabled, skipping setting governanace token");
-            return;
-        }
+    function _setRSS3Token() internal {
 
-        GovernanceToken token = new GovernanceToken();
-        console.log("Setting %s implementation at: %s", "GovernanceToken", Predeploys.GOVERNANCE_TOKEN);
-        vm.etch(Predeploys.GOVERNANCE_TOKEN, address(token).code);
+        console.log("Setting %s implementation at: %s", "RSS3Token", Predeploys.RSS3_TOKEN);
+        vm.etch(Predeploys.RSS3_TOKEN, address(token).code);
 
         bytes32 _nameSlot = hex"0000000000000000000000000000000000000000000000000000000000000003";
         bytes32 _symbolSlot = hex"0000000000000000000000000000000000000000000000000000000000000004";
-        bytes32 _ownerSlot = hex"000000000000000000000000000000000000000000000000000000000000000a";
 
-        vm.store(Predeploys.GOVERNANCE_TOKEN, _nameSlot, vm.load(address(token), _nameSlot));
-        vm.store(Predeploys.GOVERNANCE_TOKEN, _symbolSlot, vm.load(address(token), _symbolSlot));
-        vm.store(Predeploys.GOVERNANCE_TOKEN, _ownerSlot, bytes32(uint256(uint160(cfg.governanceTokenOwner()))));
-
-        /// Reset so its not included state dump
-        vm.etch(address(token), "");
-        vm.resetNonce(address(token));
+        vm.store(Predeploys.RSS3_TOKEN, _nameSlot, "RSS3");
+        vm.store(Predeploys.RSS3_TOKEN, _symbolSlot, "RSS3");
     }
 
     /// @notice This predeploy is following the saftey invariant #1.
@@ -328,7 +317,7 @@ contract L2Genesis is Script, Artifacts {
 
     /// @dev Returns true if the address is not proxied.
     function _notProxied(address _addr) internal pure returns (bool) {
-        return _addr == Predeploys.GOVERNANCE_TOKEN || _addr == Predeploys.WETH9;
+        return _addr == Predeploys.RSS3_TOKEN || _addr == Predeploys.WETH9;
     }
 
     /// @dev Returns true if the address is a predeploy.
@@ -340,7 +329,7 @@ contract L2Genesis is Script, Artifacts {
             || _addr == Predeploys.GAS_PRICE_ORACLE || _addr == Predeploys.DEPLOYER_WHITELIST || _addr == Predeploys.WETH9
             || _addr == Predeploys.L1_BLOCK_NUMBER || _addr == Predeploys.LEGACY_MESSAGE_PASSER
             || _addr == Predeploys.PROXY_ADMIN || _addr == Predeploys.BASE_FEE_VAULT || _addr == Predeploys.L1_FEE_VAULT
-            || _addr == Predeploys.GOVERNANCE_TOKEN || _addr == Predeploys.SCHEMA_REGISTRY || _addr == Predeploys.EAS;
+            || _addr == Predeploys.RSS3_TOKEN || _addr == Predeploys.SCHEMA_REGISTRY || _addr == Predeploys.EAS;
     }
 
     /// @dev Function to compute the expected address of the predeploy implementation

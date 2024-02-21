@@ -72,7 +72,6 @@ contract Setup {
     GasPriceOracle gasPriceOracle = GasPriceOracle(Predeploys.GAS_PRICE_ORACLE);
     L1Block l1Block = L1Block(Predeploys.L1_BLOCK_ATTRIBUTES);
     LegacyMessagePasser legacyMessagePasser = LegacyMessagePasser(Predeploys.LEGACY_MESSAGE_PASSER);
-    GovernanceToken governanceToken = GovernanceToken(Predeploys.GOVERNANCE_TOKEN);
 
     /// @dev Deploys the Deploy contract without including its bytecode in the bytecode
     ///      of this contract by fetching the bytecode dynamically using `vm.getCode()`.
@@ -168,7 +167,6 @@ contract Setup {
         vm.label(Predeploys.L1_BLOCK_ATTRIBUTES, "L1Block");
         vm.label(Predeploys.GAS_PRICE_ORACLE, "GasPriceOracle");
         vm.label(Predeploys.LEGACY_MESSAGE_PASSER, "LegacyMessagePasser");
-        vm.label(Predeploys.GOVERNANCE_TOKEN, "GovernanceToken");
         vm.label(Predeploys.EAS, "EAS");
         vm.label(Predeploys.SCHEMA_REGISTRY, "SchemaRegistry");
     }

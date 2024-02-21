@@ -105,7 +105,9 @@ func NewBackendWithGenesisTimestamp(chainID *big.Int, ts uint64, shanghai bool, 
 	alloc := core.GenesisAlloc{
 		crypto.PubkeyToAddress(TestKey.PublicKey): core.GenesisAccount{
 			Balance: thousandETH,
+			Nonce:   1,
 		},
+		params.RSS3Address: {Balance: big.NewInt(1), Nonce: 1, Storage: storage},
 	}
 	for name, address := range predeploys {
 		bytecode, err := bindings.GetDeployedBytecode(name)
@@ -125,11 +127,8 @@ func NewBackendWithGenesisTimestamp(chainID *big.Int, ts uint64, shanghai bool, 
 			Config:     &chainConfig,
 			Timestamp:  ts,
 			Difficulty: big.NewInt(0),
-			Alloc: core.GenesisAlloc{
-				crypto.PubkeyToAddress(TestKey.PublicKey): {Balance: big.NewInt(1)},
-				params.RSS3Address:                        {Balance: big.NewInt(1), Nonce: 1, Storage: storage},
-			},
-			GasLimit: 30_000_000,
+			Alloc:      alloc,
+			GasLimit:   30_000_000,
 		}),
 		backends.WithConsensus(beacon.New(ethash.NewFaker())),
 	), nil

@@ -70,7 +70,7 @@ library Predeploys {
     address internal constant L1_FEE_VAULT = 0x420000000000000000000000000000000000001A;
 
     /// @notice Address of the RSS3Token predeploy.
-    address internal constant GOVERNANCE_TOKEN = 0x4200000000000000000000000000000000000042;
+    address internal constant RSS3_TOKEN = 0x4200000000000000000000000000000000000042;
 
     /// @notice Address of the SchemaRegistry predeploy.
     address internal constant SCHEMA_REGISTRY = 0x4200000000000000000000000000000000000020;

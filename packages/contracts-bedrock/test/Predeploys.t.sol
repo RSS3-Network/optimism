@@ -32,12 +32,12 @@ contract PredeploysTest is CommonTest {
             || _addr == Predeploys.GAS_PRICE_ORACLE || _addr == Predeploys.DEPLOYER_WHITELIST || _addr == Predeploys.WETH9
             || _addr == Predeploys.L1_BLOCK_NUMBER || _addr == Predeploys.LEGACY_MESSAGE_PASSER
             || _addr == Predeploys.PROXY_ADMIN || _addr == Predeploys.BASE_FEE_VAULT || _addr == Predeploys.L1_FEE_VAULT
-            || _addr == Predeploys.GOVERNANCE_TOKEN || _addr == Predeploys.SCHEMA_REGISTRY || _addr == Predeploys.EAS;
+            || _addr == Predeploys.RSS3_TOKEN || _addr == Predeploys.SCHEMA_REGISTRY || _addr == Predeploys.EAS;
     }
 
     /// @dev Returns true if the adress is not proxied.
     function _notProxied(address _addr) internal pure returns (bool) {
-        return _addr == Predeploys.LEGACY_ERC20_ETH || _addr == Predeploys.GOVERNANCE_TOKEN || _addr == Predeploys.WETH9
+        return _addr == Predeploys.LEGACY_ERC20_ETH || _addr == Predeploys.RSS3_TOKEN || _addr == Predeploys.WETH9
             || _addr == Predeploys.MultiCall3 || _addr == Predeploys.Create2Deployer || _addr == Predeploys.Safe_v130
             || _addr == Predeploys.SafeL2_v130 || _addr == Predeploys.MultiSendCallOnly_v130
             || _addr == Predeploys.SafeSingletonFactory || _addr == Predeploys.DeterministicDeploymentProxy

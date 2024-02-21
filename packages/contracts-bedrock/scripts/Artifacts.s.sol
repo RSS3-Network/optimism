@@ -156,8 +156,8 @@ abstract contract Artifacts {
             return payable(Predeploys.BASE_FEE_VAULT);
         } else if (digest == keccak256(bytes("L1FeeVault"))) {
             return payable(Predeploys.L1_FEE_VAULT);
-        } else if (digest == keccak256(bytes("GovernanceToken"))) {
-            return payable(Predeploys.GOVERNANCE_TOKEN);
+        } else if (digest == keccak256(bytes("RSS3Token"))) {
+            return payable(Predeploys.RSS3_TOKEN);
         } else if (digest == keccak256(bytes("SchemaRegistry"))) {
             return payable(Predeploys.SCHEMA_REGISTRY);
         } else if (digest == keccak256(bytes("EAS"))) {
