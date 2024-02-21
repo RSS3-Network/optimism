@@ -130,17 +130,6 @@ contract OptimismPortal_Test is CommonTest {
         assertEq(optimismPortal.paused(), true);
     }
 
-    /// @dev Tests that `receive` reverts when receiving ETH.
-    function testFuzz_receive_reverts(uint256 _value) external {
-        // give alice money and send as an eoa
-        vm.deal(alice, _value);
-        vm.prank(alice, alice);
-        (bool s,) = address(optimismPortal).call{ value: _value }(hex"");
-
-        assertFalse(s);
-        assertEq(address(optimismPortal).balance, 0);
-    }
-
     /// @dev Tests that `depositTransaction` reverts when the destination address is non-zero
     ///      for a contract creation deposit.
     function test_depositTransaction_contractCreation_reverts() external {
@@ -164,10 +153,17 @@ contract OptimismPortal_Test is CommonTest {
         });
     }
 
-    /// @dev Tests that `depositTransaction` reverts when transferring ETH to contract.
-    function test_deposit_ETH_reverts() external {
+    /// @dev Tests that `receive` reverts when receiving ETH.
+    function testFuzz_receive_reverts(uint256 _value) external {
+        vm.assume(_value > 0);
+
+        // give alice money and send as an eoa
+        vm.deal(alice, _value);
+        vm.prank(alice, alice);
         vm.expectRevert("ETH_NOT_SUPPORTED");
-        address(optimismPortal).call{ value: 1 }("");
+        (bool s,) = address(optimismPortal).call{ value: _value }("");
+
+        assertFalse(s, "check return value error");
     }
 
     /// @dev Tests that `depositTransaction` reverts when the gas limit is too small.
