@@ -31,9 +31,3 @@ jobs:
           # https://github.com/crytic/slither-action/issues/70#issuecomment-1932948435
           slither-version: dev-triage-db
           slither-args: --triage-database packages/contracts-bedrock/slither.db.json
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: ${{ steps.slither.outputs.sarif }}
