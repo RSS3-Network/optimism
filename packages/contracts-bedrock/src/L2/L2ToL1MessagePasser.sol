@@ -51,9 +51,9 @@ contract L2ToL1MessagePasser is ISemver {
     /// @custom:semver 1.1.0
     string public constant version = "1.1.0";
 
-    /// @notice Allows users to withdraw ETH by sending directly to this contract.
+    /// @notice Disable users to withdraw native tokens by sending directly to this contract.
     receive() external payable {
-        initiateWithdrawal(msg.sender, RECEIVE_DEFAULT_GAS_LIMIT, bytes(""));
+        revert("ETH_NOT_SUPPORTED");
     }
 
     /// @notice Removes all ETH held by this contract from the state. Used to prevent the amount of
