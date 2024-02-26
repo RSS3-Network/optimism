@@ -113,8 +113,10 @@ contract OptimismPortal is Initializable, ResourceMetering, ISemver {
     /// @notice Initializer.
     /// @param _superchainConfig Address of the SuperchainConfig contract.
     function initialize(SuperchainConfig _superchainConfig) public initializer {
-        l2Sender = Constants.DEFAULT_L2_SENDER;
         superchainConfig = _superchainConfig;
+        if (l2Sender == address(0)) {
+            l2Sender = Constants.DEFAULT_L2_SENDER;
+        }
         __ResourceMetering_init();
     }
 
