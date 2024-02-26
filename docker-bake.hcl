@@ -31,7 +31,7 @@ variable "PLATFORMS" {
 }
 
 group "validate" {
-  targets = ["op-node", "op-batcher", "op-proposer"]
+  targets = ["op-node", "op-batcher", "op-proposer", "proxyd"]
 }
 
 target "op-stack-go" {
