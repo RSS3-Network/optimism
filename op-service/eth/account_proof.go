@@ -3,6 +3,7 @@ package eth
 import (
 	"bytes"
 	"fmt"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -63,7 +64,9 @@ func (res *AccountResult) Verify(stateRoot common.Hash) error {
 		}
 	}
 
-	accountClaimed := []any{uint64(res.Nonce), res.Balance.ToInt().Bytes(), res.StorageHash, res.CodeHash}
+	/// @dev The `Balance` of Account is always 0 for rss3 vsl, as the native token is ERC20 RSS3, and the balance is stored in the contract.
+	accountBalance := big.NewInt(0)
+	accountClaimed := []any{uint64(res.Nonce), accountBalance.Bytes(), res.StorageHash, res.CodeHash}
 	accountClaimedValue, err := rlp.EncodeToBytes(accountClaimed)
 	if err != nil {
 		return fmt.Errorf("failed to encode account from retrieved values: %w", err)
