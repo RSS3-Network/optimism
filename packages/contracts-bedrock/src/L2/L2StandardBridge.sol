@@ -77,7 +77,6 @@ contract L2StandardBridge is StandardBridge, ISemver {
         bytes calldata _extraData
     )
         external
-        payable
         virtual
         onlyEOA
     {
@@ -105,7 +104,6 @@ contract L2StandardBridge is StandardBridge, ISemver {
         bytes calldata _extraData
     )
         external
-        payable
         virtual
     {
         _initiateWithdrawal(_l2Token, msg.sender, _to, _amount, _minGasLimit, _extraData);
