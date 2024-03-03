@@ -35,6 +35,7 @@ func CLIFlags(envPrefix string) []cli.Flag {
 		&cli.StringFlag{
 			Name:    DaBackendFlagName,
 			Usage:   "Plamsa mode backend ('celestia')",
+			Value:   "celestia",
 			EnvVars: plasmaEnv(envPrefix, "DA_BACKEND"),
 		},
 		&cli.BoolFlag{
