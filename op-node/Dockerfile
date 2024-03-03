@@ -4,6 +4,8 @@ FROM $OP_STACK_GO_BUILDER as builder
 
 FROM alpine:3.18
 
+RUN apk add --no-cache git jq bash curl
+
 COPY --from=builder /usr/local/bin/op-node /usr/local/bin/op-node
 
 CMD ["op-node"]
