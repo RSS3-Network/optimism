@@ -53,6 +53,7 @@ func (c *DAClient) GetInput(ctx context.Context, key []byte) ([]byte, error) {
 }
 
 func (c *DAClient) SetInput(ctx context.Context, data []byte) ([]byte, error) {
+	log.Info("celestia: blob submission", "size", len(data))
 	ids, _, err := c.Client.Submit(ctx, [][]byte{data}, -1)
 	var key []byte
 	if err == nil && len(ids) == 1 {
