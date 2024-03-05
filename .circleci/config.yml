@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   ci_builder_image:
     type: string
-    default: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.42.0
+    default: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.43.0
   base_image:
     type: string
     default: default
@@ -2010,7 +2010,10 @@ workflows:
 
   develop-fault-proofs:
     when:
-      equal: [ "develop", <<pipeline.git.branch>> ]
+      and:
+        - equal: [ "develop", <<pipeline.git.branch>> ]
+        - not:
+            equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
     jobs:
       - go-mod-download
       - cannon-prestate:

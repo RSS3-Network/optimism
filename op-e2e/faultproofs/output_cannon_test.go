@@ -3,6 +3,7 @@ package faultproofs
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"testing"
 
 	"github.com/ethereum-optimism/optimism/op-challenger/game/fault/trace/cannon"
@@ -13,6 +14,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-e2e/e2eutils/disputegame/preimage"
 	"github.com/ethereum-optimism/optimism/op-e2e/e2eutils/wait"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/stretchr/testify/require"
 )
 
@@ -101,6 +103,7 @@ func TestOutputCannon_ChallengeAllZeroClaim(t *testing.T) {
 }
 
 func TestOutputCannon_PublishCannonRootClaim(t *testing.T) {
+	op_e2e.InitParallel(t, op_e2e.UsesCannon)
 	tests := []struct {
 		disputeL2BlockNumber uint64
 	}{
@@ -129,6 +132,7 @@ func TestOutputCannon_PublishCannonRootClaim(t *testing.T) {
 }
 
 func TestOutputCannonDisputeGame(t *testing.T) {
+	op_e2e.InitParallel(t, op_e2e.UsesCannon)
 	tests := []struct {
 		name             string
 		defendClaimDepth types.Depth
@@ -254,6 +258,7 @@ func TestOutputCannonStepWithLargePreimage(t *testing.T) {
 }
 
 func TestOutputCannonStepWithPreimage(t *testing.T) {
+	op_e2e.InitParallel(t, op_e2e.UsesCannon)
 	testPreimageStep := func(t *testing.T, preimageType cannon.PreimageOpt, preloadPreimage bool) {
 		op_e2e.InitParallel(t, op_e2e.UsesCannon)
 
@@ -295,7 +300,7 @@ func TestOutputCannonStepWithPreimage(t *testing.T) {
 }
 
 func TestOutputCannonStepWithKZGPointEvaluation(t *testing.T) {
-	t.Skip("TODO: Fix flaky test")
+	op_e2e.InitParallel(t, op_e2e.UsesCannon)
 
 	testPreimageStep := func(t *testing.T, preloadPreimage bool) {
 		op_e2e.InitParallel(t, op_e2e.UsesCannon)
@@ -303,6 +308,12 @@ func TestOutputCannonStepWithKZGPointEvaluation(t *testing.T) {
 		ctx := context.Background()
 		sys, _ := startFaultDisputeSystem(t, withEcotone())
 		t.Cleanup(sys.Close)
+
+		// NOTE: Flake prevention
+		// Ensure that the L1 origin including the point eval tx isn't on the genesis epoch.
+		safeBlock, err := sys.Clients["sequencer"].BlockByNumber(ctx, big.NewInt(int64(rpc.SafeBlockNumber)))
+		require.NoError(t, err)
+		require.NoError(t, wait.ForSafeBlock(ctx, sys.RollupClient("sequencer"), safeBlock.NumberU64()+3))
 
 		receipt := sendKZGPointEvaluationTx(t, sys, "sequencer", sys.Cfg.Secrets.Alice)
 		precompileBlock := receipt.BlockNumber
@@ -337,6 +348,7 @@ func TestOutputCannonStepWithKZGPointEvaluation(t *testing.T) {
 }
 
 func TestOutputCannonProposedOutputRootValid(t *testing.T) {
+	op_e2e.InitParallel(t, op_e2e.UsesCannon)
 	// honestStepsFail attempts to perform both an attack and defend step using the correct trace.
 	honestStepsFail := func(ctx context.Context, game *disputegame.OutputCannonGameHelper, correctTrace *disputegame.OutputHonestHelper, parentClaimIdx int64) {
 		// Attack step should fail

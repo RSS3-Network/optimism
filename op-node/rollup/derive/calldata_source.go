@@ -19,9 +19,7 @@ import (
 var daClient *celestia.DAClient
 
 func SetDAClient(c *celestia.DAClient) error {
-	if daClient != nil {
-		return errors.New("da client already configured")
-	}
+	log.Warn("da client already configured")
 	daClient = c
 	return nil
 }
@@ -116,7 +114,7 @@ func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address,
 				case celestia.DerivationVersionCelestia:
 					log.Info("celestia: blob request", "id", hex.EncodeToString(tx.Data()))
 					ctx, cancel := context.WithTimeout(context.Background(), daClient.GetTimeout)
-					blobs, err := daClient.Client.Get(ctx, [][]byte{data[1:]})
+					blobs, err := daClient.DA.Get(ctx, [][]byte{data[1:]})
 					cancel()
 					if err != nil {
 						return nil, NewResetError(fmt.Errorf("celestia: failed to resolve frame: %w", err))

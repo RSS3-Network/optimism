@@ -10,10 +10,10 @@ require (
 	github.com/crate-crypto/go-kzg-4844 v0.7.0
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0
 	github.com/ethereum-optimism/go-ethereum-hdwallet v0.1.3
-	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240213180600-05287996b949
+	github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240222155908-ab073f6aa74f
 	github.com/ethereum/go-ethereum v1.13.8
 	github.com/fsnotify/fsnotify v1.7.0
-	github.com/go-chi/chi/v5 v5.0.11
+	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-chi/docgen v1.2.0
 	github.com/golang/snappy v0.0.5-0.20220116011046-fa5810519dcb
 	github.com/google/go-cmp v0.6.0
@@ -21,7 +21,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/hashicorp/golang-lru/v2 v2.0.5
-	github.com/hashicorp/raft v1.6.0
+	github.com/hashicorp/raft v1.6.1
 	github.com/hashicorp/raft-boltdb v0.0.0-20231211162105-6c830fa4535e
 	github.com/holiman/uint256 v1.2.4
 	github.com/ipfs/go-datastore v0.6.0
@@ -110,7 +110,7 @@ require (
 	github.com/graph-gophers/graphql-go v1.3.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-bexpr v0.1.11 // indirect
-	github.com/hashicorp/go-hclog v1.5.0 // indirect
+	github.com/hashicorp/go-hclog v1.6.2 // indirect
 	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect
 	github.com/hashicorp/go-msgpack v0.5.5 // indirect
 	github.com/hashicorp/go-msgpack/v2 v2.1.1 // indirect

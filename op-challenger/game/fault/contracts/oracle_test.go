@@ -74,8 +74,9 @@ func TestPreimageOracleContract_AddGlobalDataTx(t *testing.T) {
 	t.Run("KZGPointEvaluation", func(t *testing.T) {
 		stubRpc, oracle := setupPreimageOracleTest(t)
 		input := testutils.RandomData(rand.New(rand.NewSource(23)), 200)
-		data := types.NewPreimageOracleKZGPointEvaluationData(common.Hash{byte(preimage.KZGPointEvaluationKeyType), 0xcc}.Bytes(), input)
-		stubRpc.SetResponse(oracleAddr, methodLoadKZGPointEvaluationPreimage, batching.BlockLatest, []interface{}{
+		data := types.NewPreimageOracleData(common.Hash{byte(preimage.KZGPointEvaluationKeyType), 0xcc}.Bytes(), input, uint32(545))
+		stubRpc.SetResponse(oracleAddr, methodLoadKZGPointEvaluationPreimagePart, batching.BlockLatest, []interface{}{
+			new(big.Int).SetUint64(uint64(data.OracleOffset)),
 			data.GetPreimageWithoutSize(),
 		}, nil)
 
@@ -111,6 +112,23 @@ func TestPreimageOracleContract_MinLargePreimageSize(t *testing.T) {
 	minProposalSize, err := oracle.MinLargePreimageSize(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, uint64(123), minProposalSize)
+}
+
+func TestPreimageOracleContract_MinBondSizeLPP(t *testing.T) {
+	stubRpc, oracle := setupPreimageOracleTest(t)
+	stubRpc.SetResponse(oracleAddr, methodMinBondSizeLPP, batching.BlockLatest,
+		[]interface{}{},
+		[]interface{}{big.NewInt(123)},
+	)
+	minBond, err := oracle.GetMinBondLPP(context.Background())
+	require.NoError(t, err)
+	require.Equal(t, big.NewInt(123), minBond)
+
+	// Should cache responses
+	stubRpc.ClearResponses(methodMinBondSizeLPP)
+	minBond, err = oracle.GetMinBondLPP(context.Background())
+	require.NoError(t, err)
+	require.Equal(t, big.NewInt(123), minBond)
 }
 
 func TestPreimageOracleContract_PreimageDataExists(t *testing.T) {
@@ -332,7 +350,6 @@ func setupPreimageOracleTestWithProposals(t *testing.T, block batching.Block) (*
 	}
 
 	return stubRpc, oracle, proposals
-
 }
 
 func setupPreimageOracleTest(t *testing.T) (*batchingTest.AbiBasedRpc, *PreimageOracleContract) {
