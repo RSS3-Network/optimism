@@ -71,6 +71,10 @@ contract DeployConfig is Script {
     uint256 public respectedGameType;
     bool public useFaultProofs;
 
+    string public RSS3TokenName;
+    string public RSS3TokenSymbol;
+    address public L1RSS3TokenAddress;
+
     function read(string memory _path) public {
         console.log("DeployConfig: reading file %s", _path);
         try vm.readFile(_path) returns (string memory data) {
@@ -132,6 +136,10 @@ contract DeployConfig is Script {
         preimageOracleMinProposalSize = stdJson.readUint(_json, "$.preimageOracleMinProposalSize");
         preimageOracleChallengePeriod = stdJson.readUint(_json, "$.preimageOracleChallengePeriod");
         preimageOracleCancunActivationTimestamp = stdJson.readUint(_json, "$.preimageOracleCancunActivationTimestamp");
+
+        RSS3TokenName = stdJson.readString(_json, "$.RSS3TokenName");
+        RSS3TokenSymbol = stdJson.readString(_json, "$.RSS3TokenSymbol");
+        L1RSS3TokenAddress = stdJson.readAddress(_json, "$.L1RSS3TokenAddress");
     }
 
     function l1StartingBlockTag() public returns (bytes32) {

@@ -633,6 +633,8 @@ func (m *SimpleTxManager) increaseGasPrice(ctx context.Context, tx *types.Transa
 		return nil, err
 	}
 
+	m.l.Info("re-estimate gas", "hash", tx.Hash(), "gasTipCap", bumpedTip, "gasFeeCap", bumpedFee)
+
 	// Re-estimate gaslimit in case things have changed or a previous gaslimit estimate was wrong
 	gas, err := m.backend.EstimateGas(ctx, ethereum.CallMsg{
 		From:      m.cfg.From,

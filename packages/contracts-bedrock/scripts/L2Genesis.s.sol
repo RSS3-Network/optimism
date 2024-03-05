@@ -17,6 +17,7 @@ import { OptimismMintableERC20Factory } from "src/universal/OptimismMintableERC2
 import { L1Block } from "src/L2/L1Block.sol";
 import { GovernanceToken } from "src/governance/GovernanceToken.sol";
 import { EIP1967Helper } from "test/mocks/EIP1967Helper.sol";
+import {RSS3Token} from "../src/L2/RSS3Token.sol";
 
 interface IInitializable {
     function initialize(address _addr) external;
@@ -296,7 +297,7 @@ contract L2Genesis is Script, Artifacts {
 
     /// @notice This predeploy is following the saftey invariant #3.
     function _setRSS3Token() internal {
-
+        RSS3Token token = new RSS3Token(Predeploys.L2_STANDARD_BRIDGE, cfg.L1RSS3TokenAddress());
         console.log("Setting %s implementation at: %s", "RSS3Token", Predeploys.RSS3_TOKEN);
         vm.etch(Predeploys.RSS3_TOKEN, address(token).code);
 

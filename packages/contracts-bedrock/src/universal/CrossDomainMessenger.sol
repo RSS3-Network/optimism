@@ -285,7 +285,7 @@ abstract contract CrossDomainMessenger is
 
         if (success) {
             // This check is identical to one above, but it ensures that the same message cannot be relayed
-            // twice, and adds a layer of protection against rentrancy.
+            // twice, and adds a layer of protection against reentrancy.
             assert(successfulMessages[versionedHash] == false);
             successfulMessages[versionedHash] = true;
             emit RelayedMessage(versionedHash);
