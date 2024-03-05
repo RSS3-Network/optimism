@@ -59,5 +59,9 @@
   "disputeGameFinalityDelaySeconds": 6,
   "respectedGameType": 0,
   "useFaultProofs": false,
-  "fundDevAccounts": false
+  "fundDevAccounts": false,
+
+  "rss3TokenName": "RSS3",
+  "rss3TokenSymbol": "RSS3",
+  "l1Rss3TokenAddr": "0x3Ef1D5be1E2Ce46c583a0c8e511f015706A0ab23"
 }

@@ -21,6 +21,7 @@ import { L2OutputOracle } from "src/L1/L2OutputOracle.sol";
 import { SystemConfig } from "src/L1/SystemConfig.sol";
 import { SuperchainConfig } from "src/L1/SuperchainConfig.sol";
 import { OptimismPortal } from "src/L1/OptimismPortal.sol";
+import {console2 as console} from "forge-std/console2.sol";
 
 contract OptimismPortal_Test is CommonTest {
     address depositor;
@@ -159,11 +160,9 @@ contract OptimismPortal_Test is CommonTest {
 
         // give alice money and send as an eoa
         vm.deal(alice, _value);
-        vm.prank(alice, alice);
+        vm.prank(alice);
         vm.expectRevert("ETH_NOT_SUPPORTED");
-        (bool s,) = address(optimismPortal).call{ value: _value }("");
-
-        assertFalse(s, "check return value error");
+        address(optimismPortal).call{ value: _value }("");
     }
 
     /// @dev Tests that `depositTransaction` reverts when the gas limit is too small.

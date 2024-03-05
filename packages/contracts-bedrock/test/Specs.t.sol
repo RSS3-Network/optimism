@@ -122,15 +122,11 @@ contract Specification_Test is CommonTest {
             _name: "L1StandardBridge",
             _sel: _getSel("bridgeERC20To(address,address,address,uint256,uint32,bytes)")
         });
-        _addSpec({ _name: "L1StandardBridge", _sel: _getSel("bridgeETH(uint32,bytes)") });
-        _addSpec({ _name: "L1StandardBridge", _sel: _getSel("bridgeETHTo(address,uint32,bytes)") });
         _addSpec({ _name: "L1StandardBridge", _sel: _getSel("depositERC20(address,address,uint256,uint32,bytes)") });
         _addSpec({
             _name: "L1StandardBridge",
             _sel: _getSel("depositERC20To(address,address,address,uint256,uint32,bytes)")
         });
-        _addSpec({ _name: "L1StandardBridge", _sel: _getSel("depositETH(uint32,bytes)") });
-        _addSpec({ _name: "L1StandardBridge", _sel: _getSel("depositETHTo(address,uint32,bytes)") });
         _addSpec({ _name: "L1StandardBridge", _sel: _getSel("deposits(address,address)") });
         _addSpec({
             _name: "L1StandardBridge",
@@ -140,22 +136,11 @@ contract Specification_Test is CommonTest {
         });
         _addSpec({
             _name: "L1StandardBridge",
-            _sel: _getSel("finalizeBridgeETH(address,address,uint256,bytes)"),
-            _auth: Role.MESSENGER,
-            _pausable: true
-        });
-        _addSpec({
-            _name: "L1StandardBridge",
             _sel: _getSel("finalizeERC20Withdrawal(address,address,address,address,uint256,bytes)"),
             _auth: Role.MESSENGER,
             _pausable: true
         });
-        _addSpec({
-            _name: "L1StandardBridge",
-            _sel: _getSel("finalizeETHWithdrawal(address,address,uint256,bytes)"),
-            _auth: Role.MESSENGER,
-            _pausable: true
-        });
+
         _addSpec({ _name: "L1StandardBridge", _sel: _getSel("initialize(address,address)") });
         _addSpec({ _name: "L1StandardBridge", _sel: _getSel("l2TokenBridge()") });
         _addSpec({ _name: "L1StandardBridge", _sel: _getSel("messenger()") });
@@ -202,7 +187,6 @@ contract Specification_Test is CommonTest {
         _addSpec({ _name: "OptimismPortal", _sel: _getSel("L2_ORACLE()") });
         _addSpec({ _name: "OptimismPortal", _sel: _getSel("SYSTEM_CONFIG()") });
         _addSpec({ _name: "OptimismPortal", _sel: _getSel("depositTransaction(address,uint256,uint64,bool,bytes)") });
-        _addSpec({ _name: "OptimismPortal", _sel: _getSel("donateETH()") });
         _addSpec({
             _name: "OptimismPortal",
             _sel: OptimismPortal.finalizeWithdrawalTransaction.selector,

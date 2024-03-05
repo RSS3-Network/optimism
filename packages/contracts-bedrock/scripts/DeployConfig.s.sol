@@ -137,9 +137,9 @@ contract DeployConfig is Script {
         preimageOracleChallengePeriod = stdJson.readUint(_json, "$.preimageOracleChallengePeriod");
         preimageOracleCancunActivationTimestamp = stdJson.readUint(_json, "$.preimageOracleCancunActivationTimestamp");
 
-        RSS3TokenName = stdJson.readString(_json, "$.RSS3TokenName");
-        RSS3TokenSymbol = stdJson.readString(_json, "$.RSS3TokenSymbol");
-        L1RSS3TokenAddress = stdJson.readAddress(_json, "$.L1RSS3TokenAddress");
+        RSS3TokenName = stdJson.readString(_json, "$.rss3TokenName");
+        RSS3TokenSymbol = stdJson.readString(_json, "$.rss3TokenSymbol");
+        L1RSS3TokenAddress = stdJson.readAddress(_json, "$.l1Rss3TokenAddr");
     }
 
     function l1StartingBlockTag() public returns (bytes32) {
