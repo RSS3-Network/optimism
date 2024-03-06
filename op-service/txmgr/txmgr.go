@@ -255,6 +255,8 @@ func (m *SimpleTxManager) craftTx(ctx context.Context, candidate TxCandidate) (*
 	m.l.Debug("Suggested gas price", "tip", gasTipCap, "fee", gasFeeCap, "basefee", baseFee)
 	gasLimit := candidate.GasLimit
 
+	m.l.Info("Creating tx", "to", candidate.To, "from", m.cfg.From, "gasTipCap", gasTipCap, "gasFeeCap", gasFeeCap)
+
 	// If the gas limit is set, we can use that as the gas
 	if gasLimit == 0 {
 		// Calculate the intrinsic gas for the transaction
