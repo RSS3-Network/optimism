@@ -50,7 +50,7 @@ func (c *DAClient) GetInput(ctx context.Context, key []byte) ([]byte, error) {
 
 func (c *DAClient) SetInput(ctx context.Context, data []byte) ([]byte, error) {
 	log.Info("celestia: blob submission", "size", len(data))
-	ids, _, err := c.DA.Submit(ctx, [][]byte{data}, -1)
+	ids, err := c.DA.Submit(ctx, [][]byte{data}, -1)
 	if err == nil && len(ids) == 1 {
 		c.Log.Info("celestia: blob successfully submitted", "id", hex.EncodeToString(ids[0]))
 		key := append([]byte{DerivationVersionCelestia}, ids[0]...)

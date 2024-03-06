@@ -223,5 +223,6 @@ require (
 
 replace github.com/ethereum/go-ethereum v1.13.8 => github.com/rss3-network/op-geth v0.0.0-20240220110850-1ecad30512d7
 
+replace github.com/rollkit/go-da v0.2.0 => github.com/RSS3-Network/go-da v0.2.3
 //replace github.com/ethereum-optimism/superchain-registry/superchain => ../superchain-registry/superchain
 //replace github.com/ethereum/go-ethereum v1.13.8 => ../op-geth
