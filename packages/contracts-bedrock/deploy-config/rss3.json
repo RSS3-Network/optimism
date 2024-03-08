@@ -1,7 +1,7 @@
 {
   "finalSystemOwner": "0xC4878516C198a919566773797e24af20DfdE6272",
   "superchainConfigGuardian": "0x7ef00577fAAa44D0491970D6516eB7b90EC3c80E",
-  "l1StartingBlockTag": "0x96feed514b87328533f7caf7c8c5736d62a6d76c8cc930b86796f3ea343e8dbc",
+  "l1StartingBlockTag": "0x603c6846b418745678c52ae1f80545308f935c6c38b7f2bf6804bc134fedadb5",
   "l1ChainID": 1,
   "l2ChainID": 12553,
   "l2BlockTime": 2,
@@ -13,7 +13,7 @@
   "batchInboxAddress": "0xfFFF000000000000000000000000000000012553",
   "batchSenderAddress": "0x0244f7204b9c554306053Cc557e14D6Cbd40a33C",
   "l2OutputOracleSubmissionInterval": 1800,
-  "l2OutputOracleStartingTimestamp": 1708589664,
+  "l2OutputOracleStartingTimestamp": 1709858519,
   "l2OutputOracleStartingBlockNumber": 0,
   "l2OutputOracleProposer": "0x0016b6bacD56a0D1DaFdA52d06B7eFe65AA0816a",
   "l2OutputOracleChallenger": "0xB5C248B428f9b2D8E8a03eE016760145b84098a9",
