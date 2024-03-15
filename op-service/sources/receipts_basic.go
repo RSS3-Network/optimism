@@ -32,9 +32,12 @@ func NewBasicRPCReceiptsFetcher(client rpcClient, maxBatchSize int) *BasicRPCRec
 	}
 }
 
-func (f *BasicRPCReceiptsFetcher) FetchReceipts(ctx context.Context, block eth.BlockID, txHashes []common.Hash) (types.Receipts, error) {
-	log.Info("Basic FetchReceipts", "block", block.Number, "blockHash", block.Hash, "tx count", len(txHashes))
+// FetchReceipts fetches receipts for the given block and transaction hashes
+// it does not validate receipts, and expects the caller to do so
+func (f *BasicRPCReceiptsFetcher) FetchReceipts(ctx context.Context, blockInfo eth.BlockInfo, txHashes []common.Hash) (types.Receipts, error) {
+	log.Info("Basic FetchReceipts", "block", blockInfo.NumberU64(), "blockHash", blockInfo.Hash(), "tx count", len(txHashes))
 
+	block := eth.ToBlockID(blockInfo)
 	call := f.getOrCreateBatchCall(block.Hash, txHashes)
 
 	// Fetch all receipts
