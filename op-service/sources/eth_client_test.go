@@ -180,44 +180,49 @@ func TestEthClient_WrongInfoByHash(t *testing.T) {
 	m.Mock.AssertExpectations(t)
 }
 
-func TestEthClient_validateReceipts(t *testing.T) {
-	require := require.New(t)
-	mrpc := new(mockRPC)
-	mrp := new(mockReceiptsProvider)
-	const numTxs = 4
-	block, receipts := randomRpcBlockAndReceipts(rand.New(rand.NewSource(420)), numTxs)
-	txHashes := receiptTxHashes(receipts)
-	ctx := context.Background()
-
-	// mutate a field to make validation fail.
-	receipts[2].Bloom[0] = 1
-
-	mrpc.On("CallContext", ctx, mock.AnythingOfType("**sources.rpcBlock"),
-		"eth_getBlockByHash", []any{block.Hash, true}).
-		Run(func(args mock.Arguments) {
-			*(args[1].(**rpcBlock)) = block
-		}).
-		Return([]error{nil}).Once()
-
-	mrp.On("FetchReceipts", ctx, block.BlockID(), txHashes).
-		Return(types.Receipts(receipts), error(nil)).Once()
-
-	ethcl := newEthClientWithCaches(nil, numTxs)
-	ethcl.client = mrpc
-	ethcl.recProvider = mrp
-	ethcl.trustRPC = false
-
-	_, _, err := ethcl.FetchReceipts(ctx, block.Hash)
-	require.ErrorContains(err, "invalid receipts")
-
-	mrpc.AssertExpectations(t)
-	mrp.AssertExpectations(t)
-}
-
 func newEthClientWithCaches(metrics caching.Metrics, cacheSize int) *EthClient {
 	return &EthClient{
 		transactionsCache: caching.NewLRUCache[common.Hash, types.Transactions](metrics, "txs", cacheSize),
 		headersCache:      caching.NewLRUCache[common.Hash, eth.BlockInfo](metrics, "headers", cacheSize),
 		payloadsCache:     caching.NewLRUCache[common.Hash, *eth.ExecutionPayload](metrics, "payloads", cacheSize),
 	}
+}
+
+// TestReceiptValidation tests that the receipt validation is performed by the underlying RPCReceiptsFetcher
+func TestReceiptValidation(t *testing.T) {
+	require := require.New(t)
+	mrpc := new(mockRPC)
+	rp := NewRPCReceiptsFetcher(mrpc, nil, RPCReceiptsConfig{})
+	const numTxs = 1
+	block, _ := randomRpcBlockAndReceipts(rand.New(rand.NewSource(420)), numTxs)
+	//txHashes := receiptTxHashes(receipts)
+	ctx := context.Background()
+
+	mrpc.On("CallContext",
+		ctx,
+		mock.Anything,
+		"eth_getTransactionReceipt",
+		mock.Anything).
+		Run(func(args mock.Arguments) {
+		}).
+		Return([]error{nil})
+
+	// when the block is requested, the block is returned
+	mrpc.On("CallContext",
+		ctx,
+		mock.Anything,
+		"eth_getBlockByHash",
+		mock.Anything).
+		Run(func(args mock.Arguments) {
+			*(args[1].(**rpcBlock)) = block
+		}).
+		Return([]error{nil})
+
+	ethcl := newEthClientWithCaches(nil, numTxs)
+	ethcl.client = mrpc
+	ethcl.recProvider = rp
+	ethcl.trustRPC = true
+
+	_, _, err := ethcl.FetchReceipts(ctx, block.Hash)
+	require.ErrorContains(err, "unexpected nil block number")
 }

@@ -15,16 +15,15 @@ type ReceiptsProvider interface {
 	// FetchReceipts returns a block info and all of the receipts associated with transactions in the block.
 	// It verifies the receipt hash in the block header against the receipt hash of the fetched receipts
 	// to ensure that the execution engine did not fail to return any receipts.
-	FetchReceipts(ctx context.Context, block eth.BlockID, txHashes []common.Hash) (types.Receipts, error)
+	FetchReceipts(ctx context.Context, blockInfo eth.BlockInfo, txHashes []common.Hash) (types.Receipts, error)
 }
 
 // validateReceipts validates that the receipt contents are valid.
 // Warning: contractAddress is not verified, since it is a more expensive operation for data we do not use.
 // See go-ethereum/crypto.CreateAddress to verify contract deployment address data based on sender and tx nonce.
 func validateReceipts(block eth.BlockID, receiptHash common.Hash, txHashes []common.Hash, receipts []*types.Receipt) error {
-	log.Info("validateReceipts", "block", block, "blockHash", block.Hash, "receiptHash", receiptHash, "receipts", len(receipts), "txs", len(txHashes))
-
 	if len(receipts) != len(txHashes) {
+		log.Info("validateReceipts", "block", block, "receiptHash", receiptHash, "receipts", len(receipts), "txs", len(txHashes))
 		return fmt.Errorf("got %d receipts but expected %d", len(receipts), len(txHashes))
 	}
 	if len(txHashes) == 0 {
