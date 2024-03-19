@@ -12,7 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/ethereum-optimism/optimism/op-bindings/bindings"
-	"github.com/ethereum-optimism/optimism/op-bindings/predeploys"
 	"github.com/ethereum-optimism/optimism/op-chain-ops/deployer"
 )
 
@@ -24,30 +23,20 @@ type PredeploysImmutableConfig struct {
 	L2ToL1MessagePasser    struct{}
 	DeployerWhitelist      struct{}
 	WETH9                  struct{}
-	L2CrossDomainMessenger struct {
-		OtherMessenger common.Address
-	}
-	L2StandardBridge struct {
-		OtherBridge common.Address
-		Messenger   common.Address
-	}
-	SequencerFeeVault struct {
+	L2CrossDomainMessenger struct{}
+	L2StandardBridge       struct{}
+	SequencerFeeVault      struct {
 		Recipient           common.Address
 		MinWithdrawalAmount *big.Int
 		WithdrawalNetwork   uint8
 	}
-	OptimismMintableERC20Factory struct {
-		Bridge common.Address
-	}
-	L1BlockNumber       struct{}
-	GasPriceOracle      struct{}
-	L1Block             struct{}
-	GovernanceToken     struct{}
-	LegacyMessagePasser struct{}
-	L2ERC721Bridge      struct {
-		OtherBridge common.Address
-		Messenger   common.Address
-	}
+	OptimismMintableERC20Factory  struct{}
+	L1BlockNumber                 struct{}
+	GasPriceOracle                struct{}
+	L1Block                       struct{}
+	GovernanceToken               struct{}
+	LegacyMessagePasser           struct{}
+	L2ERC721Bridge                struct{}
 	OptimismMintableERC721Factory struct {
 		Bridge        common.Address
 		RemoteChainId *big.Int
@@ -72,6 +61,16 @@ type PredeploysImmutableConfig struct {
 		Bridge      common.Address
 		RemoteToken common.Address
 	}
+	MultiCall3                   struct{}
+	Safe_v130                    struct{}
+	SafeL2_v130                  struct{}
+	MultiSendCallOnly_v130       struct{}
+	SafeSingletonFactory         struct{}
+	DeterministicDeploymentProxy struct{}
+	MultiSend_v130               struct{}
+	Permit2                      struct{}
+	SenderCreator                struct{}
+	EntryPoint                   struct{}
 }
 
 // Check will ensure that the required fields are set on the config.
@@ -167,7 +166,11 @@ func Deploy(config *PredeploysImmutableConfig) (DeploymentResults, error) {
 // can be properly set. The bytecode returned in the results is suitable to be
 // inserted into the state via state surgery.
 func deployContractsWithImmutables(constructors []deployer.Constructor) (DeploymentResults, error) {
-	deployments, err := deployer.Deploy(deployer.NewL2Backend(), constructors, l2ImmutableDeployer)
+	backend, err := deployer.NewL2Backend()
+	if err != nil {
+		return nil, err
+	}
+	deployments, err := deployer.Deploy(backend, constructors, l2ImmutableDeployer)
 	if err != nil {
 		return nil, err
 	}
@@ -193,18 +196,6 @@ func l2ImmutableDeployer(backend *backends.SimulatedBackend, opts *bind.Transact
 	}
 
 	switch deployment.Name {
-	case "L2CrossDomainMessenger":
-		otherMessenger, ok := deployment.Args[0].(common.Address)
-		if !ok {
-			return nil, fmt.Errorf("invalid type for otherMessenger")
-		}
-		_, tx, _, err = bindings.DeployL2CrossDomainMessenger(opts, backend, otherMessenger)
-	case "L2StandardBridge":
-		otherBridge, ok := deployment.Args[0].(common.Address)
-		if !ok {
-			return nil, fmt.Errorf("invalid type for otherBridge")
-		}
-		_, tx, _, err = bindings.DeployL2StandardBridge(opts, backend, otherBridge)
 	case "SequencerFeeVault":
 		recipient, minimumWithdrawalAmount, withdrawalNetwork, err = prepareFeeVaultArguments(deployment)
 		if err != nil {
@@ -223,22 +214,6 @@ func l2ImmutableDeployer(backend *backends.SimulatedBackend, opts *bind.Transact
 			return nil, err
 		}
 		_, tx, _, err = bindings.DeployL1FeeVault(opts, backend, recipient, minimumWithdrawalAmount, withdrawalNetwork)
-	case "OptimismMintableERC20Factory":
-		bridge, ok := deployment.Args[0].(common.Address)
-		if !ok {
-			return nil, fmt.Errorf("invalid type for bridge")
-		}
-		// Sanity check that the argument is correct
-		if bridge != predeploys.L2StandardBridgeAddr {
-			return nil, fmt.Errorf("invalid bridge address")
-		}
-		_, tx, _, err = bindings.DeployOptimismMintableERC20Factory(opts, backend, bridge)
-	case "L2ERC721Bridge":
-		otherBridge, ok := deployment.Args[0].(common.Address)
-		if !ok {
-			return nil, fmt.Errorf("invalid type for otherBridge")
-		}
-		_, tx, _, err = bindings.DeployL2ERC721Bridge(opts, backend, otherBridge)
 	case "OptimismMintableERC721Factory":
 		bridge, ok := deployment.Args[0].(common.Address)
 		if !ok {
