@@ -208,19 +208,9 @@ contract OptimismPortal2 is Initializable, ResourceMetering, ISemver {
         return _byteCount * 16 + 21000;
     }
 
-    /// @notice Accepts value so that users can send ETH directly to this contract and have the
-    ///         funds be deposited to their address on L2. This is intended as a convenience
-    ///         function for EOAs. Contracts should call the depositTransaction() function directly
-    ///         otherwise any deposited funds will be lost due to address aliasing.
+    /// @notice Deposit ETH is not supported.
     receive() external payable {
-        depositTransaction(msg.sender, msg.value, RECEIVE_DEFAULT_GAS_LIMIT, false, bytes(""));
-    }
-
-    /// @notice Accepts ETH value without triggering a deposit to L2.
-    ///         This function mainly exists for the sake of the migration between the legacy
-    ///         Optimism system and Bedrock.
-    function donateETH() external payable {
-        // Intentionally empty.
+        revert("ETH_NOT_SUPPORTED");
     }
 
     /// @notice Getter for the resource config.

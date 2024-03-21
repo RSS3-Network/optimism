@@ -131,17 +131,6 @@ contract OptimismPortal_Test is CommonTest {
         assertEq(optimismPortal.paused(), true);
     }
 
-    /// @dev Tests that `receive` reverts when receiving ETH.
-    function testFuzz_receive_reverts(uint256 _value) external {
-        // give alice money and send as an eoa
-        vm.deal(alice, _value);
-        vm.prank(alice, alice);
-        (bool s, bytes memory returnData) = address(optimismPortal).call{ value: _value }(hex"");
-
-        assertFalse(s);
-        console.logBytes(returnData);
-    }
-
     /// @dev Tests that `depositTransaction` reverts when the destination address is non-zero
     ///      for a contract creation deposit.
     function test_depositTransaction_contractCreation_reverts() external {
