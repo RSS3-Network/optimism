@@ -93,7 +93,8 @@ func (s *SignerClient) pingVersion() (string, error) {
 }
 
 func (s *SignerClient) SignTransaction(ctx context.Context, chainId *big.Int, from common.Address, tx *types.Transaction) (*types.Transaction, error) {
-	args := NewTransactionArgsFromTransaction(chainId, from, tx)
+	sidecar := tx.BlobTxSidecar()
+	args := NewTransactionArgsFromTransaction(chainId, &from, tx.WithoutBlobTxSidecar())
 
 	log.Debug("request to sign transaction", "from", from, "txHash", tx.Hash().String(), "txNonce", tx.Nonce(), "txGas", tx.Gas(), "txValue", tx.Value(), "txTo", tx.To(), "txAccessList", tx.AccessList(), "txChainId", tx.ChainId(), "txGasFeeCap", tx.GasFeeCap(), "txGasTipCap", tx.GasTipCap())
 
@@ -102,11 +103,16 @@ func (s *SignerClient) SignTransaction(ctx context.Context, chainId *big.Int, fr
 		return nil, fmt.Errorf("eth_signTransaction failed: %w", err)
 	}
 
-	signed := &types.Transaction{}
+	var signed types.Transaction
 	if err := signed.UnmarshalBinary(result); err != nil {
 		return nil, err
 	}
+	if sidecar != nil {
+		if err := signed.SetBlobTxSidecar(sidecar); err != nil {
+			return nil, fmt.Errorf("failed to attach sidecar to signed blob tx: %w", err)
+		}
+	}
 
 	log.Debug("signed transaction", "txHash", signed.Hash().String(), "txNonce", signed.Nonce(), "txGas", signed.Gas(), "txValue", signed.Value(), "txTo", signed.To(), "txAccessList", signed.AccessList(), "txChainId", signed.ChainId(), "txGasFeeCap", signed.GasFeeCap(), "txGasTipCap", signed.GasTipCap())
-	return signed, nil
+	return &signed, nil
 }
