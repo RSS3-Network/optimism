@@ -291,6 +291,36 @@ var (
 		EnvVars:  prefixEnvVars("ROLLUP_LOAD_PROTOCOL_VERSIONS"),
 		Category: RollupCategory,
 	}
+	NearDaAccountFlag = &cli.StringFlag{
+		Name:     "near-da-account",
+		Usage:    "Near DA Signer",
+		Required: true,
+		EnvVars:  prefixEnvVars("NEAR_DA_ACCOUNT"),
+	}
+	NearDaContractFlag = &cli.StringFlag{
+		Name:     "near-da-contract",
+		Usage:    "Near DA Contract",
+		Required: true,
+		EnvVars:  prefixEnvVars("NEAR_DA_CONTRACT"),
+	}
+	NearDaKeyFlag = &cli.StringFlag{
+		Name:     "near-da-key",
+		Required: true,
+		Usage:    "Key for sending messages to the Near DA node",
+		EnvVars:  prefixEnvVars("NEAR_DA_KEY"),
+	}
+	NearDaNetworkFlag = &cli.StringFlag{
+		Name:    "near-da-network",
+		Usage:   "Network for Near DA node (Testnet or Mainnet)",
+		EnvVars: prefixEnvVars("NEAR_DA_NETWORK"),
+	}
+	NearDaNamespaceIdFlag = &cli.StringFlag{
+		Name:    "near-da-namespace-id",
+		Usage:   "Namespace ID for Near DA node",
+		Value:   "12553",
+		EnvVars: prefixEnvVars("NEAR_DA_NAMESPACE_ID"),
+	}
+
 	SafeDBPath = &cli.StringFlag{
 		Name:     "safedb.path",
 		Usage:    "File path used to persist safe head update data. Disabled if not set.",
@@ -399,6 +429,11 @@ var optionalFlags = []cli.Flag{
 	ConductorRpcFlag,
 	ConductorRpcTimeoutFlag,
 	SafeDBPath,
+	NearDaAccountFlag,
+	NearDaContractFlag,
+	NearDaKeyFlag,
+	NearDaNamespaceIdFlag,
+	NearDaNetworkFlag,
 }
 
 var DeprecatedFlags = []cli.Flag{

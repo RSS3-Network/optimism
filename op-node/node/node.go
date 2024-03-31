@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"io"
 	"sync/atomic"
 	"time"
@@ -59,6 +60,7 @@ type OpNode struct {
 	p2pSigner p2p.Signer            // p2p gogssip application messages will be signed with this signer
 	tracer    Tracer                // tracer to get events for testing/debugging
 	runCfg    *RuntimeConfig        // runtime configurables
+	daCfg     *rollup.NearDAConfig
 
 	safeDB closableSafeDB
 
@@ -117,8 +119,16 @@ func New(ctx context.Context, cfg *Config, log log.Logger, snapshotLog log.Logge
 	return n, nil
 }
 
+func (n *OpNode) initDA(ctx context.Context, cfg *Config) error {
+	n.daCfg = &cfg.NearDACconfig
+	return nil
+}
+
 func (n *OpNode) init(ctx context.Context, cfg *Config, snapshotLog log.Logger) error {
 	n.log.Info("Initializing rollup node", "version", n.appVersion)
+	if err := n.initDA(ctx, cfg); err != nil {
+		return err
+	}
 	if err := n.initTracer(ctx, cfg); err != nil {
 		return fmt.Errorf("failed to init the trace: %w", err)
 	}

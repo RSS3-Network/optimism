@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	near "github.com/near/rollup-data-availability/gopkg/da-rpc"
 	"io"
 	"os"
 	"strings"
@@ -64,6 +65,11 @@ func NewConfig(ctx *cli.Context, log log.Logger) (*node.Config, error) {
 		return nil, fmt.Errorf("failed to load l2 endpoints info: %w", err)
 	}
 
+	nearDaConfig, err := newNearDAConfigFromCLI(log, ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create the near DA config: %w", err)
+	}
+
 	syncConfig, err := NewSyncConfig(ctx, log)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create the sync config: %w", err)
@@ -75,11 +81,12 @@ func NewConfig(ctx *cli.Context, log log.Logger) (*node.Config, error) {
 	}
 
 	cfg := &node.Config{
-		L1:     l1Endpoint,
-		L2:     l2Endpoint,
-		Rollup: *rollupConfig,
-		Driver: *driverConfig,
-		Beacon: NewBeaconEndpointConfig(ctx),
+		L1:            l1Endpoint,
+		L2:            l2Endpoint,
+		Rollup:        *rollupConfig,
+		NearDACconfig: *nearDaConfig,
+		Driver:        *driverConfig,
+		Beacon:        NewBeaconEndpointConfig(ctx),
 		RPC: node.RPCConfig{
 			ListenAddr:  ctx.String(flags.RPCListenAddr.Name),
 			ListenPort:  ctx.Int(flags.RPCListenPort.Name),
@@ -196,6 +203,16 @@ func NewDriverConfig(ctx *cli.Context) *driver.Config {
 		SequencerStopped:    ctx.Bool(flags.SequencerStoppedFlag.Name),
 		SequencerMaxSafeLag: ctx.Uint64(flags.SequencerMaxSafeLagFlag.Name),
 	}
+}
+
+func newNearDAConfigFromCLI(log log.Logger, ctx *cli.Context) (*rollup.NearDAConfig, error) {
+	daAccount := ctx.String(flags.NearDaAccountFlag.Name)
+	daContract := ctx.String(flags.NearDaContractFlag.Name)
+	daKey := ctx.String(flags.NearDaKeyFlag.Name)
+	network := ctx.String(flags.NearDaNetworkFlag.Name)
+	nameSpaceId := ctx.Uint64(flags.NearDaNamespaceIdFlag.Name)
+
+	return near.NewConfig(daAccount, daContract, daKey, network, uint32(nameSpaceId))
 }
 
 func NewRollupConfigFromCLI(log log.Logger, ctx *cli.Context) (*rollup.Config, error) {

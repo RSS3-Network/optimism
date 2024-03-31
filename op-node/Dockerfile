@@ -35,7 +35,6 @@ COPY ./.git /app/.git
 
 # Copy da rpc
 COPY --from=rust /gopkg/da-rpc/lib/ /usr/local/lib
-COPY ./go.work /app/go.work
 
 WORKDIR /app
 COPY ./Makefile /app/Makefile
