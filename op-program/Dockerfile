@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.19.0-alpine3.15 as builder
+FROM --platform=$BUILDPLATFORM golang:1.21 as builder
 
 ARG VERSION=v0.0.0
 
@@ -10,6 +10,8 @@ COPY ./op-node /app/op-node
 COPY ./op-chain-ops /app/op-chain-ops
 COPY ./op-service /app/op-service
 COPY ./op-bindings /app/op-bindings
+COPY ./op-conductor /app/op-conductor
+COPY ./op-plasma  /app/op-plasma
 COPY ./go.mod /app/go.mod
 COPY ./go.sum /app/go.sum
 COPY ./.git /app/.git
