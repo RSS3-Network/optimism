@@ -3,7 +3,7 @@ FROM --platform=$BUILDPLATFORM rss3/rollup-data-availability/da-rpc:latest as ru
 RUN ls /lib
 RUN ls /gopkg/da-rpc
 
-FROM --platform=$BUILDPLATFORM golang:1.19 as builder
+FROM --platform=$BUILDPLATFORM golang:1.21 as builder
 
 ARG VERSION=v0.0.0
 
@@ -22,7 +22,6 @@ RUN apt-get update && apt-get install -y \
 
 # build op-proposer with the shared go.mod & go.sum files
 COPY ./op-proposer /app/op-proposer
-COPY ./op-celestia /app/op-celestia
 COPY ./op-bindings /app/op-bindings
 COPY ./op-node /app/op-node
 COPY ./op-service /app/op-service
