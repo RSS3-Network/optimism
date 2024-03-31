@@ -26,7 +26,8 @@ const (
 	OperationsCategory = "4. LOGGING, METRICS, DEBUGGING, AND API"
 	P2PCategory        = "5. PEER-TO-PEER"
 	PlasmaCategory     = "6. PLASMA (EXPERIMENTAL)"
-	MiscCategory       = "7. MISC"
+	NearDaCategory     = "7. NEAR DA"
+	MiscCategory       = "8. MISC"
 )
 
 func init() {
@@ -296,29 +297,34 @@ var (
 		Usage:    "Near DA Signer",
 		Required: true,
 		EnvVars:  prefixEnvVars("NEAR_DA_ACCOUNT"),
+		Category: NearDaCategory,
 	}
 	NearDaContractFlag = &cli.StringFlag{
 		Name:     "near-da-contract",
 		Usage:    "Near DA Contract",
 		Required: true,
 		EnvVars:  prefixEnvVars("NEAR_DA_CONTRACT"),
+		Category: NearDaCategory,
 	}
 	NearDaKeyFlag = &cli.StringFlag{
 		Name:     "near-da-key",
 		Required: true,
 		Usage:    "Key for sending messages to the Near DA node",
 		EnvVars:  prefixEnvVars("NEAR_DA_KEY"),
+		Category: NearDaCategory,
 	}
 	NearDaNetworkFlag = &cli.StringFlag{
-		Name:    "near-da-network",
-		Usage:   "Network for Near DA node (Testnet or Mainnet)",
-		EnvVars: prefixEnvVars("NEAR_DA_NETWORK"),
+		Name:     "near-da-network",
+		Usage:    "Network for Near DA node (Testnet or Mainnet)",
+		EnvVars:  prefixEnvVars("NEAR_DA_NETWORK"),
+		Category: NearDaCategory,
 	}
 	NearDaNamespaceIdFlag = &cli.StringFlag{
-		Name:    "near-da-namespace-id",
-		Usage:   "Namespace ID for Near DA node",
-		Value:   "12553",
-		EnvVars: prefixEnvVars("NEAR_DA_NAMESPACE_ID"),
+		Name:     "near-da-namespace-id",
+		Usage:    "Namespace ID for Near DA node",
+		Value:    "12553",
+		EnvVars:  prefixEnvVars("NEAR_DA_NAMESPACE_ID"),
+		Category: NearDaCategory,
 	}
 
 	SafeDBPath = &cli.StringFlag{
