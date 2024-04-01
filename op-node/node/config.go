@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"math"
 	"time"
 
@@ -76,6 +77,9 @@ type Config struct {
 
 	// Plasma DA config
 	Plasma plasma.CLIConfig
+
+	// Near DA config
+	DaConfig opnear.CLIConfig
 }
 
 type RPCConfig struct {
