@@ -40,6 +40,35 @@ var (
 		Usage:   "HTTP provider URL for Rollup node. A comma-separated list enables the active L2 endpoint provider. Such a list needs to match the number of l2-eth-rpcs provided.",
 		EnvVars: prefixEnvVars("ROLLUP_RPC"),
 	}
+	NearDaAccountFlag = &cli.StringFlag{
+		Name:     "near-da-account",
+		Usage:    "Near DA Signer",
+		Required: true,
+		EnvVars:  prefixEnvVars("NEAR_DA_ACCOUNT"),
+	}
+	NearDaContractFlag = &cli.StringFlag{
+		Name:     "near-da-contract",
+		Usage:    "Near DA Contract",
+		Required: true,
+		EnvVars:  prefixEnvVars("NEAR_DA_CONTRACT"),
+	}
+	NearDaKeyFlag = &cli.StringFlag{
+		Name:     "near-da-key",
+		Required: true,
+		Usage:    "Key for sending messages to the Near DA node",
+		EnvVars:  prefixEnvVars("NEAR_DA_KEY"),
+	}
+	NearDaNetworkFlag = &cli.StringFlag{
+		Name:    "near-da-network",
+		Usage:   "Network for Near DA node (Testnet or Mainnet)",
+		EnvVars: prefixEnvVars("NEAR_DA_NETWORK"),
+	}
+	NearDaNamespaceIdFlag = &cli.StringFlag{
+		Name:    "near-da-namespace-id",
+		Usage:   "Namespace ID for Near DA node",
+		Value:   "12553",
+		EnvVars: prefixEnvVars("NEAR_DA_NAMESPACE_ID"),
+	}
 	// Optional flags
 	SubSafetyMarginFlag = &cli.Uint64Flag{
 		Name: "sub-safety-margin",
@@ -121,6 +150,11 @@ var optionalFlags = []cli.Flag{
 	BatchTypeFlag,
 	DataAvailabilityTypeFlag,
 	ActiveSequencerCheckDurationFlag,
+	NearDaAccountFlag,
+	NearDaContractFlag,
+	NearDaKeyFlag,
+	NearDaNetworkFlag,
+	NearDaNamespaceIdFlag,
 }
 
 func init() {

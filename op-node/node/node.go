@@ -60,7 +60,7 @@ type OpNode struct {
 	p2pSigner p2p.Signer            // p2p gogssip application messages will be signed with this signer
 	tracer    Tracer                // tracer to get events for testing/debugging
 	runCfg    *RuntimeConfig        // runtime configurables
-	daCfg     *rollup.NearDAConfig
+	nearDaCfg *rollup.NearDaConfig
 
 	safeDB closableSafeDB
 
@@ -119,14 +119,14 @@ func New(ctx context.Context, cfg *Config, log log.Logger, snapshotLog log.Logge
 	return n, nil
 }
 
-func (n *OpNode) initDA(ctx context.Context, cfg *Config) error {
-	n.daCfg = &cfg.NearDACconfig
+func (n *OpNode) initNearDA(ctx context.Context, cfg *Config) error {
+	n.nearDaCfg = &cfg.NearDaConfig
 	return nil
 }
 
 func (n *OpNode) init(ctx context.Context, cfg *Config, snapshotLog log.Logger) error {
 	n.log.Info("Initializing rollup node", "version", n.appVersion)
-	if err := n.initDA(ctx, cfg); err != nil {
+	if err := n.initNearDA(ctx, cfg); err != nil {
 		return err
 	}
 	if err := n.initTracer(ctx, cfg); err != nil {

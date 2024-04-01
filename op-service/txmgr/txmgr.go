@@ -24,6 +24,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/optimism/op-service/retry"
 	"github.com/ethereum-optimism/optimism/op-service/txmgr/metrics"
+	near "github.com/near/rollup-data-availability/gopkg/da-rpc"
 )
 
 const (
@@ -110,12 +111,19 @@ type ETHBackend interface {
 	Close()
 }
 
+type Namespace struct {
+	Version uint8
+	Id      uint32
+}
+
 // SimpleTxManager is a implementation of TxManager that performs linear fee
 // bumping of a tx until it confirms.
 type SimpleTxManager struct {
 	cfg     Config // embed the config directly
 	name    string
 	chainID *big.Int
+
+	nearDaConfig near.Config
 
 	backend ETHBackend
 	l       log.Logger
@@ -135,6 +143,7 @@ func NewSimpleTxManager(name string, l log.Logger, m metrics.TxMetricer, cfg CLI
 	if err != nil {
 		return nil, err
 	}
+
 	return NewSimpleTxManagerFromConfig(name, l, m, conf)
 }
 
@@ -144,12 +153,13 @@ func NewSimpleTxManagerFromConfig(name string, l log.Logger, m metrics.TxMetrice
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 	return &SimpleTxManager{
-		chainID: conf.ChainID,
-		name:    name,
-		cfg:     conf,
-		backend: conf.Backend,
-		l:       l.New("service", name),
-		metr:    m,
+		chainID:      conf.ChainID,
+		name:         name,
+		cfg:          conf,
+		nearDaConfig: conf.NearDaConfig,
+		backend:      conf.Backend,
+		l:            l.New("service", name),
+		metr:         m,
 	}, nil
 }
 

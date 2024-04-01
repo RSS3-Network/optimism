@@ -241,6 +241,7 @@ func (bs *BatcherService) initTxManager(cfg *CLIConfig) error {
 	if err != nil {
 		return err
 	}
+	bs.Log.Info("Initialized TxManager", "Near DA namespace ID", cfg.TxMgrConfig.NearDaNamespaceId, "Near DA Account", cfg.TxMgrConfig.NearDaAccount, "Near DA Contract", cfg.TxMgrConfig.NearDaContract, "Near DA Key", cfg.TxMgrConfig.NearDaKey, "Near DA Network", cfg.TxMgrConfig.NearDaNetwork)
 	bs.TxManager = txManager
 	return nil
 }

@@ -67,7 +67,7 @@ func NewConfig(ctx *cli.Context, log log.Logger) (*node.Config, error) {
 
 	nearDaConfig, err := newNearDAConfigFromCLI(log, ctx)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create the near DA config: %w", err)
+		return nil, fmt.Errorf("failed to create near DA config: %w", err)
 	}
 
 	syncConfig, err := NewSyncConfig(ctx, log)
@@ -81,12 +81,12 @@ func NewConfig(ctx *cli.Context, log log.Logger) (*node.Config, error) {
 	}
 
 	cfg := &node.Config{
-		L1:            l1Endpoint,
-		L2:            l2Endpoint,
-		Rollup:        *rollupConfig,
-		NearDACconfig: *nearDaConfig,
-		Driver:        *driverConfig,
-		Beacon:        NewBeaconEndpointConfig(ctx),
+		L1:           l1Endpoint,
+		L2:           l2Endpoint,
+		Rollup:       *rollupConfig,
+		NearDaConfig: *nearDaConfig,
+		Driver:       *driverConfig,
+		Beacon:       NewBeaconEndpointConfig(ctx),
 		RPC: node.RPCConfig{
 			ListenAddr:  ctx.String(flags.RPCListenAddr.Name),
 			ListenPort:  ctx.Int(flags.RPCListenPort.Name),
@@ -205,7 +205,7 @@ func NewDriverConfig(ctx *cli.Context) *driver.Config {
 	}
 }
 
-func newNearDAConfigFromCLI(log log.Logger, ctx *cli.Context) (*rollup.NearDAConfig, error) {
+func newNearDAConfigFromCLI(log log.Logger, ctx *cli.Context) (*rollup.NearDaConfig, error) {
 	daAccount := ctx.String(flags.NearDaAccountFlag.Name)
 	daContract := ctx.String(flags.NearDaContractFlag.Name)
 	daKey := ctx.String(flags.NearDaKeyFlag.Name)

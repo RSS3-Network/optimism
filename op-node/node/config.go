@@ -27,7 +27,7 @@ type Config struct {
 
 	Rollup rollup.Config
 
-	NearDACconfig rollup.NearDAConfig
+	NearDaConfig rollup.NearDaConfig
 
 	// P2PSigner will be used for signing off on published content
 	// if the node is sequencing and if the p2p stack is enabled

@@ -50,7 +50,7 @@ type Genesis struct {
 	SystemConfig eth.SystemConfig `json:"system_config"`
 }
 
-type NearDAConfig = near.Config
+type NearDaConfig = near.Config
 
 type Config struct {
 	// Genesis anchor point of the rollup
