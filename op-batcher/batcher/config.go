@@ -3,7 +3,6 @@ package batcher
 import (
 	"errors"
 	"fmt"
-
 	"strings"
 	"time"
 

@@ -5,7 +5,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"io"
 	"math/big"
 	_ "net/http/pprof"
@@ -17,6 +16,7 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 
 	"github.com/ethereum-optimism/optimism/op-batcher/metrics"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"github.com/ethereum-optimism/optimism/op-node/rollup/derive"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"

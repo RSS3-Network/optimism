@@ -2,12 +2,12 @@ package flags
 
 import (
 	"fmt"
-	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"time"
 
 	"github.com/urfave/cli/v2"
 
 	"github.com/ethereum-optimism/optimism/op-batcher/compressor"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
 	opservice "github.com/ethereum-optimism/optimism/op-service"
 	openum "github.com/ethereum-optimism/optimism/op-service/enum"

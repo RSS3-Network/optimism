@@ -2,11 +2,11 @@ package flags
 
 import (
 	"fmt"
-	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"time"
 
 	"github.com/urfave/cli/v2"
 
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/rollup/sync"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
 	openum "github.com/ethereum-optimism/optimism/op-service/enum"
@@ -401,11 +401,6 @@ var optionalFlags = []cli.Flag{
 	ConductorRpcFlag,
 	ConductorRpcTimeoutFlag,
 	SafeDBPath,
-	NearDaAccountFlag,
-	NearDaContractFlag,
-	NearDaKeyFlag,
-	NearDaNamespaceIdFlag,
-	NearDaNetworkFlag,
 }
 
 var DeprecatedFlags = []cli.Flag{
