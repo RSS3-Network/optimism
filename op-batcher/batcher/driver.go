@@ -2,8 +2,10 @@ package batcher
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"io"
 	"math/big"
 	_ "net/http/pprof"
@@ -48,6 +50,7 @@ type DriverSetup struct {
 	EndpointProvider dial.L2EndpointProvider
 	ChannelConfig    ChannelConfig
 	PlasmaDA         *plasma.DAClient
+	DAClient         *opnear.DAClient
 }
 
 // BatchSubmitter encapsulates a service responsible for submitting L2 tx
@@ -433,7 +436,14 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 }
 
 func (l *BatchSubmitter) calldataTxCandidate(data []byte) *txmgr.TxCandidate {
-	l.Log.Info("building Calldata transaction candidate", "size", len(data))
+	l.Log.Info("building calldata transaction candidate", "size", len(data))
+	maybeFrameRef, err := l.DAClient.Client.ForceSubmit(data)
+	if err != nil {
+		l.Log.Warn("near: unable to publish blob to near", "err", err)
+	} else {
+		l.Log.Info("near: blob successfully submitted", "frameRef", hex.EncodeToString(maybeFrameRef))
+		data = append([]byte{opnear.DerivationVersionNear}, maybeFrameRef...)
+	}
 	return &txmgr.TxCandidate{
 		To:     &l.RollupConfig.BatchInboxAddress,
 		TxData: data,

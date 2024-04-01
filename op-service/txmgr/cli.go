@@ -37,11 +37,6 @@ const (
 	TxSendTimeoutFlagName             = "txmgr.send-timeout"
 	TxNotInMempoolTimeoutFlagName     = "txmgr.not-in-mempool-timeout"
 	ReceiptQueryIntervalFlagName      = "txmgr.receipt-query-interval"
-	NearDaAccountFlagName             = "near-da-account"
-	NearDaContractFlagName            = "near-da-contract"
-	NearDaKeyFlagName                 = "near-da-key"
-	NearDaNetworkFlagName             = "near-da-network"
-	NearDaNamespaceIdFlagName         = "near-da-namespace-id"
 )
 
 var (
@@ -216,11 +211,6 @@ type CLIConfig struct {
 	NetworkTimeout            time.Duration
 	TxSendTimeout             time.Duration
 	TxNotInMempoolTimeout     time.Duration
-	NearDaAccount             string
-	NearDaContract            string
-	NearDaKey                 string
-	NearDaNetwork             string
-	NearDaNamespaceId         uint32
 }
 
 func NewCLIConfig(l1RPCURL string, defaults DefaultFlagValues) CLIConfig {
@@ -271,13 +261,6 @@ func (m CLIConfig) Check() error {
 		return errors.New("SafeAbortNonceTooLowCount must not be 0")
 	}
 
-	// TODO: add Near DA checks
-	if m.NearDaNamespaceId == 0 {
-		return errors.New("NearDaNamespaceId id cannot be blank")
-	}
-	if m.NearDaAccount == "" {
-		return errors.New("NearDaAccount cannot be blank")
-	}
 	if err := m.SignerCLIConfig.Check(); err != nil {
 		return err
 	}
@@ -304,11 +287,6 @@ func ReadCLIConfig(ctx *cli.Context) CLIConfig {
 		NetworkTimeout:            ctx.Duration(NetworkTimeoutFlagName),
 		TxSendTimeout:             ctx.Duration(TxSendTimeoutFlagName),
 		TxNotInMempoolTimeout:     ctx.Duration(TxNotInMempoolTimeoutFlagName),
-		NearDaAccount:             ctx.String(NearDaAccountFlagName),
-		NearDaContract:            ctx.String(NearDaContractFlagName),
-		NearDaKey:                 ctx.String(NearDaKeyFlagName),
-		NearDaNetwork:             ctx.String(NearDaNetworkFlagName),
-		NearDaNamespaceId:         uint32(ctx.Uint64(NearDaNamespaceIdFlagName)),
 	}
 }
 
@@ -359,11 +337,6 @@ func NewConfig(cfg CLIConfig, l log.Logger) (Config, error) {
 		return Config{}, fmt.Errorf("invalid min tip cap: %w", err)
 	}
 
-	nearDaConfig, err := near.NewConfig(cfg.NearDaAccount, cfg.NearDaContract, cfg.NearDaKey, cfg.NearDaNetwork, cfg.NearDaNamespaceId)
-	if err != nil {
-		return Config{}, fmt.Errorf("failed to create near DA config: %w", err)
-	}
-
 	return Config{
 		Backend:                   l1,
 		ResubmissionTimeout:       cfg.ResubmissionTimeout,
@@ -378,7 +351,6 @@ func NewConfig(cfg CLIConfig, l log.Logger) (Config, error) {
 		ReceiptQueryInterval:      cfg.ReceiptQueryInterval,
 		NumConfirmations:          cfg.NumConfirmations,
 		SafeAbortNonceTooLowCount: cfg.SafeAbortNonceTooLowCount,
-		NearDaConfig:              *nearDaConfig,
 		Signer:                    signerFactory(chainID),
 		From:                      from,
 	}, nil
@@ -435,9 +407,6 @@ type Config struct {
 	// are required to give up on a tx at a particular nonce without receiving
 	// confirmation.
 	SafeAbortNonceTooLowCount uint64
-
-	// NearDaConfig is the configuration for the Near DA
-	NearDaConfig NearDaConfig
 
 	// Signer is used to sign transactions when the gas price is increased.
 	Signer opcrypto.SignerFn

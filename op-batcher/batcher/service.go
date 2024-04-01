@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"io"
 	_ "net/http/pprof"
 	"strings"
@@ -74,6 +75,7 @@ type BatcherService struct {
 	stopped         atomic.Bool
 
 	NotSubmittingOnStart bool
+	DAClient             *opnear.DAClient
 }
 
 // BatcherServiceFromCLIConfig creates a new BatcherService from a CLIConfig.
@@ -241,7 +243,6 @@ func (bs *BatcherService) initTxManager(cfg *CLIConfig) error {
 	if err != nil {
 		return err
 	}
-	bs.Log.Info("Initialized TxManager", "Near DA namespace ID", cfg.TxMgrConfig.NearDaNamespaceId, "Near DA Account", cfg.TxMgrConfig.NearDaAccount, "Near DA Contract", cfg.TxMgrConfig.NearDaContract, "Near DA Key", cfg.TxMgrConfig.NearDaKey, "Near DA Network", cfg.TxMgrConfig.NearDaNetwork)
 	bs.TxManager = txManager
 	return nil
 }
@@ -323,6 +324,16 @@ func (bs *BatcherService) initPlasmaDA(cfg *CLIConfig) error {
 	}
 	bs.PlasmaDA = config.NewDAClient()
 	bs.UsePlasma = config.Enabled
+	return nil
+}
+
+func (bs *BatcherService) initNearDA(cfg *CLIConfig) error {
+	client, err := opnear.NewDAClient(cfg.DaConfig.NearDaAccount, cfg.DaConfig.NearDaContract, cfg.DaConfig.NearDaKey, cfg.DaConfig.NearDaNetwork, cfg.DaConfig.NearDaNamespaceId)
+	if err != nil {
+		bs.Log.Error("Failed to create Near DA client", "err", err)
+		return err
+	}
+	bs.DAClient = client
 	return nil
 }
 

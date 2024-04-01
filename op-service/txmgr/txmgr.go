@@ -24,7 +24,6 @@ import (
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/optimism/op-service/retry"
 	"github.com/ethereum-optimism/optimism/op-service/txmgr/metrics"
-	near "github.com/near/rollup-data-availability/gopkg/da-rpc"
 )
 
 const (
@@ -123,8 +122,6 @@ type SimpleTxManager struct {
 	name    string
 	chainID *big.Int
 
-	nearDaConfig near.Config
-
 	backend ETHBackend
 	l       log.Logger
 	metr    metrics.TxMetricer
@@ -153,13 +150,12 @@ func NewSimpleTxManagerFromConfig(name string, l log.Logger, m metrics.TxMetrice
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}
 	return &SimpleTxManager{
-		chainID:      conf.ChainID,
-		name:         name,
-		cfg:          conf,
-		nearDaConfig: conf.NearDaConfig,
-		backend:      conf.Backend,
-		l:            l.New("service", name),
-		metr:         m,
+		chainID: conf.ChainID,
+		name:    name,
+		cfg:     conf,
+		backend: conf.Backend,
+		l:       l.New("service", name),
+		metr:    m,
 	}, nil
 }
 

@@ -2,6 +2,7 @@ package flags
 
 import (
 	"fmt"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"time"
 
 	"github.com/urfave/cli/v2"
@@ -292,41 +293,6 @@ var (
 		EnvVars:  prefixEnvVars("ROLLUP_LOAD_PROTOCOL_VERSIONS"),
 		Category: RollupCategory,
 	}
-	NearDaAccountFlag = &cli.StringFlag{
-		Name:     "near-da-account",
-		Usage:    "Near DA Signer",
-		Required: true,
-		EnvVars:  prefixEnvVars("NEAR_DA_ACCOUNT"),
-		Category: NearDaCategory,
-	}
-	NearDaContractFlag = &cli.StringFlag{
-		Name:     "near-da-contract",
-		Usage:    "Near DA Contract",
-		Required: true,
-		EnvVars:  prefixEnvVars("NEAR_DA_CONTRACT"),
-		Category: NearDaCategory,
-	}
-	NearDaKeyFlag = &cli.StringFlag{
-		Name:     "near-da-key",
-		Required: true,
-		Usage:    "Key for sending messages to the Near DA node",
-		EnvVars:  prefixEnvVars("NEAR_DA_KEY"),
-		Category: NearDaCategory,
-	}
-	NearDaNetworkFlag = &cli.StringFlag{
-		Name:     "near-da-network",
-		Usage:    "Network for Near DA node (Testnet or Mainnet)",
-		EnvVars:  prefixEnvVars("NEAR_DA_NETWORK"),
-		Category: NearDaCategory,
-	}
-	NearDaNamespaceIdFlag = &cli.StringFlag{
-		Name:     "near-da-namespace-id",
-		Usage:    "Namespace ID for Near DA node",
-		Value:    "12553",
-		EnvVars:  prefixEnvVars("NEAR_DA_NAMESPACE_ID"),
-		Category: NearDaCategory,
-	}
-
 	SafeDBPath = &cli.StringFlag{
 		Name:     "safedb.path",
 		Usage:    "File path used to persist safe head update data. Disabled if not set.",
@@ -462,6 +428,8 @@ func init() {
 	optionalFlags = append(optionalFlags, DeprecatedFlags...)
 	optionalFlags = append(optionalFlags, opflags.CLIFlags(EnvVarPrefix, RollupCategory)...)
 	optionalFlags = append(optionalFlags, plasma.CLIFlags(EnvVarPrefix, PlasmaCategory)...)
+	optionalFlags = append(optionalFlags, opnear.CLIFlags(EnvVarPrefix, NearDaCategory)...)
+
 	Flags = append(requiredFlags, optionalFlags...)
 }
 
