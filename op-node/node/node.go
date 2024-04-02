@@ -118,9 +118,8 @@ func New(ctx context.Context, cfg *Config, log log.Logger, snapshotLog log.Logge
 }
 
 func (n *OpNode) initNearDA(ctx context.Context, cfg *Config) error {
-	n.log.Info("initNearDA", "DaAccount", cfg.NearDaConfig.NearDaAccount, "DaContract", cfg.NearDaConfig.NearDaContract, "NamespaceId", cfg.NearDaConfig.NearDaNamespaceId, "Network", cfg.NearDaConfig.NearDaNetwork)
-	return driver.SetDAClient(cfg.NearDaConfig)
-	return nil
+	n.log.Info("initNearDA", "DaAccount", cfg.NearDA.DaAccount, "DaContract", cfg.NearDA.DaContract, "NamespaceId", cfg.NearDA.DaNamespaceId, "Network", cfg.NearDA.DaNetwork)
+	return driver.SetDAClient(cfg.NearDA)
 }
 
 func (n *OpNode) init(ctx context.Context, cfg *Config, snapshotLog log.Logger) error {

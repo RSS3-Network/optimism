@@ -50,11 +50,11 @@ func CLIFlags(envPrefix string, category string) []cli.Flag {
 }
 
 type CLIConfig struct {
-	NearDaAccount     string
-	NearDaContract    string
-	NearDaKey         string
-	NearDaNetwork     string
-	NearDaNamespaceId uint32
+	DaAccount     string
+	DaContract    string
+	DaKey         string
+	DaNetwork     string
+	DaNamespaceId uint32
 }
 
 func (c CLIConfig) Check() error {
@@ -63,10 +63,10 @@ func (c CLIConfig) Check() error {
 
 func ReadCLIConfig(ctx *cli.Context) CLIConfig {
 	return CLIConfig{
-		NearDaAccount:     ctx.String(NearDaAccountFlagName),
-		NearDaContract:    ctx.String(NearDaContractFlagName),
-		NearDaKey:         ctx.String(NearDaKeyFlagName),
-		NearDaNetwork:     ctx.String(NearDaNetworkFlagName),
-		NearDaNamespaceId: uint32(ctx.Uint64(NearDaNamespaceIdFlagName)),
+		DaAccount:     ctx.String(NearDaAccountFlagName),
+		DaContract:    ctx.String(NearDaContractFlagName),
+		DaKey:         ctx.String(NearDaKeyFlagName),
+		DaNetwork:     ctx.String(NearDaNetworkFlagName),
+		DaNamespaceId: uint32(ctx.Uint64(NearDaNamespaceIdFlagName)),
 	}
 }

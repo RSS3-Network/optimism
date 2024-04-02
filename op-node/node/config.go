@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"math"
 	"time"
 
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/flags"
 	"github.com/ethereum-optimism/optimism/op-node/p2p"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
@@ -79,7 +79,7 @@ type Config struct {
 	Plasma plasma.CLIConfig
 
 	// Near DA config
-	NearDaConfig opnear.CLIConfig
+	NearDA opnear.CLIConfig
 }
 
 type RPCConfig struct {

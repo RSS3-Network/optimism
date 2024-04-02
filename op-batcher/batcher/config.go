@@ -78,7 +78,7 @@ type CLIConfig struct {
 	CompressorConfig compressor.CLIConfig
 	RPC              oprpc.CLIConfig
 	PlasmaDA         plasma.CLIConfig
-	DaConfig         opnear.CLIConfig
+	NearDA           opnear.CLIConfig
 }
 
 func (c *CLIConfig) Check() error {
@@ -124,7 +124,7 @@ func (c *CLIConfig) Check() error {
 	if err := c.RPC.Check(); err != nil {
 		return err
 	}
-	if err := c.DaConfig.Check(); err != nil {
+	if err := c.NearDA.Check(); err != nil {
 		return err
 	}
 
@@ -156,6 +156,6 @@ func NewConfig(ctx *cli.Context) *CLIConfig {
 		CompressorConfig:             compressor.ReadCLIConfig(ctx),
 		RPC:                          oprpc.ReadCLIConfig(ctx),
 		PlasmaDA:                     plasma.ReadCLIConfig(ctx),
-		DaConfig:                     opnear.ReadCLIConfig(ctx),
+		NearDA:                       opnear.ReadCLIConfig(ctx),
 	}
 }

@@ -75,7 +75,7 @@ type BatcherService struct {
 	stopped         atomic.Bool
 
 	NotSubmittingOnStart bool
-	NearDaClient         *opnear.DAClient
+	NearDAClient         *opnear.DAClient
 }
 
 // BatcherServiceFromCLIConfig creates a new BatcherService from a CLIConfig.
@@ -121,6 +121,9 @@ func (bs *BatcherService) initFromCLIConfig(ctx context.Context, version string,
 	// init before driver
 	if err := bs.initPlasmaDA(cfg); err != nil {
 		return fmt.Errorf("failed to init plasma DA: %w", err)
+	}
+	if err := bs.initNearDA(cfg); err != nil {
+		return fmt.Errorf("failed to init Near DA: %w", err)
 	}
 	bs.initDriver()
 	if err := bs.initRPCServer(cfg); err != nil {
@@ -294,7 +297,7 @@ func (bs *BatcherService) initDriver() {
 		EndpointProvider: bs.EndpointProvider,
 		ChannelConfig:    bs.ChannelConfig,
 		PlasmaDA:         bs.PlasmaDA,
-		NearDaClient:     bs.NearDaClient,
+		NearDAClient:     bs.NearDAClient,
 	})
 }
 
@@ -329,12 +332,12 @@ func (bs *BatcherService) initPlasmaDA(cfg *CLIConfig) error {
 }
 
 func (bs *BatcherService) initNearDA(cfg *CLIConfig) error {
-	client, err := opnear.NewDAClient(cfg.DaConfig.NearDaAccount, cfg.DaConfig.NearDaContract, cfg.DaConfig.NearDaKey, cfg.DaConfig.NearDaNetwork, cfg.DaConfig.NearDaNamespaceId)
+	client, err := opnear.NewDAClient(cfg.NearDA.DaAccount, cfg.NearDA.DaContract, cfg.NearDA.DaKey, cfg.NearDA.DaNetwork, cfg.NearDA.DaNamespaceId)
 	if err != nil {
-		bs.Log.Error("Failed to create Near DA client", "err", err)
+		bs.Log.Error("Failed to create near da client", "err", err)
 		return err
 	}
-	bs.NearDaClient = client
+	bs.NearDAClient = client
 	return nil
 }
 

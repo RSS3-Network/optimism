@@ -15,13 +15,13 @@ import (
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 )
 
-var daClient *opnear.DAClient
+var nearDAClient *opnear.DAClient
 
 func SetDAClient(c *opnear.DAClient) error {
-	if daClient != nil {
-		return errors.New("da client already configured")
+	if nearDAClient != nil {
+		return errors.New("near DA client already configured")
 	}
-	daClient = c
+	nearDAClient = c
 	return nil
 }
 

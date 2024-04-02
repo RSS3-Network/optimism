@@ -6,7 +6,7 @@ import (
 )
 
 func SetDAClient(cfg opnear.CLIConfig) error {
-	client, err := opnear.NewDAClient(cfg.NearDaAccount, cfg.NearDaContract, cfg.NearDaKey, cfg.NearDaNetwork, cfg.NearDaNamespaceId)
+	client, err := opnear.NewDAClient(cfg.DaAccount, cfg.DaContract, cfg.DaKey, cfg.DaNetwork, cfg.DaNamespaceId)
 	if err != nil {
 		return err
 	}

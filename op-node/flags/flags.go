@@ -27,7 +27,7 @@ const (
 	OperationsCategory = "4. LOGGING, METRICS, DEBUGGING, AND API"
 	P2PCategory        = "5. PEER-TO-PEER"
 	PlasmaCategory     = "6. PLASMA (EXPERIMENTAL)"
-	NearDaCategory     = "7. NEAR DA"
+	NearDACategory     = "7. NEAR DA"
 	MiscCategory       = "8. MISC"
 )
 
@@ -423,7 +423,7 @@ func init() {
 	optionalFlags = append(optionalFlags, DeprecatedFlags...)
 	optionalFlags = append(optionalFlags, opflags.CLIFlags(EnvVarPrefix, RollupCategory)...)
 	optionalFlags = append(optionalFlags, plasma.CLIFlags(EnvVarPrefix, PlasmaCategory)...)
-	optionalFlags = append(optionalFlags, opnear.CLIFlags(EnvVarPrefix, NearDaCategory)...)
+	optionalFlags = append(optionalFlags, opnear.CLIFlags(EnvVarPrefix, NearDACategory)...)
 
 	Flags = append(requiredFlags, optionalFlags...)
 }
