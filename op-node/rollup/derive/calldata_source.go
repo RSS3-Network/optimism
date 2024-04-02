@@ -11,8 +11,19 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/log"
 
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 )
+
+var daClient *opnear.DAClient
+
+func SetDAClient(c *opnear.DAClient) error {
+	if daClient != nil {
+		return errors.New("da client already configured")
+	}
+	daClient = c
+	return nil
+}
 
 // CalldataSource is a fault tolerant approach to fetching data.
 // The constructor will never fail & it will instead re-attempt the fetcher

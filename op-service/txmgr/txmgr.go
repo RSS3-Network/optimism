@@ -110,11 +110,6 @@ type ETHBackend interface {
 	Close()
 }
 
-type Namespace struct {
-	Version uint8
-	Id      uint32
-}
-
 // SimpleTxManager is a implementation of TxManager that performs linear fee
 // bumping of a tx until it confirms.
 type SimpleTxManager struct {
@@ -140,7 +135,6 @@ func NewSimpleTxManager(name string, l log.Logger, m metrics.TxMetricer, cfg CLI
 	if err != nil {
 		return nil, err
 	}
-
 	return NewSimpleTxManagerFromConfig(name, l, m, conf)
 }
 

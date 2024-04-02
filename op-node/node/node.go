@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"io"
 	"sync/atomic"
 	"time"
@@ -60,7 +59,6 @@ type OpNode struct {
 	p2pSigner p2p.Signer            // p2p gogssip application messages will be signed with this signer
 	tracer    Tracer                // tracer to get events for testing/debugging
 	runCfg    *RuntimeConfig        // runtime configurables
-	nearDaCfg *rollup.NearDaConfig
 
 	safeDB closableSafeDB
 
@@ -120,7 +118,8 @@ func New(ctx context.Context, cfg *Config, log log.Logger, snapshotLog log.Logge
 }
 
 func (n *OpNode) initNearDA(ctx context.Context, cfg *Config) error {
-	n.nearDaCfg = &cfg.NearDaConfig
+	n.log.Info("initNearDA", "DaAccount", cfg.NearDaConfig.NearDaAccount, "DaContract", cfg.NearDaConfig.NearDaContract, "NamespaceId", cfg.NearDaConfig.NearDaNamespaceId, "Network", cfg.NearDaConfig.NearDaNetwork)
+	return driver.SetDAClient(cfg.NearDaConfig)
 	return nil
 }
 

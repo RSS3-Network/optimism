@@ -79,7 +79,7 @@ type Config struct {
 	Plasma plasma.CLIConfig
 
 	// Near DA config
-	DaConfig opnear.CLIConfig
+	NearDaConfig opnear.CLIConfig
 }
 
 type RPCConfig struct {

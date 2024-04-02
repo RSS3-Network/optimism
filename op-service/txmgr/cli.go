@@ -14,7 +14,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/log"
-	near "github.com/near/rollup-data-availability/gopkg/da-rpc"
 	"github.com/urfave/cli/v2"
 )
 
@@ -53,8 +52,6 @@ var (
 		EnvVars: []string{"OP_PROPOSER_L2_OUTPUT_HD_PATH"},
 	}
 )
-
-type NearDaConfig = near.Config
 
 type DefaultFlagValues struct {
 	NumConfirmations          uint64
@@ -260,7 +257,6 @@ func (m CLIConfig) Check() error {
 	if m.SafeAbortNonceTooLowCount == 0 {
 		return errors.New("SafeAbortNonceTooLowCount must not be 0")
 	}
-
 	if err := m.SignerCLIConfig.Check(); err != nil {
 		return err
 	}

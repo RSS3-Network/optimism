@@ -404,7 +404,10 @@ func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, que
 				return nil
 			}
 		}
-		candidate = l.calldataTxCandidate(data)
+		candidate, err = l.calldataTxCandidate(data)
+		if err != nil {
+			return fmt.Errorf("failed to publish blob to near: %w", err)
+		}
 	}
 
 	intrinsicGas, err := core.IntrinsicGas(candidate.TxData, nil, false, true, true, false)
@@ -435,11 +438,12 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 	}, nil
 }
 
-func (l *BatchSubmitter) calldataTxCandidate(data []byte) *txmgr.TxCandidate {
+func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, error) {
 	l.Log.Info("building calldata transaction candidate", "size", len(data))
 	maybeFrameRef, err := l.DAClient.Client.ForceSubmit(data)
 	if err != nil {
 		l.Log.Warn("near: unable to publish blob to near", "err", err)
+		return nil, err
 	} else {
 		l.Log.Info("near: blob successfully submitted", "frameRef", hex.EncodeToString(maybeFrameRef))
 		data = append([]byte{opnear.DerivationVersionNear}, maybeFrameRef...)
@@ -447,7 +451,7 @@ func (l *BatchSubmitter) calldataTxCandidate(data []byte) *txmgr.TxCandidate {
 	return &txmgr.TxCandidate{
 		To:     &l.RollupConfig.BatchInboxAddress,
 		TxData: data,
-	}
+	}, nil
 }
 
 func (l *BatchSubmitter) handleReceipt(r txmgr.TxReceipt[txData]) {
