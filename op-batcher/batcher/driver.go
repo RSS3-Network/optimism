@@ -50,7 +50,7 @@ type DriverSetup struct {
 	EndpointProvider dial.L2EndpointProvider
 	ChannelConfig    ChannelConfig
 	PlasmaDA         *plasma.DAClient
-	DAClient         *opnear.DAClient
+	NearDaClient     *opnear.DAClient
 }
 
 // BatchSubmitter encapsulates a service responsible for submitting L2 tx
@@ -438,9 +438,11 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 	}, nil
 }
 
+// publish blob to near da, and get the FrameRef from near da
+// then publish the `DerivationVersionNear + FrameRef` to ethereum
 func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, error) {
 	l.Log.Info("building calldata transaction candidate", "size", len(data))
-	maybeFrameRef, err := l.DAClient.Client.ForceSubmit(data)
+	maybeFrameRef, err := l.NearDaClient.Client.ForceSubmit(data)
 	if err != nil {
 		l.Log.Warn("near: unable to publish blob to near", "err", err)
 		return nil, err

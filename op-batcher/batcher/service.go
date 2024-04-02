@@ -75,7 +75,7 @@ type BatcherService struct {
 	stopped         atomic.Bool
 
 	NotSubmittingOnStart bool
-	DAClient             *opnear.DAClient
+	NearDaClient         *opnear.DAClient
 }
 
 // BatcherServiceFromCLIConfig creates a new BatcherService from a CLIConfig.
@@ -294,6 +294,7 @@ func (bs *BatcherService) initDriver() {
 		EndpointProvider: bs.EndpointProvider,
 		ChannelConfig:    bs.ChannelConfig,
 		PlasmaDA:         bs.PlasmaDA,
+		NearDaClient:     bs.NearDaClient,
 	})
 }
 
@@ -333,7 +334,7 @@ func (bs *BatcherService) initNearDA(cfg *CLIConfig) error {
 		bs.Log.Error("Failed to create Near DA client", "err", err)
 		return err
 	}
-	bs.DAClient = client
+	bs.NearDaClient = client
 	return nil
 }
 
