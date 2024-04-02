@@ -1,6 +1,25 @@
-FROM --platform=$BUILDPLATFORM golang:1.21.3-alpine3.18 as builder
+FROM --platform=$BUILDPLATFORM rss3/rollup-data-availability/da-rpc:latest as rust
 
-RUN apk add --no-cache make gcc musl-dev linux-headers git jq bash curl
+RUN ls /lib
+RUN ls /gopkg/da-rpc
+
+FROM --platform=$BUILDPLATFORM golang:1.21 as builder
+
+RUN apt-get update && apt-get install -y \
+    git \
+    jq \
+    make \
+    bash \
+    openssl \
+    libssl-dev \
+    protobuf-compiler \
+    pkg-config \
+    cbindgen \
+    clang \
+    curl
+
+# Copy lib from da-rpc
+COPY --from=rust /gopkg/da-rpc/lib/ /usr/local/lib
 
 # We copy the go.mod/sum first, so the `go mod download` does not have to re-run if dependencies do not change.
 COPY ./go.mod /app/go.mod
