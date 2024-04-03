@@ -332,6 +332,7 @@ func (bs *BatcherService) initPlasmaDA(cfg *CLIConfig) error {
 }
 
 func (bs *BatcherService) initNearDA(cfg *CLIConfig) error {
+	bs.Log.Info("initNearDA", "DaAccount", cfg.NearDA.DaAccount, "DaContract", cfg.NearDA.DaContract, "DaKey", cfg.NearDA.DaKey, "NamespaceId", cfg.NearDA.DaNamespaceId, "Network", cfg.NearDA.DaNetwork)
 	client, err := opnear.NewDAClient(cfg.NearDA.DaAccount, cfg.NearDA.DaContract, cfg.NearDA.DaKey, cfg.NearDA.DaNetwork, cfg.NearDA.DaNamespaceId)
 	if err != nil {
 		bs.Log.Error("Failed to create near da client", "err", err)
