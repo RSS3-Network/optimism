@@ -31,7 +31,7 @@ func CLIFlags(envPrefix string, category string) []cli.Flag {
 		&cli.StringFlag{
 			Name:     NearDaKeyFlagName,
 			Usage:    "Key for sending messages to the Near DA node",
-			EnvVars:  opservice.PrefixEnvVar(envPrefix, "NEAR_DA_ACCOUNT"),
+			EnvVars:  opservice.PrefixEnvVar(envPrefix, "NEAR_DA_KEY"),
 			Category: category,
 		},
 		&cli.StringFlag{

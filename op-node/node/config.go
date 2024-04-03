@@ -178,5 +178,8 @@ func (cfg *Config) Check() error {
 	if err := cfg.Plasma.Check(); err != nil {
 		return fmt.Errorf("plasma config error: %w", err)
 	}
+	if err := cfg.NearDA.Check(); err != nil {
+		return fmt.Errorf("near da config error: %w", err)
+	}
 	return nil
 }
