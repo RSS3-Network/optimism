@@ -16,6 +16,7 @@
 **Table of Contents**
 
 - [What is Optimism?](#what-is-optimism)
+- [What is RSS3 VSL?](#what-is-rss3-vsl)
 - [Documentation](#documentation)
 - [Specification](#specification)
 - [Community](#community)
