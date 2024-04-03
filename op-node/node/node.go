@@ -724,6 +724,10 @@ func (n *OpNode) Stop(ctx context.Context) error {
 		}
 	}
 
+	// free near da client
+	n.log.Info("Free Near DA Client")
+	driver.FreeDAClient()
+
 	return result.ErrorOrNil()
 }
 

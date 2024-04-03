@@ -25,6 +25,12 @@ func SetDAClient(c *opnear.DAClient) error {
 	return nil
 }
 
+func FreeDAClient() {
+	if nearDAClient != nil {
+		opnear.FreeDAClient(nearDAClient)
+	}
+}
+
 // CalldataSource is a fault tolerant approach to fetching data.
 // The constructor will never fail & it will instead re-attempt the fetcher
 // at a later point.

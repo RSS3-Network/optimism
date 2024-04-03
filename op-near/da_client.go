@@ -19,3 +19,7 @@ func NewDAClient(accountN, contractN, keyN, networkN string, nameSpace uint32) (
 		Client: *client,
 	}, nil
 }
+
+func FreeDAClient(c *DAClient) {
+	c.Client.FreeClient()
+}

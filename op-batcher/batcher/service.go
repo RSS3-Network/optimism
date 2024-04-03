@@ -420,6 +420,12 @@ func (bs *BatcherService) Stop(ctx context.Context) error {
 		bs.stopped.Store(true)
 		bs.Log.Info("Batch Submitter stopped")
 	}
+
+	// free near da client
+	if bs.NearDAClient != nil {
+		bs.driver.Log.Info("Free Near DA Client")
+		opnear.FreeDAClient(bs.NearDAClient)
+	}
 	return result
 }
 

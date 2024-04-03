@@ -221,7 +221,7 @@ require (
 
 replace github.com/ethereum/go-ethereum v1.13.8 => github.com/rss3-network/op-geth v0.0.0-20240318084011-ac750f910c66
 
-replace github.com/near/rollup-data-availability v0.2.3 => github.com/rss3-network/rollup-data-availability v0.0.0-20240327150603-b004cd803551
+replace github.com/near/rollup-data-availability v0.2.3 => github.com/rss3-network/rollup-data-availability v0.0.0-20240403041744-d5e4a21ababb
 
 //replace github.com/ethereum-optimism/superchain-registry/superchain => ../superchain-registry/superchain
 //replace github.com/ethereum/go-ethereum v1.13.8 => ../op-geth

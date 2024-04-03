@@ -12,3 +12,7 @@ func SetDAClient(cfg opnear.CLIConfig) error {
 	}
 	return derive.SetDAClient(client)
 }
+
+func FreeDAClient() {
+	derive.FreeDAClient()
+}
