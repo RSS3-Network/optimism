@@ -97,8 +97,6 @@ RUN --mount=type=cache,target=/root/.cache/go-build cd op-conductor && make op-c
 
 FROM debian:bookworm-slim
 
-
-
 COPY --from=builder /app/cannon/bin/cannon /usr/local/bin/
 COPY --from=builder /app/op-program/bin/op-program /usr/local/bin/
 
