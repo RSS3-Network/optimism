@@ -19,4 +19,5 @@ COPY --from=builder /usr/local/bin/op-proposer /usr/local/bin/op-proposer
 COPY --from=rust /gopkg/da-rpc/lib/ /usr/local/lib
 
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
 CMD ["op-proposer"]
