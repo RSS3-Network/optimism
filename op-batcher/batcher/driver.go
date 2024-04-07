@@ -438,13 +438,32 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 	}, nil
 }
 
+func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
+	maybeFrameRef, err := l.NearDAClient.Client.ForceSubmit(data)
+	if err != nil {
+		l.Log.Warn("near: failed to submit blob to near", "err", err)
+		return nil, err
+	}
+
+	time.Sleep(5 * time.Second)
+	// finality is achieved which is 3 blocks (around 2-3 seconds) its not possible for a reorg to happen
+	// check the submitted blob after finality
+	_, err = l.NearDAClient.Client.Get(maybeFrameRef, 0)
+	if err != nil {
+		log.Error("failed to get data from near, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
+		return nil, err
+	}
+
+	return maybeFrameRef, nil
+}
+
 // publish blob to near da, and get the FrameRef from near da
 // then publish the `DerivationVersionNear + FrameRef` to ethereum
 func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, error) {
 	l.Log.Info("building calldata transaction candidate", "size", len(data))
-	maybeFrameRef, err := l.NearDAClient.Client.ForceSubmit(data)
+	maybeFrameRef, err := l.submitBlobToNearDA(data)
 	if err != nil {
-		l.Log.Warn("near: unable to publish blob to near", "err", err)
+		l.Log.Warn("near: unable to submit blob to near", "err", err)
 		return nil, err
 	} else {
 		l.Log.Info("near: blob successfully submitted", "frameRef", hex.EncodeToString(maybeFrameRef))
