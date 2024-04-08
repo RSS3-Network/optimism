@@ -440,6 +440,7 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 }
 
 func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
+	log.Debug("submitBlobToNearDA", "data", hex.EncodeToString(data), "size", len(data))
 	maybeFrameRef, err := l.NearDAClient.Client.ForceSubmit(data)
 	if err != nil {
 		l.Log.Warn("near: failed to submit blob to near", "err", err)
