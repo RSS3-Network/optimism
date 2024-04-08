@@ -447,15 +447,15 @@ func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	time.Sleep(5 * time.Second)
 	// finality is achieved which is 3 blocks (around 2-3 seconds) its not possible for a reorg to happen
 	// check the submitted blob after finality
+	time.Sleep(6 * time.Second)
 	blobData, err := l.NearDAClient.Client.Get(maybeFrameRef, 0)
 	if err != nil {
 		log.Error("failed to get data from near, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
 		return nil, err
 	}
-	if bytes.Equal(blobData, data) {
+	if !bytes.Equal(blobData, data) {
 		log.Error("failed to get data from near, blob data mismatch", "id", hex.EncodeToString(maybeFrameRef), "expected", hex.EncodeToString(data), "got", hex.EncodeToString(blobData))
 		return nil, fmt.Errorf("submitted data mismatch with obtained data, id :%s", hex.EncodeToString(maybeFrameRef))
 	}
