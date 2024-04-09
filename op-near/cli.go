@@ -1,6 +1,8 @@
 package opnear
 
 import (
+	"errors"
+
 	"github.com/urfave/cli/v2"
 
 	opservice "github.com/ethereum-optimism/optimism/op-service"
@@ -12,6 +14,14 @@ const (
 	NearDaKeyFlagName         = "near-da-key"
 	NearDaNetworkFlagName     = "near-da-network"
 	NearDaNamespaceIdFlagName = "near-da-namespace-id"
+)
+
+var (
+	ErrMissingDaAccount  = errors.New("near da account cannot be empty")
+	ErrMissingDaContract = errors.New("near da contract cannot be empty")
+	ErrMissingDaKey      = errors.New("near da key cannot be empty")
+	ErrInvalidDaNetwork  = errors.New("near da network invalid")
+	ErrDaNamespaceIdZero = errors.New("near da namespace id cannot be 0")
 )
 
 func CLIFlags(envPrefix string, category string) []cli.Flag {
@@ -58,6 +68,22 @@ type CLIConfig struct {
 }
 
 func (c CLIConfig) Check() error {
+	if c.DaAccount == "" {
+		return ErrMissingDaAccount
+	}
+	if c.DaContract == "" {
+		return ErrMissingDaContract
+	}
+	if c.DaKey == "" {
+		return ErrMissingDaKey
+	}
+	if c.DaNetwork != "Mainnet" && c.DaNetwork != "Testnet" {
+		return ErrInvalidDaNetwork
+	}
+	if c.DaNamespaceId == 0 {
+		return ErrDaNamespaceIdZero
+	}
+
 	return nil
 }
 
