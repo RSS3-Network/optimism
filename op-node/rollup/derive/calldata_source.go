@@ -28,7 +28,7 @@ func SetDAClient(c *opnear.DAClient) error {
 
 func FreeDAClient() {
 	if nearDAClient != nil {
-		opnear.FreeDAClient(nearDAClient)
+		nearDAClient.FreeDAClient()
 	}
 }
 
@@ -122,7 +122,7 @@ func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address,
 				case opnear.DerivationVersionNear:
 					log.Info("near: blob request", "id", hex.EncodeToString(data), "txIndex", idx)
 					// get blob from near da
-					blob, err := nearDAClient.Client.Get(data[1:], (uint32)(idx))
+					blob, err := nearDAClient.Get(data[1:], (uint32)(idx))
 					if err != nil {
 						log.Error("failed to get data from near", "id", hex.EncodeToString(data), "index", idx, "err", err)
 						return nil, fmt.Errorf("failed to get data from near da, id: %s, txIndex: %d, %w", hex.EncodeToString(data), idx, err)

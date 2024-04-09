@@ -425,7 +425,7 @@ func (bs *BatcherService) Stop(ctx context.Context) error {
 	// free near da client
 	if bs.NearDAClient != nil {
 		bs.driver.Log.Info("Free Near DA Client")
-		opnear.FreeDAClient(bs.NearDAClient)
+		bs.NearDAClient.FreeDAClient()
 	}
 	return result
 }
