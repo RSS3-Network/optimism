@@ -48,13 +48,13 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 	blobData, err := retry.Do(ctx, defaultGetAttempts, bOff, func() ([]byte, error) {
 		data, err := c.Client.Get(frameRefBytes, txIndex)
 		if err != nil {
-			log.Warn("failed to get data from near", "id", hex.EncodeToString(frameRefBytes), "err", err)
 			return nil, err
 		}
 
 		return data, nil
 	})
 	if err != nil {
+		log.Error("failed to get data from near", "id", hex.EncodeToString(frameRefBytes), "err", err)
 		return nil, err
 	}
 	return blobData, nil
