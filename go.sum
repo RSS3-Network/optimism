@@ -692,8 +692,8 @@ github.com/rs/zerolog v1.13.0/go.mod h1:YbFCdg8HfsridGWAh22vktObvhZbQsZXe4/zB0OK
 github.com/rs/zerolog v1.15.0/go.mod h1:xYTKnLHcpfU2225ny5qZjxnj9NvkumZYjJHlAThCjNc=
 github.com/rss3-network/op-geth v0.0.0-20240318084011-ac750f910c66 h1:JmziXEoykS6nVOLC2MAMkUwaCIAol6Hvi3TbA/rJi5E=
 github.com/rss3-network/op-geth v0.0.0-20240318084011-ac750f910c66/go.mod h1:k0UbrLuOITLD8goCyA2xWebAL03n2BZUCfwos0rxz60=
-github.com/rss3-network/rollup-data-availability v0.0.0-20240408063248-6efed18efd93 h1:x+yNNz+yCxhA9u5PQNyJlG2pEfD7DeLLb6YwKYguiU8=
-github.com/rss3-network/rollup-data-availability v0.0.0-20240408063248-6efed18efd93/go.mod h1:hCjAJiCD0Ng9JYavCBGIkN0nwVKVKOircQLp+0Q4cuI=
+github.com/rss3-network/rollup-data-availability v0.0.0-20240409120045-ecb17ed54b2d h1:xpnP/k3VMy+GwHCaLSsYx+tp2wzaEP8ylZKr9lYVDPI=
+github.com/rss3-network/rollup-data-availability v0.0.0-20240409120045-ecb17ed54b2d/go.mod h1:hCjAJiCD0Ng9JYavCBGIkN0nwVKVKOircQLp+0Q4cuI=
 github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf35Ld67mk=
