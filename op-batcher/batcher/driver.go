@@ -1,7 +1,9 @@
 package batcher
 
 import (
+	"bytes"
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -15,6 +17,7 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 
 	"github.com/ethereum-optimism/optimism/op-batcher/metrics"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"github.com/ethereum-optimism/optimism/op-node/rollup/derive"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
@@ -48,6 +51,7 @@ type DriverSetup struct {
 	EndpointProvider dial.L2EndpointProvider
 	ChannelConfig    ChannelConfig
 	PlasmaDA         *plasma.DAClient
+	NearDAClient     *opnear.DAClient
 }
 
 // BatchSubmitter encapsulates a service responsible for submitting L2 tx
@@ -264,7 +268,7 @@ func (l *BatchSubmitter) loop() {
 		for {
 			select {
 			case r := <-receiptsCh:
-				l.Log.Info("handling receipt", "id", r.ID)
+				l.Log.Info("handling receipt", "id", r.ID.ID())
 				l.handleReceipt(r)
 			case <-receiptLoopDone:
 				l.Log.Info("receipt processing loop done")
@@ -401,7 +405,10 @@ func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, que
 				return nil
 			}
 		}
-		candidate = l.calldataTxCandidate(data)
+		candidate, err = l.calldataTxCandidate(data)
+		if err != nil {
+			return fmt.Errorf("failed to build calldata transaction candidate: %w", err)
+		}
 	}
 
 	intrinsicGas, err := core.IntrinsicGas(candidate.TxData, nil, false, true, true, false)
@@ -432,12 +439,46 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 	}, nil
 }
 
-func (l *BatchSubmitter) calldataTxCandidate(data []byte) *txmgr.TxCandidate {
-	l.Log.Info("building Calldata transaction candidate", "size", len(data))
+func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
+	log.Debug("submitBlobToNearDA", "data", hex.EncodeToString(data), "size", len(data))
+	maybeFrameRef, err := l.NearDAClient.Submit(data)
+	if err != nil {
+		l.Log.Warn("near: failed to submit blob to near", "err", err)
+		return nil, err
+	}
+
+	// finality is achieved which is 3 blocks (around 2-3 seconds) its not possible for a reorg to happen
+	// check the submitted blob after finality
+	time.Sleep(5 * time.Second)
+	blobData, err := l.NearDAClient.Get(maybeFrameRef, 0)
+	if err != nil {
+		log.Error("failed to get data from near, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
+		return nil, err
+	}
+	if !bytes.Equal(blobData, data) {
+		log.Error("failed to get data from near, blob data mismatch", "id", hex.EncodeToString(maybeFrameRef), "expected", hex.EncodeToString(data), "got", hex.EncodeToString(blobData))
+		return nil, fmt.Errorf("submitted data mismatch with obtained data, id :%s", hex.EncodeToString(maybeFrameRef))
+	}
+
+	return maybeFrameRef, nil
+}
+
+// publish blob to near da, and get the FrameRef from near da
+// then publish the `DerivationVersionNear + FrameRef` to ethereum
+func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, error) {
+	l.Log.Info("building calldata transaction candidate", "size", len(data))
+	maybeFrameRef, err := l.submitBlobToNearDA(data)
+	if err != nil {
+		l.Log.Warn("near: unable to submit blob to near", "err", err)
+		return nil, err
+	} else {
+		l.Log.Info("near: blob successfully submitted", "frameRef", hex.EncodeToString(maybeFrameRef))
+		data = append([]byte{opnear.DerivationVersionNear}, maybeFrameRef...)
+	}
 	return &txmgr.TxCandidate{
 		To:     &l.RollupConfig.BatchInboxAddress,
 		TxData: data,
-	}
+	}, nil
 }
 
 func (l *BatchSubmitter) handleReceipt(r txmgr.TxReceipt[txData]) {

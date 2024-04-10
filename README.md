@@ -4,6 +4,10 @@
   <a href="https://optimism.io"><img alt="Optimism" src="https://raw.githubusercontent.com/ethereum-optimism/brand-kit/main/assets/svg/OPTIMISM-R.svg" width=600></a>
   <br />
   <h3><a href="https://optimism.io">Optimism</a> is Ethereum, scaled.</h3>
+  <h3>+</h3>
+  <a href="https://rss3.io"><img alt="RSS3 VSL" src="docs/op-stack/src/assets/docs/understand/VSL.svg" width=600></a>
+  <h3><a href="https://rss3.io">RSS3 VSL</a> is a modularized Ethereum Layer 2, built to handle value and ownership of Open Information (social, search, AI, and beyond).</h3>
+  <br />
   <br />
 </div>
 
@@ -12,6 +16,7 @@
 **Table of Contents**
 
 - [What is Optimism?](#what-is-optimism)
+- [What is RSS3 VSL?](#what-is-rss3-vsl)
 - [Documentation](#documentation)
 - [Specification](#specification)
 - [Community](#community)
@@ -31,6 +36,26 @@
 [Optimism](https://www.optimism.io/) is a project dedicated to scaling Ethereum's technology and expanding its ability to coordinate people from across the world to build effective decentralized economies and governance systems. The [Optimism Collective](https://app.optimism.io/announcement) builds open-source software for running L2 blockchains and aims to address key governance and economic challenges in the wider cryptocurrency ecosystem. Optimism operates on the principle of **impact=profit**, the idea that individuals who positively impact the Collective should be proportionally rewarded with profit. **Change the incentives and you change the world.**
 
 In this repository, you'll find numerous core components of the OP Stack, the decentralized software stack maintained by the Optimism Collective that powers Optimism and forms the backbone of blockchains like [OP Mainnet](https://explorer.optimism.io/) and [Base](https://base.org). Designed to be "aggressively open source," the OP Stack encourages you to explore, modify, extend, and test the code as needed. Although not all elements of the OP Stack are contained here, many of its essential components can be found within this repository. By collaborating on free, open software and shared standards, the Optimism Collective aims to prevent siloed software development and rapidly accelerate the development of the Ethereum ecosystem. Come contribute, build the future, and redefine power, together.
+
+## What is RSS3 VSL?
+
+The RSS3 VSL is a modularized Ethereum Layer 2, built to handle value and ownership of Open Information (social, search, AI, and beyond).
+
+- Layer 2
+
+  Blockchain is the technology naturally designed to handle value and ownership with consensus. Therefore, we’ve decided to have VSL in the form of a blockchain. There are quite a few approaches to build a blockchain, and we ended up having a Ethereum layer 2: its EVM is the most widely used environment for smart contracts, it offer great potential liquidity, and $RSS3 for the current testnet is issued on Ethereum Mainnet - it will smoothly evolve as the utility token for the RSS3 Mainnet.
+
+- Adjusted OP Stack
+
+  For Ethereum rollups, there are still the ongoing debates on what scaling solution is the best. We’ve decided that for now, the RSS3 VSL will be built based on OP Stack for its efficiency and ecosystem. As a relatively-mature solution powering multiple L2s, Optimistic rollup has been well proven. And we’ve adjusted OP Stack to best serve the purpose of VSL.
+
+- Near DA
+
+  While being a layer 2 greatly saves transaction gas fee compared to Ethereum Mainnet, it’s not enough. As the ownership and value layer for open information, constant high frequency microtransactions are expected. Therefore, we are partnering with Near and have DA stored on the network. This further significantly lowers the transaction cost on RSS3 VSL.
+
+- Gas Token
+
+  The RSS3 VSL will have $RSS3 as its gas token, making it the first native gas L2 with Optimistic rollup and Near DA. The sequencer will take $RSS3 and convert it into $ETH and $TIA. And if that results in sequencer revenue, it will go to public goods and ecosystem grants.
 
 ## Documentation
 

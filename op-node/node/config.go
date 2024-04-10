@@ -7,6 +7,7 @@ import (
 	"math"
 	"time"
 
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/flags"
 	"github.com/ethereum-optimism/optimism/op-node/p2p"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
@@ -76,6 +77,9 @@ type Config struct {
 
 	// Plasma DA config
 	Plasma plasma.CLIConfig
+
+	// Near DA config
+	NearDA opnear.CLIConfig
 }
 
 type RPCConfig struct {
@@ -173,6 +177,9 @@ func (cfg *Config) Check() error {
 	}
 	if err := cfg.Plasma.Check(); err != nil {
 		return fmt.Errorf("plasma config error: %w", err)
+	}
+	if err := cfg.NearDA.Check(); err != nil {
+		return fmt.Errorf("near da config error: %w", err)
 	}
 	return nil
 }

@@ -117,8 +117,16 @@ func New(ctx context.Context, cfg *Config, log log.Logger, snapshotLog log.Logge
 	return n, nil
 }
 
+func (n *OpNode) initNearDA(ctx context.Context, cfg *Config) error {
+	n.log.Info("initNearDA", "DaAccount", cfg.NearDA.DaAccount, "DaContract", cfg.NearDA.DaContract, "NamespaceId", cfg.NearDA.DaNamespaceId, "Network", cfg.NearDA.DaNetwork)
+	return driver.SetDAClient(cfg.NearDA)
+}
+
 func (n *OpNode) init(ctx context.Context, cfg *Config, snapshotLog log.Logger) error {
 	n.log.Info("Initializing rollup node", "version", n.appVersion)
+	if err := n.initNearDA(ctx, cfg); err != nil {
+		return err
+	}
 	if err := n.initTracer(ctx, cfg); err != nil {
 		return fmt.Errorf("failed to init the trace: %w", err)
 	}
@@ -715,6 +723,10 @@ func (n *OpNode) Stop(ctx context.Context) error {
 			result = multierror.Append(result, fmt.Errorf("failed to close metrics server: %w", err))
 		}
 	}
+
+	// free near da client
+	n.log.Info("Free Near DA Client")
+	driver.FreeDAClient()
 
 	return result.ErrorOrNil()
 }
