@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM rss3/rollup-data-availability/da-rpc:latest as rust
+FROM --platform=$BUILDPLATFORM rss3/da-rpc:latest as rust
 
 RUN ls /lib
 RUN ls /gopkg/da-rpc
