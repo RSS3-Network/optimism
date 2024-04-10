@@ -48,6 +48,7 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 	blobData, err := retry.Do(ctx, defaultGetAttempts, bOff, func() ([]byte, error) {
 		data, err := c.Client.Get(frameRefBytes, txIndex)
 		if err != nil {
+			log.Warn("get blob from near", "id", hex.EncodeToString(frameRefBytes), "err", err)
 			return nil, err
 		}
 
