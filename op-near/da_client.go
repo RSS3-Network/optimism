@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	defaultGetTimeout = 10 * time.Second
+	defaultGetTimeout = 60 * time.Second
 
 	defaultGetAttempts = 5
 )
