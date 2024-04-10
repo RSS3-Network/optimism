@@ -1,10 +1,11 @@
+ARG OP_STACK_GO_BUILDER=rss3/op-stack-go:latest
+FROM $OP_STACK_GO_BUILDER as builder
+# See "make golang-docker" and /ops/docker/op-stack-go
+
 FROM --platform=$BUILDPLATFORM rss3/da-rpc:latest as rust
 
 RUN ls /lib
 RUN ls /gopkg/da-rpc
-
-FROM rss3/op-stack-go:latest as builder
-# See "make golang-docker" and /ops/docker/op-stack-go
 
 FROM debian:bookworm-slim
 
