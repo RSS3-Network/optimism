@@ -441,7 +441,8 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 
 func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
 	log.Info("submitBlobToNearDA", "data", hex.EncodeToString(data), "size", len(data))
-	maybeFrameRef, err := l.NearDA.Submit(data)
+	// frameRef is the blob commitment, which is provided as [transaction_id ++ commitment]
+	frameRef, err := l.NearDA.Submit(data)
 	if err != nil {
 		l.Log.Warn("near: failed to submit blob to near", "err", err)
 		return nil, err
@@ -450,17 +451,17 @@ func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
 	// finality is achieved which is 3 blocks (around 2-3 seconds) its not possible for a reorg to happen
 	// check the submitted blob after finality
 	time.Sleep(5 * time.Second)
-	blobData, err := l.NearDA.Get(maybeFrameRef, 0)
+	blobData, err := l.NearDA.Get(frameRef, 0)
 	if err != nil {
 		log.Error("failed to get blob from near, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
 		return nil, err
 	}
 	if !bytes.Equal(blobData, data) {
-		log.Error("failed to get blob from near, blob data mismatch", "id", hex.EncodeToString(maybeFrameRef), "expected", hex.EncodeToString(data), "got", hex.EncodeToString(blobData))
-		return nil, fmt.Errorf("submitted blob mismatch with obtained blob, id :%s", hex.EncodeToString(maybeFrameRef))
+		log.Error("failed to get blob from near, blob data mismatch", "id", hex.EncodeToString(frameRef), "expected", hex.EncodeToString(data), "got", hex.EncodeToString(blobData))
+		return nil, fmt.Errorf("submitted blob mismatch with obtained blob, id :%s", hex.EncodeToString(frameRef))
 	}
 
-	return maybeFrameRef, nil
+	return frameRef, nil
 }
 
 // publish blob to near da, and get the FrameRef from near da

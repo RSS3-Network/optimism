@@ -13,9 +13,11 @@ import (
 )
 
 const (
-	defaultGetTimeout = 60 * time.Second
+	defaultSubmitTimeout = 60 * time.Second
+	defaultGetTimeout    = 60 * time.Second
 
-	defaultGetAttempts = 5
+	defaultSubmitAttempts = 5
+	defaultGetAttempts    = 5
 )
 
 type DAClient struct {
@@ -37,7 +39,24 @@ func (c *DAClient) FreeDAClient() {
 }
 
 func (c *DAClient) Submit(data []byte) ([]byte, error) {
-	return c.Client.ForceSubmit(data)
+	ctx, cancel := context.WithTimeout(context.Background(), defaultSubmitTimeout)
+	defer cancel()
+
+	bOff := retry.Exponential()
+	frameRef, err := retry.Do(ctx, defaultSubmitAttempts, bOff, func() ([]byte, error) {
+		result, err := c.Client.ForceSubmit(data)
+		if err != nil {
+			log.Warn("submit blob to near", "err", err)
+			return nil, err
+		}
+
+		return result, nil
+	})
+	if err != nil {
+		log.Error("failed to submit blob to near", "err", err)
+		return nil, err
+	}
+	return frameRef, nil
 }
 
 func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
@@ -46,13 +65,13 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 
 	bOff := retry.Exponential()
 	blobData, err := retry.Do(ctx, defaultGetAttempts, bOff, func() ([]byte, error) {
-		data, err := c.Client.Get(frameRefBytes, txIndex)
+		result, err := c.Client.Get(frameRefBytes, txIndex)
 		if err != nil {
 			log.Warn("get blob from near", "id", hex.EncodeToString(frameRefBytes), "err", err)
 			return nil, err
 		}
 
-		return data, nil
+		return result, nil
 	})
 	if err != nil {
 		log.Error("failed to get blob from near", "id", hex.EncodeToString(frameRefBytes), "err", err)
