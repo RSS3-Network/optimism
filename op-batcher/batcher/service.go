@@ -55,6 +55,7 @@ type BatcherService struct {
 	EndpointProvider dial.L2EndpointProvider
 	TxManager        txmgr.TxManager
 	PlasmaDA         *plasma.DAClient
+	NearDA           *opnear.DAClient
 
 	BatcherConfig
 
@@ -75,7 +76,6 @@ type BatcherService struct {
 	stopped         atomic.Bool
 
 	NotSubmittingOnStart bool
-	NearDAClient         *opnear.DAClient
 }
 
 // BatcherServiceFromCLIConfig creates a new BatcherService from a CLIConfig.
@@ -297,7 +297,7 @@ func (bs *BatcherService) initDriver() {
 		EndpointProvider: bs.EndpointProvider,
 		ChannelConfig:    bs.ChannelConfig,
 		PlasmaDA:         bs.PlasmaDA,
-		NearDAClient:     bs.NearDAClient,
+		NearDA:           bs.NearDA,
 	})
 }
 
@@ -338,7 +338,7 @@ func (bs *BatcherService) initNearDA(cfg *CLIConfig) error {
 		bs.Log.Error("Failed to create near da client", "err", err)
 		return err
 	}
-	bs.NearDAClient = client
+	bs.NearDA = client
 	return nil
 }
 
@@ -423,9 +423,9 @@ func (bs *BatcherService) Stop(ctx context.Context) error {
 	}
 
 	// free near da client
-	if bs.NearDAClient != nil {
+	if bs.NearDA != nil {
 		bs.driver.Log.Info("Free Near DA Client")
-		bs.NearDAClient.FreeDAClient()
+		bs.NearDA.FreeDAClient()
 	}
 	return result
 }

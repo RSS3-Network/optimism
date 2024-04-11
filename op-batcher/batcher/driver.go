@@ -51,7 +51,7 @@ type DriverSetup struct {
 	EndpointProvider dial.L2EndpointProvider
 	ChannelConfig    ChannelConfig
 	PlasmaDA         *plasma.DAClient
-	NearDAClient     *opnear.DAClient
+	NearDA           *opnear.DAClient
 }
 
 // BatchSubmitter encapsulates a service responsible for submitting L2 tx
@@ -441,7 +441,7 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 
 func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
 	log.Debug("submitBlobToNearDA", "data", hex.EncodeToString(data), "size", len(data))
-	maybeFrameRef, err := l.NearDAClient.Submit(data)
+	maybeFrameRef, err := l.NearDA.Submit(data)
 	if err != nil {
 		l.Log.Warn("near: failed to submit blob to near", "err", err)
 		return nil, err
@@ -450,14 +450,14 @@ func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
 	// finality is achieved which is 3 blocks (around 2-3 seconds) its not possible for a reorg to happen
 	// check the submitted blob after finality
 	time.Sleep(5 * time.Second)
-	blobData, err := l.NearDAClient.Get(maybeFrameRef, 0)
+	blobData, err := l.NearDA.Get(maybeFrameRef, 0)
 	if err != nil {
-		log.Error("failed to get data from near, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
+		log.Error("failed to get blob from near, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
 		return nil, err
 	}
 	if !bytes.Equal(blobData, data) {
-		log.Error("failed to get data from near, blob data mismatch", "id", hex.EncodeToString(maybeFrameRef), "expected", hex.EncodeToString(data), "got", hex.EncodeToString(blobData))
-		return nil, fmt.Errorf("submitted data mismatch with obtained data, id :%s", hex.EncodeToString(maybeFrameRef))
+		log.Error("failed to get blob from near, blob data mismatch", "id", hex.EncodeToString(maybeFrameRef), "expected", hex.EncodeToString(data), "got", hex.EncodeToString(blobData))
+		return nil, fmt.Errorf("submitted blob mismatch with obtained blob, id :%s", hex.EncodeToString(maybeFrameRef))
 	}
 
 	return maybeFrameRef, nil

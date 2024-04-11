@@ -55,7 +55,7 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 		return data, nil
 	})
 	if err != nil {
-		log.Error("failed to get data from near", "id", hex.EncodeToString(frameRefBytes), "err", err)
+		log.Error("failed to get blob from near", "id", hex.EncodeToString(frameRefBytes), "err", err)
 		return nil, err
 	}
 	return blobData, nil
