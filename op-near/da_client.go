@@ -60,7 +60,7 @@ func (c *DAClient) Submit(data []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	log.Info("end submitting blob with retry", "elapsed time", time.Since(startTime))
+	log.Info("end submitting blob with retry", "id", hex.EncodeToString(frameRef), "elapsed time", time.Since(startTime))
 	return frameRef, nil
 }
 
