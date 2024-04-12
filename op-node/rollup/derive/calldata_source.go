@@ -120,7 +120,7 @@ func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address,
 			default:
 				switch data[0] {
 				case opnear.DerivationVersionNear:
-					log.Info("near: blob request", "id", hex.EncodeToString(data), "txIndex", idx)
+					log.Info("request blob from near da", "id", hex.EncodeToString(data), "txIndex", idx)
 					// get blob from near da
 					blob, err := nearDAClient.Get(data[1:], (uint32)(idx))
 					if err != nil {
@@ -130,7 +130,7 @@ func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address,
 					out = append(out, blob)
 				default:
 					out = append(out, data)
-					log.Info("near: using eth da")
+					log.Info("using eth da")
 				}
 			}
 		}

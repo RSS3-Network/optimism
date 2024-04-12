@@ -440,11 +440,11 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 }
 
 func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
-	log.Info("submitBlobToNearDA", "data", hex.EncodeToString(data), "size", len(data))
+	log.Debug("submitBlobToNearDA", "data", hex.EncodeToString(data), "size", len(data))
 	// frameRef is the blob commitment, which is provided as [transaction_id ++ commitment]
 	frameRef, err := l.NearDA.Submit(data)
 	if err != nil {
-		l.Log.Warn("near: failed to submit blob to near", "err", err)
+		l.Log.Warn("failed to submit blob to near da", "err", err)
 		return nil, err
 	}
 
@@ -453,11 +453,11 @@ func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
 	time.Sleep(5 * time.Second)
 	blobData, err := l.NearDA.Get(frameRef, 0)
 	if err != nil {
-		log.Error("failed to get blob from near, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
+		log.Error("failed to get blob from near da, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
 		return nil, err
 	}
 	if !bytes.Equal(blobData, data) {
-		log.Error("failed to get blob from near, blob data mismatch", "id", hex.EncodeToString(frameRef), "expected", hex.EncodeToString(data), "got", hex.EncodeToString(blobData))
+		log.Error("failed to get blob from near da, blob data mismatch", "id", hex.EncodeToString(frameRef), "expected", hex.EncodeToString(data), "got", hex.EncodeToString(blobData))
 		return nil, fmt.Errorf("submitted blob mismatch with obtained blob, id :%s", hex.EncodeToString(frameRef))
 	}
 
@@ -470,10 +470,10 @@ func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, e
 	l.Log.Info("building calldata transaction candidate", "size", len(data))
 	maybeFrameRef, err := l.submitBlobToNearDA(data)
 	if err != nil {
-		l.Log.Warn("near: unable to submit blob to near", "err", err)
+		l.Log.Warn("unable to submit blob to near da", "err", err)
 		return nil, err
 	} else {
-		l.Log.Info("near: blob successfully submitted", "frameRef", hex.EncodeToString(maybeFrameRef))
+		l.Log.Info("blob successfully submitted to near da", "frameRef", hex.EncodeToString(maybeFrameRef))
 		data = append([]byte{opnear.DerivationVersionNear}, maybeFrameRef...)
 	}
 	return &txmgr.TxCandidate{

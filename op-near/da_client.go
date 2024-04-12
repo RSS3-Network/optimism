@@ -46,14 +46,14 @@ func (c *DAClient) Submit(data []byte) ([]byte, error) {
 	frameRef, err := retry.Do(ctx, defaultSubmitAttempts, bOff, func() ([]byte, error) {
 		result, err := c.Client.ForceSubmit(data)
 		if err != nil {
-			log.Warn("submit blob to near", "err", err)
+			log.Warn("submit blob to near da", "err", err)
 			return nil, err
 		}
 
 		return result, nil
 	})
 	if err != nil {
-		log.Error("failed to submit blob to near", "err", err)
+		log.Error("failed to submit blob to near da", "err", err)
 		return nil, err
 	}
 	return frameRef, nil
@@ -67,14 +67,14 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 	blobData, err := retry.Do(ctx, defaultGetAttempts, bOff, func() ([]byte, error) {
 		result, err := c.Client.Get(frameRefBytes, txIndex)
 		if err != nil {
-			log.Warn("get blob from near", "id", hex.EncodeToString(frameRefBytes), "err", err)
+			log.Warn("get blob from near da", "id", hex.EncodeToString(frameRefBytes), "err", err)
 			return nil, err
 		}
 
 		return result, nil
 	})
 	if err != nil {
-		log.Error("failed to get blob from near", "id", hex.EncodeToString(frameRefBytes), "err", err)
+		log.Error("failed to get blob from near da", "id", hex.EncodeToString(frameRefBytes), "err", err)
 		return nil, err
 	}
 	return blobData, nil
