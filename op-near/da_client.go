@@ -39,6 +39,9 @@ func (c *DAClient) FreeDAClient() {
 }
 
 func (c *DAClient) Submit(data []byte) ([]byte, error) {
+	log.Info("start submitting with retry")
+	startTime := time.Now()
+
 	ctx, cancel := context.WithTimeout(context.Background(), defaultSubmitTimeout)
 	defer cancel()
 
@@ -56,10 +59,15 @@ func (c *DAClient) Submit(data []byte) ([]byte, error) {
 		log.Error("failed to submit blob to near da", "err", err)
 		return nil, err
 	}
+
+	log.Info("end submitting with retry", "elapsed time", time.Since(startTime))
 	return frameRef, nil
 }
 
 func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
+	log.Info("start getting blob with retry")
+	startTime := time.Now()
+
 	ctx, cancel := context.WithTimeout(context.Background(), defaultGetTimeout)
 	defer cancel()
 
@@ -77,5 +85,7 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 		log.Error("failed to get blob from near da", "id", hex.EncodeToString(frameRefBytes), "err", err)
 		return nil, err
 	}
+
+	log.Info("end getting with retry", "elapsed time", time.Since(startTime))
 	return blobData, nil
 }
