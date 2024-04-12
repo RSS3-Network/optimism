@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	defaultSubmitTimeout = 60 * time.Second
-	defaultGetTimeout    = 60 * time.Second
+	defaultSubmitTimeout = 90 * time.Second
+	defaultGetTimeout    = 90 * time.Second
 
 	defaultSubmitAttempts = 5
 	defaultGetAttempts    = 5
