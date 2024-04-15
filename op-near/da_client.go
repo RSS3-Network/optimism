@@ -16,8 +16,8 @@ const (
 	defaultSubmitTimeout = 90 * time.Second
 	defaultGetTimeout    = 90 * time.Second
 
-	defaultSubmitAttempts = 5
-	defaultGetAttempts    = 5
+	defaultSubmitAttempts = 10
+	defaultGetAttempts    = 10
 )
 
 type DAClient struct {
