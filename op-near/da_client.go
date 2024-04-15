@@ -65,7 +65,7 @@ func (c *DAClient) Submit(data []byte) ([]byte, error) {
 }
 
 func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
-	log.Info("start getting blob with retry", "id", hex.EncodeToString(frameRefBytes))
+	log.Info("start getting blob with retry")
 	startTime := time.Now()
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultGetTimeout)
@@ -86,6 +86,6 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 		return nil, err
 	}
 
-	log.Info("end getting blob with retry", "elapsed time", time.Since(startTime))
+	log.Info("end getting blob with retry", "id", hex.EncodeToString(frameRefBytes), "elapsed time", time.Since(startTime))
 	return blobData, nil
 }

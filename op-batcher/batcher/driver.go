@@ -450,7 +450,7 @@ func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
 
 	// finality is achieved which is 3 blocks (around 2-3 seconds) its not possible for a reorg to happen
 	// check the submitted blob after finality
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	blobData, err := l.NearDA.Get(frameRef, 0)
 	if err != nil {
 		log.Error("failed to get blob from near da, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
@@ -473,7 +473,7 @@ func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, e
 		l.Log.Warn("unable to submit blob to near da", "err", err)
 		return nil, err
 	} else {
-		l.Log.Info("blob successfully submitted to near da", "frameRef", hex.EncodeToString(maybeFrameRef))
+		l.Log.Info("blob successfully submitted to near da", "id", hex.EncodeToString(maybeFrameRef))
 		data = append([]byte{opnear.DerivationVersionNear}, maybeFrameRef...)
 	}
 	return &txmgr.TxCandidate{
