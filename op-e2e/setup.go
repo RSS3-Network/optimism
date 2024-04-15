@@ -47,6 +47,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-e2e/e2eutils"
 	"github.com/ethereum-optimism/optimism/op-e2e/e2eutils/fakebeacon"
 	"github.com/ethereum-optimism/optimism/op-e2e/e2eutils/geth"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/chaincfg"
 	"github.com/ethereum-optimism/optimism/op-node/metrics"
 	rollupNode "github.com/ethereum-optimism/optimism/op-node/node"
@@ -132,6 +133,7 @@ func DefaultSystemConfig(t *testing.T) SystemConfig {
 				RuntimeConfigReloadInterval: time.Minute * 10,
 				ConfigPersistence:           &rollupNode.DisabledConfigPersistence{},
 				Sync:                        sync.Config{SyncMode: sync.CLSync},
+				NearDA:                      opnear.CLIConfig{DaAccount: "test.testnet", DaContract: "test.testnet", DaKey: "ed25519:aaa", DaNetwork: "Testnet", DaNamespaceId: 12553},
 			},
 			"verifier": {
 				Driver: driver.Config{
@@ -143,6 +145,7 @@ func DefaultSystemConfig(t *testing.T) SystemConfig {
 				RuntimeConfigReloadInterval: time.Minute * 10,
 				ConfigPersistence:           &rollupNode.DisabledConfigPersistence{},
 				Sync:                        sync.Config{SyncMode: sync.CLSync},
+				NearDA:                      opnear.CLIConfig{DaAccount: "test.testnet", DaContract: "test.testnet", DaKey: "ed25519:aaa", DaNetwork: "Testnet", DaNamespaceId: 12553},
 			},
 		},
 		Loggers: map[string]log.Logger{

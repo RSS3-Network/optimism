@@ -1,6 +1,28 @@
-FROM --platform=$BUILDPLATFORM golang:1.21.3-alpine3.18 as builder
+FROM --platform=$BUILDPLATFORM rss3/da-rpc:latest as rust
 
-RUN apk add --no-cache make gcc musl-dev linux-headers git jq bash curl
+RUN ls /lib
+RUN ls /gopkg/da-rpc
+
+FROM --platform=$BUILDPLATFORM golang:1.21 as builder
+
+RUN apt-get update && apt-get install -y \
+    git \
+    jq \
+    make \
+    bash \
+    openssl \
+    libssl-dev \
+    protobuf-compiler \
+    pkg-config \
+    cbindgen \
+    clang \
+    curl
+
+
+# Copy lib from da-rpc
+COPY --from=rust /gopkg/da-rpc/lib/ /usr/local/lib
+
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # We copy the go.mod/sum first, so the `go mod download` does not have to re-run if dependencies do not change.
 COPY ./go.mod /app/go.mod
@@ -73,7 +95,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build cd op-conductor && make op-c
     GOOS=$TARGETOS GOARCH=$TARGETARCH GITCOMMIT=$GIT_COMMIT GITDATE=$GIT_DATE  VERSION="$OP_CONDUCTOR_VERSION"
 
 
-FROM alpine:3.18
+FROM debian:bookworm-slim
 
 COPY --from=builder /app/cannon/bin/cannon /usr/local/bin/
 COPY --from=builder /app/op-program/bin/op-program /usr/local/bin/

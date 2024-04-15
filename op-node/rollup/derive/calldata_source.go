@@ -2,6 +2,7 @@ package derive
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
@@ -11,8 +12,25 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/log"
 
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 )
+
+var nearDAClient *opnear.DAClient
+
+func SetDAClient(c *opnear.DAClient) error {
+	if nearDAClient != nil {
+		return errors.New("near DA client already configured")
+	}
+	nearDAClient = c
+	return nil
+}
+
+func FreeDAClient() {
+	if nearDAClient != nil {
+		nearDAClient.FreeDAClient()
+	}
+}
 
 // CalldataSource is a fault tolerant approach to fetching data.
 // The constructor will never fail & it will instead re-attempt the fetcher
@@ -32,7 +50,7 @@ type CalldataSource struct {
 
 // NewCalldataSource creates a new calldata source. It suppresses errors in fetching the L1 block if they occur.
 // If there is an error, it will attempt to fetch the result on the next call to `Next`.
-func NewCalldataSource(ctx context.Context, log log.Logger, dsCfg DataSourceConfig, fetcher L1TransactionFetcher, ref eth.L1BlockRef, batcherAddr common.Address) DataIter {
+func NewCalldataSource(ctx context.Context, log log.Logger, dsCfg DataSourceConfig, fetcher L1TransactionFetcher, ref eth.L1BlockRef, batcherAddr common.Address) (DataIter, error) {
 	_, txs, err := fetcher.InfoAndTxsByHash(ctx, ref.Hash)
 	if err != nil {
 		return &CalldataSource{
@@ -42,12 +60,24 @@ func NewCalldataSource(ctx context.Context, log log.Logger, dsCfg DataSourceConf
 			fetcher:     fetcher,
 			log:         log,
 			batcherAddr: batcherAddr,
-		}
+		}, nil
+	}
+
+	data, err := DataFromEVMTransactions(dsCfg, batcherAddr, txs, log.New("origin", ref))
+	if err != nil {
+		return &CalldataSource{
+			open:        false,
+			ref:         ref,
+			dsCfg:       dsCfg,
+			fetcher:     fetcher,
+			log:         log,
+			batcherAddr: batcherAddr,
+		}, err
 	}
 	return &CalldataSource{
 		open: true,
-		data: DataFromEVMTransactions(dsCfg, batcherAddr, txs, log.New("origin", ref)),
-	}
+		data: data,
+	}, nil
 }
 
 // Next returns the next piece of data if it has it. If the constructor failed, this
@@ -57,7 +87,10 @@ func (ds *CalldataSource) Next(ctx context.Context) (eth.Data, error) {
 	if !ds.open {
 		if _, txs, err := ds.fetcher.InfoAndTxsByHash(ctx, ds.ref.Hash); err == nil {
 			ds.open = true
-			ds.data = DataFromEVMTransactions(ds.dsCfg, ds.batcherAddr, txs, ds.log)
+			ds.data, err = DataFromEVMTransactions(ds.dsCfg, ds.batcherAddr, txs, ds.log)
+			if err != nil {
+				return nil, err
+			}
 		} else if errors.Is(err, ethereum.NotFound) {
 			return nil, NewResetError(fmt.Errorf("failed to open calldata source: %w", err))
 		} else {
@@ -76,12 +109,31 @@ func (ds *CalldataSource) Next(ctx context.Context) (eth.Data, error) {
 // DataFromEVMTransactions filters all of the transactions and returns the calldata from transactions
 // that are sent to the batch inbox address from the batch sender address.
 // This will return an empty array if no valid transactions are found.
-func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address, txs types.Transactions, log log.Logger) []eth.Data {
-	out := []eth.Data{}
-	for _, tx := range txs {
+func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address, txs types.Transactions, log log.Logger) ([]eth.Data, error) {
+	var out []eth.Data
+	for idx, tx := range txs {
 		if isValidBatchTx(tx, dsCfg.l1Signer, dsCfg.batchInboxAddress, batcherAddr) {
-			out = append(out, tx.Data())
+			data := tx.Data()
+			switch len(data) {
+			case 0:
+				out = append(out, data)
+			default:
+				switch data[0] {
+				case opnear.DerivationVersionNear:
+					log.Info("request blob from near da", "id", hex.EncodeToString(data), "txIndex", idx)
+					// get blob from near da
+					blob, err := nearDAClient.Get(data[1:], (uint32)(idx))
+					if err != nil {
+						log.Error("failed to get data from near", "id", hex.EncodeToString(data), "index", idx, "err", err)
+						return nil, fmt.Errorf("failed to get data from near da, id: %s, txIndex: %d, %w", hex.EncodeToString(data), idx, err)
+					}
+					out = append(out, blob)
+				default:
+					out = append(out, data)
+					log.Info("using eth da")
+				}
+			}
 		}
 	}
-	return out
+	return out, nil
 }

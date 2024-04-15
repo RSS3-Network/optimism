@@ -6,6 +6,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/rollup/sync"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
 	openum "github.com/ethereum-optimism/optimism/op-service/enum"
@@ -26,7 +27,8 @@ const (
 	OperationsCategory = "4. LOGGING, METRICS, DEBUGGING, AND API"
 	P2PCategory        = "5. PEER-TO-PEER"
 	PlasmaCategory     = "6. PLASMA (EXPERIMENTAL)"
-	MiscCategory       = "7. MISC"
+	NearDACategory     = "7. NEAR DA"
+	MiscCategory       = "8. MISC"
 )
 
 func init() {
@@ -421,6 +423,8 @@ func init() {
 	optionalFlags = append(optionalFlags, DeprecatedFlags...)
 	optionalFlags = append(optionalFlags, opflags.CLIFlags(EnvVarPrefix, RollupCategory)...)
 	optionalFlags = append(optionalFlags, plasma.CLIFlags(EnvVarPrefix, PlasmaCategory)...)
+	optionalFlags = append(optionalFlags, opnear.CLIFlags(EnvVarPrefix, NearDACategory)...)
+
 	Flags = append(requiredFlags, optionalFlags...)
 }
 

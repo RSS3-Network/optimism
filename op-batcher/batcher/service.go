@@ -17,6 +17,7 @@ import (
 	"github.com/ethereum-optimism/optimism/op-batcher/flags"
 	"github.com/ethereum-optimism/optimism/op-batcher/metrics"
 	"github.com/ethereum-optimism/optimism/op-batcher/rpc"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/chaincfg"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	plasma "github.com/ethereum-optimism/optimism/op-plasma"
@@ -54,6 +55,7 @@ type BatcherService struct {
 	EndpointProvider dial.L2EndpointProvider
 	TxManager        txmgr.TxManager
 	PlasmaDA         *plasma.DAClient
+	NearDA           *opnear.DAClient
 
 	BatcherConfig
 
@@ -119,6 +121,9 @@ func (bs *BatcherService) initFromCLIConfig(ctx context.Context, version string,
 	// init before driver
 	if err := bs.initPlasmaDA(cfg); err != nil {
 		return fmt.Errorf("failed to init plasma DA: %w", err)
+	}
+	if err := bs.initNearDA(cfg); err != nil {
+		return fmt.Errorf("failed to init Near DA: %w", err)
 	}
 	bs.initDriver()
 	if err := bs.initRPCServer(cfg); err != nil {
@@ -292,6 +297,7 @@ func (bs *BatcherService) initDriver() {
 		EndpointProvider: bs.EndpointProvider,
 		ChannelConfig:    bs.ChannelConfig,
 		PlasmaDA:         bs.PlasmaDA,
+		NearDA:           bs.NearDA,
 	})
 }
 
@@ -322,6 +328,17 @@ func (bs *BatcherService) initPlasmaDA(cfg *CLIConfig) error {
 	}
 	bs.PlasmaDA = config.NewDAClient()
 	bs.UsePlasma = config.Enabled
+	return nil
+}
+
+func (bs *BatcherService) initNearDA(cfg *CLIConfig) error {
+	bs.Log.Info("initNearDA", "DaAccount", cfg.NearDA.DaAccount, "DaContract", cfg.NearDA.DaContract, "NamespaceId", cfg.NearDA.DaNamespaceId, "Network", cfg.NearDA.DaNetwork)
+	client, err := opnear.NewDAClient(cfg.NearDA.DaAccount, cfg.NearDA.DaContract, cfg.NearDA.DaKey, cfg.NearDA.DaNetwork, cfg.NearDA.DaNamespaceId)
+	if err != nil {
+		bs.Log.Error("Failed to create near da client", "err", err)
+		return err
+	}
+	bs.NearDA = client
 	return nil
 }
 
@@ -403,6 +420,12 @@ func (bs *BatcherService) Stop(ctx context.Context) error {
 	if result == nil {
 		bs.stopped.Store(true)
 		bs.Log.Info("Batch Submitter stopped")
+	}
+
+	// free near da client
+	if bs.NearDA != nil {
+		bs.driver.Log.Info("Free Near DA Client")
+		bs.NearDA.FreeDAClient()
 	}
 	return result
 }
