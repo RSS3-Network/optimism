@@ -440,7 +440,7 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 }
 
 func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
-	log.Debug("submitBlobToNearDA", "data", hex.EncodeToString(data), "size", len(data))
+	l.Log.Debug("submitBlobToNearDA", "data", hex.EncodeToString(data), "size", len(data))
 	// frameRef is the blob commitment, which is provided as [transaction_id ++ commitment]
 	frameRef, err := l.NearDA.Submit(data)
 	if err != nil {
