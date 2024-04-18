@@ -35,6 +35,7 @@ func NewDAClient(accountN, contractN, keyN, networkN string, nameSpace uint32) (
 }
 
 func (c *DAClient) FreeDAClient() {
+	log.Info("free NEAR client")
 	c.Client.FreeClient()
 }
 
