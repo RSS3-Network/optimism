@@ -51,7 +51,7 @@ type DriverSetup struct {
 	EndpointProvider dial.L2EndpointProvider
 	ChannelConfig    ChannelConfig
 	PlasmaDA         *plasma.DAClient
-	NearDA           *opnear.DAClient
+	NearDA           opnear.CLIConfig
 }
 
 // BatchSubmitter encapsulates a service responsible for submitting L2 tx
@@ -439,10 +439,24 @@ func (l *BatchSubmitter) blobTxCandidate(data txData) (*txmgr.TxCandidate, error
 	}, nil
 }
 
-func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
+func (l *BatchSubmitter) submitBlobToNearDA(data []byte) (frameRef []byte, err error) {
+	defer func() {
+		if rErr := recover(); rErr != nil {
+			err = fmt.Errorf("critical error from submitBlobToNearDA: %v", rErr)
+		}
+	}()
+
+	// create a Near DA Client before submitting blob
+	daClient, err := opnear.NewDAClient(l.NearDA.DaAccount, l.NearDA.DaContract, l.NearDA.DaKey, l.NearDA.DaNetwork, l.NearDA.DaNamespaceId)
+	if err != nil {
+		l.Log.Error("new near da client", "err", err)
+		return nil, err
+	}
+	defer daClient.FreeDAClient()
+
 	l.Log.Debug("submitBlobToNearDA", "data", hex.EncodeToString(data), "size", len(data))
 	// frameRef is the blob commitment, which is provided as [transaction_id ++ commitment]
-	frameRef, err := l.NearDA.Submit(data)
+	frameRef, err = daClient.Submit(data)
 	if err != nil {
 		l.Log.Warn("failed to submit blob to near da", "err", err)
 		return nil, err
@@ -451,7 +465,7 @@ func (l *BatchSubmitter) submitBlobToNearDA(data []byte) ([]byte, error) {
 	// finality is achieved which is 3 blocks (around 2-3 seconds) its not possible for a reorg to happen
 	// check the submitted blob after finality
 	time.Sleep(10 * time.Second)
-	blobData, err := l.NearDA.Get(frameRef, 0)
+	blobData, err := daClient.Get(frameRef, 0)
 	if err != nil {
 		log.Error("failed to get blob from near da, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
 		return nil, err

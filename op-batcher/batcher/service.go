@@ -55,7 +55,7 @@ type BatcherService struct {
 	EndpointProvider dial.L2EndpointProvider
 	TxManager        txmgr.TxManager
 	PlasmaDA         *plasma.DAClient
-	NearDA           *opnear.DAClient
+	NearDA           opnear.CLIConfig
 
 	BatcherConfig
 
@@ -332,13 +332,7 @@ func (bs *BatcherService) initPlasmaDA(cfg *CLIConfig) error {
 }
 
 func (bs *BatcherService) initNearDA(cfg *CLIConfig) error {
-	bs.Log.Info("initNearDA", "DaAccount", cfg.NearDA.DaAccount, "DaContract", cfg.NearDA.DaContract, "NamespaceId", cfg.NearDA.DaNamespaceId, "Network", cfg.NearDA.DaNetwork)
-	client, err := opnear.NewDAClient(cfg.NearDA.DaAccount, cfg.NearDA.DaContract, cfg.NearDA.DaKey, cfg.NearDA.DaNetwork, cfg.NearDA.DaNamespaceId)
-	if err != nil {
-		bs.Log.Error("Failed to create near da client", "err", err)
-		return err
-	}
-	bs.NearDA = client
+	bs.NearDA = cfg.NearDA
 	return nil
 }
 
@@ -422,11 +416,6 @@ func (bs *BatcherService) Stop(ctx context.Context) error {
 		bs.Log.Info("Batch Submitter stopped")
 	}
 
-	// free near da client
-	if bs.NearDA != nil {
-		bs.driver.Log.Info("Free Near DA Client")
-		bs.NearDA.FreeDAClient()
-	}
 	return result
 }
 
