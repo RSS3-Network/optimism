@@ -206,7 +206,7 @@ importers:
         version: 4.19.2
       express-prom-bundle:
         specifier: ^7.0.0
-        version: 7.0.0(prom-client@14.2.0)
+        version: 7.0.0(prom-client@15.1.2)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -223,8 +223,8 @@ importers:
         specifier: ^0.14.0
         version: 0.14.0
       prom-client:
-        specifier: ^14.2.0
-        version: 14.2.0
+        specifier: ^15.1.1
+        version: 15.1.2
     devDependencies:
       '@ethersproject/abstract-provider':
         specifier: ^5.7.0
@@ -542,8 +542,8 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3
       web3-eth-accounts:
-        specifier: ^4.0.3
-        version: 4.0.3
+        specifier: ^4.1.2
+        version: 4.1.2
     devDependencies:
       '@eth-optimism/contracts-ts':
         specifier: workspace:^
@@ -4293,19 +4293,11 @@ packages:
       - debug
     dev: true
 
-<<<<<<< HEAD
-  /@nrwl/tao@18.1.2:
-    resolution: {integrity: sha512-IA+osZ5TlKMwJmcP7TECW7TO0JdNNQud9Dgkh1ZfJ4GWnT7WEkE9b2Yf1IFeeB81kCTXXq8jfISa8ZY21MjRaQ==}
-    hasBin: true
-    dependencies:
-      nx: 18.1.2
-=======
   /@nrwl/tao@18.2.2:
     resolution: {integrity: sha512-tXjAbbw8Ir3cY/PQVHiC7q10jsU43r5kkEVwa2vzd1rfPtPFvj9WtgwISd+GstuppYtsbNi+UgTNmHX8dRKPYQ==}
     hasBin: true
     dependencies:
       nx: 18.2.2
->>>>>>> temp_branch
       tslib: 2.6.2
     transitivePeerDependencies:
       - '@swc-node/register'
@@ -4313,13 +4305,8 @@ packages:
       - debug
     dev: true
 
-<<<<<<< HEAD
-  /@nx/nx-darwin-arm64@18.1.2:
-    resolution: {integrity: sha512-KduC9WBmeTLP8HyTg4NOgQGLk9LEd5qd9dGuYKPU0jA4b+eJIa0rRHEjFdc5WulQrcUAvTIKfmScRCgzR96ogg==}
-=======
   /@nx/nx-darwin-arm64@18.2.2:
     resolution: {integrity: sha512-mZ5X2rmtzmEGnt5ddpKlyQDGRd1wh0HSJtWvjruj6fYLNNpoosnXefI0PQLZUw13hf8OpJNo8J6xKfjIViSa8g==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -4327,13 +4314,8 @@ packages:
     dev: true
     optional: true
 
-<<<<<<< HEAD
-  /@nx/nx-darwin-x64@18.1.2:
-    resolution: {integrity: sha512-mBf3X8m4P4QHoW8g/L/YoK8zkndDyIw4bojLg8Q3xc47s5JZFCqSSMeOXZ9NicM2DpPiDWSQALtQX7A8lIsoAA==}
-=======
   /@nx/nx-darwin-x64@18.2.2:
     resolution: {integrity: sha512-FeYvbr0OOIdn9xvuNZlLHQKwdAPN9KcWnmIysJTQZeanvUf6tifkhBUU1cXDduAkdut5iibnnA91JhcEj4x9yg==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -4341,13 +4323,8 @@ packages:
     dev: true
     optional: true
 
-<<<<<<< HEAD
-  /@nx/nx-freebsd-x64@18.1.2:
-    resolution: {integrity: sha512-ZqzT2BTsOHhWip1PvNm7AZ4Pzn4I+IZNRvtRgpETYvIH+nqoCmi5rrEi1avnhnr6P5hyzh2mISRSyk186SbZew==}
-=======
   /@nx/nx-freebsd-x64@18.2.2:
     resolution: {integrity: sha512-Owt/5jT8IG5I6eRbs8en+bHvi2St+k1Z1S1CLArlnfTzkTgVGz/R39HD4OouEVnr2dQPkfc7ms6+XkhlYx5NLg==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [freebsd]
@@ -4355,13 +4332,8 @@ packages:
     dev: true
     optional: true
 
-<<<<<<< HEAD
-  /@nx/nx-linux-arm-gnueabihf@18.1.2:
-    resolution: {integrity: sha512-V9Dp9uuuce+/f50dXxaYz1C9ULo5+5VS35yc6gN7b6SchCWjNK+xg1YcHBTRNc2ChBtayO2z+mBQ1s6wMDNs/Q==}
-=======
   /@nx/nx-linux-arm-gnueabihf@18.2.2:
     resolution: {integrity: sha512-6D6ZC4EdBjAE0QgLYXuk7AC5r/LM+XUUOa5tFAV6fsAKn+GjVFsmP8dl/HEHfg+vx619+o+IrVrOA+h6ztmNJA==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [arm]
     os: [linux]
@@ -4369,13 +4341,8 @@ packages:
     dev: true
     optional: true
 
-<<<<<<< HEAD
-  /@nx/nx-linux-arm64-gnu@18.1.2:
-    resolution: {integrity: sha512-aM860T4Hy2JCLcU56mtARIp1MdT1Ms7cGUQzE+a5irM8ZdaHsPdRnYqIgEKd3hoF6PQ6/piHFXWa4xm7pe/2KA==}
-=======
   /@nx/nx-linux-arm64-gnu@18.2.2:
     resolution: {integrity: sha512-RHZ9nPZ4ivv9p+djO9WqoilMhjlR8/rj7P4sog5OpeRE5EWc65Rb7SFwjek1IovS2gbbK+3P2y8Q4G7lyvbe5w==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -4383,13 +4350,8 @@ packages:
     dev: true
     optional: true
 
-<<<<<<< HEAD
-  /@nx/nx-linux-arm64-musl@18.1.2:
-    resolution: {integrity: sha512-BgBoOeIgCQ56xii7fKNWiE7UIP/0G+OQhdWJQmh+q6NN0kk78WsdCSq+f7f7LQIji5HiNqUUVx9fd1s6xRSb/w==}
-=======
   /@nx/nx-linux-arm64-musl@18.2.2:
     resolution: {integrity: sha512-WginA4UHdrRhK40pDV8sv3Izho5aOzWf3iC8WVXi8r850mVbOE88JaWnO7TJ7zNWgiM32/OZeVyaYQ/Wv8pYjw==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -4397,13 +4359,8 @@ packages:
     dev: true
     optional: true
 
-<<<<<<< HEAD
-  /@nx/nx-linux-x64-gnu@18.1.2:
-    resolution: {integrity: sha512-WDOjtk+K2Tc9SNjGe+zmyy05VUerZpEQ5kvB6Ude0v/W2bMnmpVrLZwwTF5Yrq0ebbUlXM/9wtc1Zjjc75MU2g==}
-=======
   /@nx/nx-linux-x64-gnu@18.2.2:
     resolution: {integrity: sha512-Fekq6TWZAN7T1Yi+IVAPQ3wUmsmtvu3WyvXiVBjVKh8C1H/PKPcNi+4kaG9Ys1BhBZhqiEfTgc44RF9xLM9IAQ==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -4411,13 +4368,8 @@ packages:
     dev: true
     optional: true
 
-<<<<<<< HEAD
-  /@nx/nx-linux-x64-musl@18.1.2:
-    resolution: {integrity: sha512-I7jTmbfR5CHC3KVlU3SkqYKJnn25MbH8pdRZJY4gaHnqL9JzbHw9rxddhKBj41lez7jQZTGLnPFUV7JPLXTzKg==}
-=======
   /@nx/nx-linux-x64-musl@18.2.2:
     resolution: {integrity: sha512-3Uk7x2/giczRCva7RsWd/KjgeYH9kOQFiqzE4heMrjBEuJQfACDlasjIrTRv9bwLrZ6otkBVeX/zmE9kBo3tOA==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -4425,13 +4377,8 @@ packages:
     dev: true
     optional: true
 
-<<<<<<< HEAD
-  /@nx/nx-win32-arm64-msvc@18.1.2:
-    resolution: {integrity: sha512-KQobKvkrdkmaJmx0Pyt2lzHkNugO0gE7q9F4h22KIECyGW1tC3nSPAB4F3mmdE2KuWKgYG5WLafvzusysLsR7g==}
-=======
   /@nx/nx-win32-arm64-msvc@18.2.2:
     resolution: {integrity: sha512-y0d79+FYtSEI96KGAjIUrD7/xybAp7aSjqqesM0WP2+DIJBYkdjK6maTKxkB5gb3FBJyhfNYr4A1NqDnvbPtvA==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -4439,19 +4386,19 @@ packages:
     dev: true
     optional: true
 
-<<<<<<< HEAD
-  /@nx/nx-win32-x64-msvc@18.1.2:
-    resolution: {integrity: sha512-uvJvROSwHBwkTOoOPkb56jEsKJjr4LnZ3fCHmEbrtGhAUC0gAUL+dWJUDHoatrGzN+bM2VqrvgNCGkityK96hw==}
-=======
   /@nx/nx-win32-x64-msvc@18.2.2:
     resolution: {integrity: sha512-17b7hh8VMGWHq0yQDxevLUM0K4ZoNUah3oYVbYe46tp1w7D4u44vDkOOE2SpV2E/alllcDES1etcVsYQSMTGig==}
->>>>>>> temp_branch
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
+
+  /@opentelemetry/api@1.8.0:
+    resolution: {integrity: sha512-I/s6F7yKUDdtMsoBWXJe8Qz40Tui5vsuKCWJEWVL+5q9sSWRzzx6v2KeNsOBEwd94j0eWkpWCH4yB6rZg9Mf0w==}
+    engines: {node: '>=8.0.0'}
+    dev: false
 
   /@parcel/watcher-android-arm64@2.3.0:
     resolution: {integrity: sha512-f4o9eA3dgk0XRT3XhB0UWpWpLnKgrh1IwNJKJ7UJek7eTYccQ8LR7XUWFKqw6aEq5KUNlCcGvSzKqSX/vtWVVA==}
@@ -9874,7 +9821,6 @@ packages:
 
   /eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
-    dev: true
 
   /events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
@@ -9924,7 +9870,7 @@ packages:
       homedir-polyfill: 1.0.3
     dev: true
 
-  /express-prom-bundle@7.0.0(prom-client@14.2.0):
+  /express-prom-bundle@7.0.0(prom-client@15.1.2):
     resolution: {integrity: sha512-VwVaCyGBGHkHdecpTqRdW1Jm2fXK8weCUKjGjNWorc9g4M+cZ3xoj+N9uQzfRWfIPXJG5QOaiAziOIalQzMwgA==}
     engines: {node: '>=18'}
     peerDependencies:
@@ -9933,7 +9879,7 @@ packages:
       '@types/express': 4.17.21
       express: 4.19.2
       on-finished: 2.4.1
-      prom-client: 14.2.0
+      prom-client: 15.1.2
       url-value-parser: 2.0.3
     transitivePeerDependencies:
       - supports-color
@@ -13599,13 +13545,8 @@ packages:
       - debug
     dev: true
 
-<<<<<<< HEAD
-  /nx@18.1.2:
-    resolution: {integrity: sha512-E414xp6lVtiTGdDUMVo72G96G66t7oJMqmcHRMEZ/mVq5ZpNWUhfMuRq5Fh8orXPtrM3xk5SHokmmFvo5PKC+g==}
-=======
   /nx@18.2.2:
     resolution: {integrity: sha512-ZEnN+2XV6QWI3q6N/I9byjSK2ErxAJJjKIWFQ45RW7+KCFbiwF0zeGnn5zruSHY7nbTrUf5C7MDA80eXam5DTg==}
->>>>>>> temp_branch
     hasBin: true
     requiresBuild: true
     peerDependencies:
@@ -13617,11 +13558,7 @@ packages:
       '@swc/core':
         optional: true
     dependencies:
-<<<<<<< HEAD
-      '@nrwl/tao': 18.1.2
-=======
       '@nrwl/tao': 18.2.2
->>>>>>> temp_branch
       '@yarnpkg/lockfile': 1.1.0
       '@yarnpkg/parsers': 3.0.0-rc.46
       '@zkochan/js-yaml': 0.0.6
@@ -13656,18 +13593,6 @@ packages:
       yargs: 17.7.2
       yargs-parser: 21.1.1
     optionalDependencies:
-<<<<<<< HEAD
-      '@nx/nx-darwin-arm64': 18.1.2
-      '@nx/nx-darwin-x64': 18.1.2
-      '@nx/nx-freebsd-x64': 18.1.2
-      '@nx/nx-linux-arm-gnueabihf': 18.1.2
-      '@nx/nx-linux-arm64-gnu': 18.1.2
-      '@nx/nx-linux-arm64-musl': 18.1.2
-      '@nx/nx-linux-x64-gnu': 18.1.2
-      '@nx/nx-linux-x64-musl': 18.1.2
-      '@nx/nx-win32-arm64-msvc': 18.1.2
-      '@nx/nx-win32-x64-msvc': 18.1.2
-=======
       '@nx/nx-darwin-arm64': 18.2.2
       '@nx/nx-darwin-x64': 18.2.2
       '@nx/nx-freebsd-x64': 18.2.2
@@ -13678,7 +13603,6 @@ packages:
       '@nx/nx-linux-x64-musl': 18.2.2
       '@nx/nx-win32-arm64-msvc': 18.2.2
       '@nx/nx-win32-x64-msvc': 18.2.2
->>>>>>> temp_branch
     transitivePeerDependencies:
       - debug
     dev: true
@@ -14526,10 +14450,11 @@ packages:
     resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
     engines: {node: '>= 0.6.0'}
 
-  /prom-client@14.2.0:
-    resolution: {integrity: sha512-sF308EhTenb/pDRPakm+WgiN+VdM/T1RaHj1x+MvAuT8UiQP8JmOEbxVqtkbfR4LrvOg5n7ic01kRBDGXjYikA==}
-    engines: {node: '>=10'}
+  /prom-client@15.1.2:
+    resolution: {integrity: sha512-on3h1iXb04QFLLThrmVYg1SChBQ9N1c+nKAjebBjokBqipddH3uxmOUcEkTnzmJ8Jh/5TSUnUqS40i2QB2dJHQ==}
+    engines: {node: ^16 || ^18 || >=20}
     dependencies:
+      '@opentelemetry/api': 1.8.0
       tdigest: 0.1.1
     dev: false
 
@@ -17220,44 +17145,6 @@ packages:
       - terser
     dev: true
 
-  /vite@5.1.5(@types/node@20.11.17):
-    resolution: {integrity: sha512-BdN1xh0Of/oQafhU+FvopafUp6WaYenLU/NFoL5WyJL++GxkNfieKzBhM24H3HVsPQrlAqB7iJYTHabzaRed5Q==}
-    engines: {node: ^18.0.0 || >=20.0.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^18.0.0 || >=20.0.0
-      less: '*'
-      lightningcss: ^1.21.0
-      sass: '*'
-      stylus: '*'
-      sugarss: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      '@types/node': 20.11.17
-      esbuild: 0.19.10
-      postcss: 8.4.35
-      rollup: 4.5.1
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
-<<<<<<< HEAD
-=======
   /vite@5.1.7(@types/node@20.11.17):
     resolution: {integrity: sha512-sgnEEFTZYMui/sTlH1/XEnVNHMujOahPLGMxn1+5sIT45Xjng1Ec1K78jRP15dSmVgg5WBin9yO81j3o9OxofA==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -17294,7 +17181,6 @@ packages:
       fsevents: 2.3.3
     dev: true
 
->>>>>>> temp_branch
   /vitest@1.2.2(@types/node@20.11.17)(jsdom@24.0.0):
     resolution: {integrity: sha512-d5Ouvrnms3GD9USIK36KG8OZ5bEvKEkITFtnGv56HFaSlbItJuYr7hv2Lkn903+AvRAgSixiamozUVfORUekjw==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -17340,7 +17226,7 @@ packages:
       strip-literal: 1.3.0
       tinybench: 2.5.1
       tinypool: 0.8.2
-      vite: 5.0.12(@types/node@20.11.17)
+      vite: 5.1.7(@types/node@20.11.17)
       vite-node: 1.2.2(@types/node@20.11.17)
       why-is-node-running: 2.2.2
     transitivePeerDependencies:
@@ -17450,13 +17336,13 @@ packages:
     resolution: {integrity: sha512-fVGmPInWNlT/lGj1aKDmmSDIqYO5iwVlZ3NdD4q/u/i9j8/o7a8S0jz8Js8oS/fqoBqF25WSJ8il2KKdSDGzXw==}
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
-      web3-errors: 1.1.0
+      web3-errors: 1.1.4
       web3-eth-iban: 4.0.4
       web3-providers-http: 4.0.4
       web3-providers-ws: 4.0.4
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
-      web3-validator: 2.0.0
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
+      web3-validator: 2.0.5
     optionalDependencies:
       web3-providers-ipc: 4.0.5
     transitivePeerDependencies:
@@ -17469,15 +17355,14 @@ packages:
     resolution: {integrity: sha512-XKkq4uLp/I75qid+/eXjc/veZywmcmsYy1yNZHePIS2riBcqTGKrdKiplyNCoVwY9OGWlKv9NpxZBd32k8a9mg==}
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
-      web3-types: 1.1.0
+      web3-types: 1.6.0
     dev: false
 
-  /web3-errors@1.1.1:
-    resolution: {integrity: sha512-9IEhcympCJEK3Nmkz2oE/daKnOh+3CxHceuVWWRkHWKUfuIiJQgXAv9wRkPGk63JJTP/R9jtGmP+IbkScKoTBA==}
+  /web3-errors@1.1.4:
+    resolution: {integrity: sha512-WahtszSqILez+83AxGecVroyZsMuuRT+KmQp4Si5P4Rnqbczno1k748PCrZTS1J4UCPmXMG2/Vt+0Bz2zwXkwQ==}
     engines: {node: '>=14', npm: '>=6.12.0'}
-    requiresBuild: true
     dependencies:
-      web3-types: 1.1.1
+      web3-types: 1.6.0
     dev: false
 
   /web3-eth-abi@4.1.0:
@@ -17486,35 +17371,22 @@ packages:
     dependencies:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/bignumber': 5.7.0
-      web3-errors: 1.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
     dev: false
 
-  /web3-eth-accounts@4.0.3:
-    resolution: {integrity: sha512-qS4r25weJYlKzHPIneL3g33LG+I6QkRCs25ZtooK6elurlZY4HyRE04BIWv12xZswtsvdmMt4HysMUNKgLrgPg==}
+  /web3-eth-accounts@4.1.2:
+    resolution: {integrity: sha512-y0JynDeTDnclyuE9mShXLeEj+BCrPHxPHOyPCgTchUBQsALF9+0OhP7WiS3IqUuu0Hle5bjG2f5ddeiPtNEuLg==}
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
       '@ethereumjs/rlp': 4.0.1
       crc-32: 1.2.2
       ethereum-cryptography: 2.1.2
-      web3-errors: 1.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.4
-      web3-validator: 1.0.2
-    dev: false
-
-  /web3-eth-accounts@4.0.4:
-    resolution: {integrity: sha512-Ed7WNLEv92CkdxB8iDkr4SOZ0L0jHBYFBcnPX8T0+QcqECU0REVOs5IBddm5dlSaAPRezaGT5mHDYNZhwhr02w==}
-    engines: {node: '>=14', npm: '>=6.12.0'}
-    dependencies:
-      '@ethereumjs/rlp': 4.0.1
-      crc-32: 1.2.2
-      ethereum-cryptography: 2.1.2
-      web3-errors: 1.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
-      web3-validator: 2.0.0
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
+      web3-validator: 2.0.5
     dev: false
 
   /web3-eth-contract@4.0.4:
@@ -17522,12 +17394,12 @@ packages:
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
       web3-core: 4.1.0
-      web3-errors: 1.1.0
+      web3-errors: 1.1.4
       web3-eth: 4.1.0
       web3-eth-abi: 4.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
-      web3-validator: 2.0.0
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
+      web3-validator: 2.0.5
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -17540,13 +17412,13 @@ packages:
     dependencies:
       '@adraffy/ens-normalize': 1.10.0
       web3-core: 4.1.0
-      web3-errors: 1.1.0
+      web3-errors: 1.1.4
       web3-eth: 4.1.0
       web3-eth-contract: 4.0.4
       web3-net: 4.0.4
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
-      web3-validator: 2.0.0
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
+      web3-validator: 2.0.5
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -17557,10 +17429,10 @@ packages:
     resolution: {integrity: sha512-ukX2K45Hdn+sVdCqNzSJ1ztzouy/4V88vn4M6gCnpw7cc39uDprSmoMi8LEVEJbJM9BqeFN3FXaDQvZJIsv26A==}
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
-      web3-errors: 1.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
-      web3-validator: 2.0.0
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
+      web3-validator: 2.0.5
     dev: false
 
   /web3-eth-personal@4.0.4:
@@ -17570,9 +17442,9 @@ packages:
       web3-core: 4.1.0
       web3-eth: 4.1.0
       web3-rpc-methods: 1.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
-      web3-validator: 2.0.0
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
+      web3-validator: 2.0.5
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -17587,7 +17459,7 @@ packages:
       web3-core: 4.1.0
       web3-errors: 1.1.0
       web3-eth-abi: 4.1.0
-      web3-eth-accounts: 4.0.3
+      web3-eth-accounts: 4.1.2
       web3-net: 4.0.4
       web3-providers-ws: 4.0.4
       web3-rpc-methods: 1.1.0
@@ -17606,15 +17478,15 @@ packages:
     dependencies:
       setimmediate: 1.0.5
       web3-core: 4.1.0
-      web3-errors: 1.1.0
+      web3-errors: 1.1.4
       web3-eth-abi: 4.1.0
-      web3-eth-accounts: 4.0.4
+      web3-eth-accounts: 4.1.2
       web3-net: 4.0.4
       web3-providers-ws: 4.0.4
       web3-rpc-methods: 1.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
-      web3-validator: 2.0.0
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
+      web3-validator: 2.0.5
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -17627,8 +17499,8 @@ packages:
     dependencies:
       web3-core: 4.1.0
       web3-rpc-methods: 1.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -17640,9 +17512,9 @@ packages:
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
       cross-fetch: 3.1.8
-      web3-errors: 1.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -17652,9 +17524,9 @@ packages:
     engines: {node: '>=14', npm: '>=6.12.0'}
     requiresBuild: true
     dependencies:
-      web3-errors: 1.1.1
-      web3-types: 1.1.1
-      web3-utils: 4.0.5
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
     dev: false
     optional: true
 
@@ -17664,9 +17536,9 @@ packages:
     dependencies:
       '@types/ws': 8.5.3
       isomorphic-ws: 5.0.0(ws@8.16.0)
-      web3-errors: 1.1.0
-      web3-types: 1.1.0
-      web3-utils: 4.0.5
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
+      web3-utils: 4.2.3
       ws: 8.16.0
     transitivePeerDependencies:
       - bufferutil
@@ -17678,8 +17550,8 @@ packages:
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
       web3-core: 4.1.0
-      web3-types: 1.1.0
-      web3-validator: 2.0.0
+      web3-types: 1.6.0
+      web3-validator: 2.0.5
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -17691,10 +17563,9 @@ packages:
     engines: {node: '>=14', npm: '>=6.12.0'}
     dev: false
 
-  /web3-types@1.1.1:
-    resolution: {integrity: sha512-bXmIPJi/NPed43JBcya71gT+euZSMvfQx6NYv8G97PSNxR1HWwANYBKbamTZvzBbq10QCwQLh0hZw3tyOXuPFA==}
+  /web3-types@1.6.0:
+    resolution: {integrity: sha512-qgOtADqlD5hw+KPKBUGaXAcdNLL0oh6qTeVgXwewCfbL/lG9R+/GrgMQB1gbTJ3cit8hMwtH8KX2Em6OwO0HRw==}
     engines: {node: '>=14', npm: '>=6.12.0'}
-    requiresBuild: true
     dev: false
 
   /web3-utils@1.10.1:
@@ -17715,19 +17586,20 @@ packages:
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
       ethereum-cryptography: 2.1.2
-      web3-errors: 1.1.0
-      web3-types: 1.1.0
-      web3-validator: 2.0.0
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
+      web3-validator: 2.0.5
     dev: false
 
-  /web3-utils@4.0.5:
-    resolution: {integrity: sha512-43xIM7rr3htYNzliVQLpWLQmEf4XX8IXgjvqLcEuC/xje14O5UQM4kamRCtz8v3JZN3X6QTfsV6Zgby67mVmCg==}
+  /web3-utils@4.2.3:
+    resolution: {integrity: sha512-m5plKTC2YtQntHITQRyIePw52UVP1IrShhmA2FACtn4zmc5ADmrXOlQWiPzxFP/18eRJsAaUAw2+CQn1u4WPxQ==}
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
       ethereum-cryptography: 2.1.2
-      web3-errors: 1.1.1
-      web3-types: 1.1.1
-      web3-validator: 2.0.1
+      eventemitter3: 5.0.1
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
+      web3-validator: 2.0.5
     dev: false
 
   /web3-validator@1.0.2:
@@ -17737,30 +17609,18 @@ packages:
       ethereum-cryptography: 2.1.2
       is-my-json-valid: 2.20.6
       util: 0.12.5
-      web3-errors: 1.1.0
-      web3-types: 1.1.0
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
     dev: false
 
-  /web3-validator@2.0.0:
-    resolution: {integrity: sha512-JGOuJFX4mjBMaR7e0VI1xrBXDHz1Z6+824eJiJZFaGOt1kjMsrbYX/z4cHJ8rgv+DdZqIFjOlxsAVJV5T8ODXQ==}
+  /web3-validator@2.0.5:
+    resolution: {integrity: sha512-2gLOSW8XqEN5pw5jVUm20EB7A8SbQiekpAtiI0JBmCIV0a2rp97v8FgWY5E3UEqnw5WFfEqvcDVW92EyynDTyQ==}
     engines: {node: '>=14', npm: '>=6.12.0'}
     dependencies:
       ethereum-cryptography: 2.1.2
       util: 0.12.5
-      web3-errors: 1.1.0
-      web3-types: 1.1.0
-      zod: 3.22.4
-    dev: false
-
-  /web3-validator@2.0.1:
-    resolution: {integrity: sha512-RIdZCNhceBEOQpmzcEk6K3qqLHRfDIMkg2PJe7yllpuEc0fa0cmUZgGUl1FEnioc5Rx9GBEE8eTllaneIAiiQQ==}
-    engines: {node: '>=14', npm: '>=6.12.0'}
-    requiresBuild: true
-    dependencies:
-      ethereum-cryptography: 2.1.2
-      util: 0.12.5
-      web3-errors: 1.1.1
-      web3-types: 1.1.1
+      web3-errors: 1.1.4
+      web3-types: 1.6.0
       zod: 3.22.4
     dev: false
 
@@ -17772,7 +17632,7 @@ packages:
       web3-errors: 1.1.0
       web3-eth: 4.1.0
       web3-eth-abi: 4.1.0
-      web3-eth-accounts: 4.0.3
+      web3-eth-accounts: 4.1.2
       web3-eth-contract: 4.0.4
       web3-eth-ens: 4.0.4
       web3-eth-iban: 4.0.4
