@@ -68,7 +68,7 @@ func checkSingularBatch(cfg *rollup.Config, log log.Logger, l1Blocks []eth.L1Blo
 
 	nextTimestamp := l2SafeHead.Time + cfg.BlockTime
 	if batch.Timestamp > nextTimestamp {
-		log.Trace("received out-of-order batch for future processing after next batch", "next_timestamp", nextTimestamp)
+		log.Info("received out-of-order batch for future processing after next batch", "next_timestamp", nextTimestamp)
 		return BatchFuture
 	}
 	if batch.Timestamp < nextTimestamp {
@@ -194,7 +194,7 @@ func checkSpanBatch(ctx context.Context, cfg *rollup.Config, log log.Logger, l1B
 	nextTimestamp := l2SafeHead.Time + cfg.BlockTime
 
 	if batch.GetTimestamp() > nextTimestamp {
-		log.Trace("received out-of-order batch for future processing after next batch", "next_timestamp", nextTimestamp)
+		log.Info("received out-of-order batch for future processing after next batch", "next_timestamp", nextTimestamp)
 		return BatchFuture
 	}
 	if batch.GetBlockTimestamp(batch.GetBlockCount()-1) < nextTimestamp {
