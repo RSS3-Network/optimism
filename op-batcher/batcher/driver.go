@@ -267,7 +267,7 @@ func (l *BatchSubmitter) loop() {
 		for {
 			select {
 			case r := <-receiptsCh:
-				l.Log.Info("handling receipt", "id", r.ID.ID())
+				l.Log.Info("handling receipt", "id", r.ID)
 				l.handleReceipt(r)
 			case <-receiptLoopDone:
 				l.Log.Info("receipt processing loop done")
