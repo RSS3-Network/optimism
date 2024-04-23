@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/ethereum-optimism/optimism/op-challenger/game/fault/contracts"
 	monTypes "github.com/ethereum-optimism/optimism/op-dispute-mon/mon/types"
 	"github.com/ethereum-optimism/optimism/op-service/sources/batching/rpcblock"
 	"github.com/stretchr/testify/require"
@@ -176,26 +177,61 @@ func (m *mockGameCallerCreator) CreateGameCaller(_ gameTypes.GameMetadata) (Game
 }
 
 type mockGameCaller struct {
-	metadataCalls    int
-	metadataErr      error
-	claimsCalls      int
-	claimsErr        error
-	rootClaim        common.Hash
-	claims           []faultTypes.Claim
-	requestedCredits []common.Address
-	creditsErr       error
-	credits          []*big.Int
-	balanceErr       error
-	balance          *big.Int
-	balanceAddr      common.Address
+	metadataCalls     int
+	metadataErr       error
+	claimsCalls       int
+	claimsErr         error
+	rootClaim         common.Hash
+	claims            []faultTypes.Claim
+	requestedCredits  []common.Address
+	creditsErr        error
+	credits           map[common.Address]*big.Int
+	extraCredit       []*big.Int
+	balanceErr        error
+	balance           *big.Int
+	balanceAddr       common.Address
+	requiredBondCalls int
+	requiredBondErr   error
+	requiredBonds     []*big.Int
+	withdrawalsCalls  int
+	withdrawalsErr    error
+	withdrawals       []*contracts.WithdrawalRequest
 }
 
-func (m *mockGameCaller) GetGameMetadata(_ context.Context, _ rpcblock.Block) (uint64, common.Hash, types.GameStatus, uint64, error) {
+func (m *mockGameCaller) GetRequiredBonds(ctx context.Context, block rpcblock.Block, positions ...*big.Int) ([]*big.Int, error) {
+	m.requiredBondCalls++
+	if m.requiredBondErr != nil {
+		return nil, m.requiredBondErr
+	}
+	return m.requiredBonds, nil
+}
+
+func (m *mockGameCaller) GetWithdrawals(_ context.Context, _ rpcblock.Block, _ common.Address, _ ...common.Address) ([]*contracts.WithdrawalRequest, error) {
+	m.withdrawalsCalls++
+	if m.withdrawalsErr != nil {
+		return nil, m.withdrawalsErr
+	}
+	if m.withdrawals != nil {
+		return m.withdrawals, nil
+	}
+	return []*contracts.WithdrawalRequest{
+		{
+			Timestamp: big.NewInt(1),
+			Amount:    big.NewInt(2),
+		},
+		{
+			Timestamp: big.NewInt(3),
+			Amount:    big.NewInt(4),
+		},
+	}, nil
+}
+
+func (m *mockGameCaller) GetGameMetadata(_ context.Context, _ rpcblock.Block) (common.Hash, uint64, common.Hash, types.GameStatus, uint64, error) {
 	m.metadataCalls++
 	if m.metadataErr != nil {
-		return 0, common.Hash{}, 0, 0, m.metadataErr
+		return common.Hash{}, 0, common.Hash{}, 0, 0, m.metadataErr
 	}
-	return 0, mockRootClaim, 0, 0, nil
+	return common.Hash{0xaa}, 0, mockRootClaim, 0, 0, nil
 }
 
 func (m *mockGameCaller) GetAllClaims(_ context.Context, _ rpcblock.Block) ([]faultTypes.Claim, error) {
@@ -211,7 +247,16 @@ func (m *mockGameCaller) GetCredits(_ context.Context, _ rpcblock.Block, recipie
 	if m.creditsErr != nil {
 		return nil, m.creditsErr
 	}
-	return m.credits, nil
+	response := make([]*big.Int, 0, len(recipients))
+	for _, recipient := range recipients {
+		credit, ok := m.credits[recipient]
+		if !ok {
+			credit = big.NewInt(0)
+		}
+		response = append(response, credit)
+	}
+	response = append(response, m.extraCredit...)
+	return response, nil
 }
 
 func (m *mockGameCaller) GetBalance(_ context.Context, _ rpcblock.Block) (*big.Int, common.Address, error) {

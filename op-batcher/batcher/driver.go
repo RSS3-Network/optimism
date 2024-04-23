@@ -12,10 +12,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
-
 	"github.com/ethereum-optimism/optimism/op-batcher/metrics"
 	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
@@ -24,6 +20,9 @@ import (
 	"github.com/ethereum-optimism/optimism/op-service/dial"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
 	"github.com/ethereum-optimism/optimism/op-service/txmgr"
+	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 var ErrBatcherNotRunning = errors.New("batcher is not running")
@@ -97,7 +96,7 @@ func (l *BatchSubmitter) StartBatchSubmitting() error {
 
 	l.shutdownCtx, l.cancelShutdownCtx = context.WithCancel(context.Background())
 	l.killCtx, l.cancelKillCtx = context.WithCancel(context.Background())
-	l.state.Clear()
+	l.clearState(l.shutdownCtx)
 	l.lastStoredBlock = eth.BlockID{}
 
 	l.wg.Add(1)
@@ -258,8 +257,8 @@ func (l *BatchSubmitter) calculateL2BlockRangeToStore(ctx context.Context) (eth.
 func (l *BatchSubmitter) loop() {
 	defer l.wg.Done()
 
-	receiptsCh := make(chan txmgr.TxReceipt[txData])
-	queue := txmgr.NewQueue[txData](l.killCtx, l.Txmgr, l.Config.MaxPendingTransactions)
+	receiptsCh := make(chan txmgr.TxReceipt[txID])
+	queue := txmgr.NewQueue[txID](l.killCtx, l.Txmgr, l.Config.MaxPendingTransactions)
 
 	// start the receipt/result processing loop
 	receiptLoopDone := make(chan struct{})
@@ -268,7 +267,7 @@ func (l *BatchSubmitter) loop() {
 		for {
 			select {
 			case r := <-receiptsCh:
-				l.Log.Info("handling receipt", "id", r.ID.ID())
+				l.Log.Info("handling receipt", "id", r.ID)
 				l.handleReceipt(r)
 			case <-receiptLoopDone:
 				l.Log.Info("receipt processing loop done")
@@ -303,7 +302,7 @@ func (l *BatchSubmitter) loop() {
 				// on reorg we want to publish all pending state then wait until each result clears before resetting
 				// the state.
 				publishAndWait()
-				l.state.Clear()
+				l.clearState(l.shutdownCtx)
 				continue
 			}
 			l.publishStateToL1(queue, receiptsCh)
@@ -331,7 +330,7 @@ func (l *BatchSubmitter) loop() {
 
 // publishStateToL1 queues up all pending TxData to be published to the L1, returning when there is
 // no more data to queue for publishing or if there was an error queing the data.
-func (l *BatchSubmitter) publishStateToL1(queue *txmgr.Queue[txData], receiptsCh chan txmgr.TxReceipt[txData]) {
+func (l *BatchSubmitter) publishStateToL1(queue *txmgr.Queue[txID], receiptsCh chan txmgr.TxReceipt[txID]) {
 	for {
 		// if the txmgr is closed, we stop the transaction sending
 		if l.Txmgr.IsClosed() {
@@ -348,8 +347,47 @@ func (l *BatchSubmitter) publishStateToL1(queue *txmgr.Queue[txData], receiptsCh
 	}
 }
 
-// publishTxToL1 queues a single tx to be published to the L1
-func (l *BatchSubmitter) publishTxToL1(ctx context.Context, queue *txmgr.Queue[txData], receiptsCh chan txmgr.TxReceipt[txData]) error {
+// clearState clears the state of the channel manager
+func (l *BatchSubmitter) clearState(ctx context.Context) {
+	l.Log.Info("Clearing state")
+	defer l.Log.Info("State cleared")
+
+	clearStateWithL1Origin := func() bool {
+		l1SafeOrigin, err := l.safeL1Origin(ctx)
+		if err != nil {
+			l.Log.Warn("Failed to query L1 safe origin, will retry", "err", err)
+			return false
+		} else {
+			l.Log.Info("Clearing state with safe L1 origin", "origin", l1SafeOrigin)
+			l.state.Clear(l1SafeOrigin)
+			return true
+		}
+	}
+
+	// Attempt to set the L1 safe origin and clear the state, if fetching fails -- fall through to an infinite retry
+	if clearStateWithL1Origin() {
+		return
+	}
+
+	tick := time.NewTicker(5 * time.Second)
+	defer tick.Stop()
+
+	for {
+		select {
+		case <-tick.C:
+			if clearStateWithL1Origin() {
+				return
+			}
+		case <-ctx.Done():
+			l.Log.Warn("Clearing state cancelled")
+			l.state.Clear(eth.BlockID{})
+			return
+		}
+	}
+}
+
+// publishTxToL1 submits a single state tx to the L1
+func (l *BatchSubmitter) publishTxToL1(ctx context.Context, queue *txmgr.Queue[txID], receiptsCh chan txmgr.TxReceipt[txID]) error {
 	// send all available transactions
 	l1tip, err := l.l1Tip(ctx)
 	if err != nil {
@@ -360,6 +398,7 @@ func (l *BatchSubmitter) publishTxToL1(ctx context.Context, queue *txmgr.Queue[t
 
 	// Collect next transaction data
 	txdata, err := l.state.TxData(l1tip.ID())
+
 	if err == io.EOF {
 		l.Log.Trace("no transaction data available")
 		return err
@@ -374,9 +413,33 @@ func (l *BatchSubmitter) publishTxToL1(ctx context.Context, queue *txmgr.Queue[t
 	return nil
 }
 
+func (l *BatchSubmitter) safeL1Origin(ctx context.Context) (eth.BlockID, error) {
+	ctx, cancel := context.WithTimeout(ctx, l.Config.NetworkTimeout)
+	defer cancel()
+
+	c, err := l.EndpointProvider.RollupClient(ctx)
+	if err != nil {
+		log.Error("Failed to get rollup client", "err", err)
+		return eth.BlockID{}, fmt.Errorf("safe l1 origin: error getting rollup client: %w", err)
+	}
+
+	status, err := c.SyncStatus(ctx)
+	if err != nil {
+		log.Error("Failed to get sync status", "err", err)
+		return eth.BlockID{}, fmt.Errorf("safe l1 origin: error getting sync status: %w", err)
+	}
+
+	// If the safe L2 block origin is 0, we are at the genesis block and should use the L1 origin from the rollup config.
+	if status.SafeL2.L1Origin.Number == 0 {
+		return l.RollupConfig.Genesis.L1, nil
+	}
+
+	return status.SafeL2.L1Origin, nil
+}
+
 // sendTransaction creates & queues for sending a transaction to the batch inbox address with the given `txData`.
 // The method will block if the queue's MaxPendingTransactions is exceeded.
-func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, queue *txmgr.Queue[txData], receiptsCh chan txmgr.TxReceipt[txData]) error {
+func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, queue *txmgr.Queue[txID], receiptsCh chan txmgr.TxReceipt[txID]) error {
 	var err error
 	// Do the gas estimation offline. A value of 0 will cause the [txmgr] to estimate the gas limit.
 
@@ -397,13 +460,15 @@ func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, que
 		data := txdata.CallData()
 		// if plasma DA is enabled we post the txdata to the DA Provider and replace it with the commitment.
 		if l.Config.UsePlasma {
-			data, err = l.PlasmaDA.SetInput(ctx, data)
+			comm, err := l.PlasmaDA.SetInput(ctx, data)
 			if err != nil {
 				l.Log.Error("Failed to post input to Plasma DA", "error", err)
 				// requeue frame if we fail to post to the DA Provider so it can be retried
-				l.recordFailedTx(txdata, err)
+				l.recordFailedTx(txdata.ID(), err)
 				return nil
 			}
+			// signal plasma commitment tx with TxDataVersion1
+			data = comm.TxData()
 		}
 		candidate, err = l.calldataTxCandidate(data)
 		if err != nil {
@@ -419,7 +484,7 @@ func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, que
 		candidate.GasLimit = intrinsicGas
 	}
 
-	queue.Send(txdata, *candidate, receiptsCh)
+	queue.Send(txdata.ID(), *candidate, receiptsCh)
 	return nil
 }
 
@@ -498,7 +563,7 @@ func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, e
 	}, nil
 }
 
-func (l *BatchSubmitter) handleReceipt(r txmgr.TxReceipt[txData]) {
+func (l *BatchSubmitter) handleReceipt(r txmgr.TxReceipt[txID]) {
 	// Record TX Status
 	if r.Err != nil {
 		l.recordFailedTx(r.ID, r.Err)
@@ -515,15 +580,15 @@ func (l *BatchSubmitter) recordL1Tip(l1tip eth.L1BlockRef) {
 	l.Metr.RecordLatestL1Block(l1tip)
 }
 
-func (l *BatchSubmitter) recordFailedTx(txd txData, err error) {
-	l.Log.Warn("Transaction failed to send", logFields(txd, err)...)
-	l.state.TxFailed(txd.ID())
+func (l *BatchSubmitter) recordFailedTx(id txID, err error) {
+	l.Log.Warn("Transaction failed to send", logFields(id, err)...)
+	l.state.TxFailed(id)
 }
 
-func (l *BatchSubmitter) recordConfirmedTx(txd txData, receipt *types.Receipt) {
-	l.Log.Info("Transaction confirmed", logFields(txd, receipt)...)
+func (l *BatchSubmitter) recordConfirmedTx(id txID, receipt *types.Receipt) {
+	l.Log.Info("Transaction confirmed", logFields(id, receipt)...)
 	l1block := eth.ReceiptBlockID(receipt)
-	l.state.TxConfirmed(txd.ID(), l1block)
+	l.state.TxConfirmed(id, l1block)
 }
 
 // l1Tip gets the current L1 tip as a L1BlockRef. The passed context is assumed
@@ -541,8 +606,8 @@ func (l *BatchSubmitter) l1Tip(ctx context.Context) (eth.L1BlockRef, error) {
 func logFields(xs ...any) (fs []any) {
 	for _, x := range xs {
 		switch v := x.(type) {
-		case txData:
-			fs = append(fs, "tx_id", v.ID(), "data_len", v.Len())
+		case txID:
+			fs = append(fs, "tx_id", v.String())
 		case *types.Receipt:
 			fs = append(fs, "tx", v.TxHash, "block", eth.ReceiptBlockID(v))
 		case error:

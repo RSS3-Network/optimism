@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   ci_builder_image:
     type: string
-    default: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.43.0
+    default: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder:v0.46.1
   ci_builder_rust_image:
     type: string
     default: us-docker.pkg.dev/oplabs-tools-artifacts/images/ci-builder-rust:latest
@@ -21,6 +21,9 @@ parameters:
     type: boolean
     default: true # default to running main in case the manual run cancelled an automatic run
   fault_proofs_dispatch:
+    type: boolean
+    default: false
+  kontrol_dispatch:
     type: boolean
     default: false
 
@@ -132,7 +135,8 @@ jobs:
       - run:
           name: Cannon Go tests
           command: |
-            gotestsum --format=standard-verbose --junitfile=/tmp/test-results/cannon.xml \
+            mkdir -p /testlogs
+            gotestsum --format=testname --junitfile=/tmp/test-results/cannon.xml --jsonfile=/testlogs/log.json \
             -- -parallel=2 -coverpkg=github.com/ethereum-optimism/optimism/cannon/... -coverprofile=coverage.out ./...
           working_directory: cannon
       - run:
@@ -140,6 +144,9 @@ jobs:
           command: codecov --verbose --clean --flags cannon-go-tests
       - store_test_results:
           path: /tmp/test-results
+      - store_artifacts:
+          path: /testlogs
+          when: always
   cannon-build-test-vectors:
     docker:
       - image: <<pipeline.parameters.ci_builder_image>>
@@ -204,6 +211,12 @@ jobs:
           name: Copy FPAC allocs to .devnet-fpac
           command: cp -r .devnet/ .devnet-fault-proofs/
       - run:
+          name: Generate Plasma allocs
+          command: DEVNET_PLASMA="true" make devnet-allocs
+      - run:
+          name: Copy Plasma allocs to .devnet-plasma
+          command: cp -r .devnet/ .devnet-plasma/
+      - run:
           name: Generate non-FPAC allocs
           command: make devnet-allocs
       - persist_to_workspace:
@@ -219,6 +232,8 @@ jobs:
             - ".devnet/addresses.json"
             - ".devnet-fault-proofs/allocs-l1.json"
             - ".devnet-fault-proofs/addresses.json"
+            - ".devnet-plasma/allocs-l1.json"
+            - ".devnet-plasma/addresses.json"
             - "packages/contracts-bedrock/deploy-config/devnetL1.json"
             - "packages/contracts-bedrock/deployments/devnetL1"
 
@@ -671,22 +686,22 @@ jobs:
           keys:
             - pnpm-packages-v2-{{ checksum "pnpm.lock.yaml" }}
       - check-changed:
-          patterns: sdk,contracts-bedrock,contracts
+          patterns: sdk
       # populate node modules from the cache
       - run:
           name: Install dependencies
           command: pnpm install:ci
       - run:
-          name: anvil-l1
+          name: sepolia-fork
           background: true
           # atm this is goerli but we should use mainnet after bedrock is live
-          command: anvil --fork-url $ANVIL_L1_FORK_URL --fork-block-number 9256679
+          command: anvil --fork-url $ANVIL_SEPOLIA_FORK_URL --fork-block-number 5580113 --port 8545
 
       - run:
-          name: anvil-l2
+          name: op-sepolia-fork
           background: true
           # atm this is goerli but we should use mainnet after bedrock is live
-          command: anvil --fork-url $ANVIL_L2_FORK_URL --port 9545 --fork-block-number 11276409
+          command: anvil --fork-url $ANVIL_OP_SEPOLIA_FORK_URL --port 9545 --fork-block-number 9925328
 
       - run:
           name: build
@@ -836,11 +851,11 @@ jobs:
             - golang-build-cache-
       - run:
           name: prep results dir
-          command: mkdir -p /tmp/test-results
+          command: mkdir -p /tmp/test-results &&  mkdir -p /testlogs
       - run:
           name: run tests
           command: |
-            gotestsum --format=standard-verbose --junitfile=/tmp/test-results/<<parameters.module>>.xml \
+            gotestsum --format=testname --junitfile=/tmp/test-results/<<parameters.module>>.xml --jsonfile=/testlogs/log.json \
             -- -parallel=8 -coverpkg=github.com/ethereum-optimism/optimism/... -coverprofile=coverage.out ./...
           working_directory: <<parameters.module>>
       - save_cache:
@@ -853,6 +868,9 @@ jobs:
           #command: codecov --verbose --clean --flags bedrock-go-tests
       - store_test_results:
           path: /tmp/test-results
+      - store_artifacts:
+          path: /testlogs
+          when: always
 
   go-e2e-test:
     parameters:
@@ -896,6 +914,13 @@ jobs:
             - run:
                 name: Set OP_E2E_USE_FPAC = true
                 command: echo 'export OP_E2E_USE_FPAC=true' >> $BASH_ENV
+      - when:
+          condition:
+            equal: ['-plasma', <<parameters.fpac>>]
+          steps:
+            - run:
+                name: Set OP_E2E_USE_PLASMA = true
+                command: echo 'export OP_E2E_USE_PLASMA=true' >> $BASH_ENV
       - check-changed:
           patterns: op-(.+),cannon,contracts-bedrock
       - run:
@@ -932,7 +957,7 @@ jobs:
             export OP_E2E_CANNON_ENABLED="false"
             # Note: We don't use circle CI test splits because we need to split by test name, not by package. There is an additional
             # constraint that gotestsum does not currently (nor likely will) accept files from different pacakges when building.
-            JUNIT_FILE=/tmp/test-results/<<parameters.module>>_<<parameters.target>>.xml make <<parameters.target>> 2>&1 | tee /testlogs/test.log
+            JUNIT_FILE=/tmp/test-results/<<parameters.module>>_<<parameters.target>>.xml JSON_LOG_FILE=/testlogs/test.log make <<parameters.target>>
           working_directory: <<parameters.module>>
       - store_artifacts:
           path: /testlogs
@@ -976,10 +1001,13 @@ jobs:
           name: Test
           command: |
             mkdir -p /test-results
-            gotestsum  --format=standard-verbose --junitfile /test-results/tests.xml -- -parallel=2
+            gotestsum  --format=testname --junitfile /test-results/tests.xml --jsonfile /test-results/log.json -- -parallel=2
           working_directory: <<parameters.working_directory>>
       - store_test_results:
           path: /test-results
+      - store_artifacts:
+          path: /testlogs
+          when: always
       - when:
           condition:
             equal: [ true, <<parameters.build>> ]
@@ -1140,11 +1168,11 @@ jobs:
       - run:
           name: Install Geth
           command: |
-            wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.13.4-3f907d6a.tar.gz
+            wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.13.14-2bd6bd01.tar.gz
             # geth only provides md5 sums sadly
-            echo 'c2e3d38372cb8081ed01591246a7556f geth-alltools-linux-amd64-1.13.4-3f907d6a.tar.gz' | md5sum -c -
-            tar -xzvf geth-alltools-linux-amd64-1.13.4-3f907d6a.tar.gz
-            sudo cp geth-alltools-linux-amd64-1.13.4-3f907d6a/* /usr/local/bin
+            echo '76a04354dba9980fcbc35bece2957b30 geth-alltools-linux-amd64-1.13.14-2bd6bd01.tar.gz' | md5sum -c -
+            tar -xzvf geth-alltools-linux-amd64-1.13.14-2bd6bd01.tar.gz
+            sudo cp geth-alltools-linux-amd64-1.13.14-2bd6bd01/* /usr/local/bin
       - run:
           name: foundryup
           command: |
@@ -1157,7 +1185,7 @@ jobs:
       - run:
           name: Install NVM
           command: |
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
             source ~/.bashrc
             nvm --version
       - run:
@@ -1403,7 +1431,7 @@ jobs:
       - run:
           name: compat-sepolia
           command: |
-            make run-sepolia-verify
+            make verify-compat
           working_directory: op-program
 
   check-generated-mocks-op-node:
@@ -1470,7 +1498,9 @@ jobs:
           command: pnpm test:kontrol
           working_directory: ./packages/contracts-bedrock
       - store_artifacts:
-          path: ./packages/contracts-bedrock/kontrol-results_latest.tar.gz
+          path: ./packages/contracts-bedrock/test/kontrol/logs/kontrol-results_latest.tar.gz
+      - store_test_results:
+          path: ./packages/contracts-bedrock
       - notify-failures-on-develop
 
 workflows:
@@ -1525,13 +1555,6 @@ workflows:
           requires:
             - pnpm-monorepo
       - js-lint-test:
-          name: sdk-next-tests
-          coverage_flag: sdk-next-tests
-          package_name: sdk
-          dependencies: "(common-ts|contracts-bedrock|core-utils)"
-          requires:
-            - pnpm-monorepo
-      - js-lint-test:
           name: sdk-tests
           coverage_flag: sdk-tests
           package_name: sdk
@@ -1545,6 +1568,10 @@ workflows:
           name: proxyd-tests
           binary_name: proxyd
           working_directory: proxyd
+      - sdk-next-tests:
+          name: sdk-next-tests
+          requires:
+            - pnpm-monorepo
       - indexer-tests:
           name: indexer-tests<< matrix.fpac >>
           matrix:
@@ -2063,9 +2090,14 @@ workflows:
           context:
             - slack
 
-  scheduled-kontrol-tests:
+  develop-kontrol-tests:
     when:
-      equal: [ build_four_hours, <<pipeline.schedule.name>> ]
+      and:
+        - or:
+          - equal: [ "develop", <<pipeline.git.branch>> ]
+          - equal: [ true, <<pipeline.parameters.kontrol_dispatch>> ]
+        - not:
+           equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
     jobs:
       - kontrol-tests:
           context:

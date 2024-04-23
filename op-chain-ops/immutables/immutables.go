@@ -166,10 +166,11 @@ func Deploy(config *PredeploysImmutableConfig) (DeploymentResults, error) {
 // can be properly set. The bytecode returned in the results is suitable to be
 // inserted into the state via state surgery.
 func deployContractsWithImmutables(constructors []deployer.Constructor) (DeploymentResults, error) {
-	backend, err := deployer.NewL2Backend()
+	backend, err := deployer.NewBackend()
 	if err != nil {
 		return nil, err
 	}
+	defer backend.Close()
 	deployments, err := deployer.Deploy(backend, constructors, l2ImmutableDeployer)
 	if err != nil {
 		return nil, err

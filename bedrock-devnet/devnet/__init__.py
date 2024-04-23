@@ -29,6 +29,7 @@ log = logging.getLogger()
 # Global environment variables
 DEVNET_NO_BUILD = os.getenv('DEVNET_NO_BUILD') == "true"
 DEVNET_FPAC = os.getenv('DEVNET_FPAC') == "true"
+DEVNET_PLASMA = os.getenv('DEVNET_PLASMA') == "true"
 
 class Bunch:
     def __init__(self, **kwds):
@@ -130,6 +131,8 @@ def init_devnet_l1_deploy_config(paths, update_timestamp=False):
     if DEVNET_FPAC:
         deploy_config['useFaultProofs'] = True
         deploy_config['faultGameMaxDuration'] = 10
+    if DEVNET_PLASMA:
+        deploy_config['usePlasma'] = True
     write_json(paths.devnet_config_path, deploy_config)
 
 def devnet_l1_genesis(paths):
@@ -137,8 +140,9 @@ def devnet_l1_genesis(paths):
     init_devnet_l1_deploy_config(paths)
 
     fqn = 'scripts/Deploy.s.sol:Deploy'
+    # Use foundry pre-funded account #1 for the deployer
     run_command([
-        'forge', 'script', '--chain-id', '900', fqn, "--sig", "runWithStateDump()"
+        'forge', 'script', '--chain-id', '900', fqn, "--sig", "runWithStateDump()", "--private-key", "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
     ], env={}, cwd=paths.contracts_bedrock_dir)
 
     forge_dump = read_json(paths.forge_dump_path)
@@ -279,7 +283,7 @@ def devnet_test(paths):
           ['npx', 'hardhat',  'deposit-eth', '--network',  'devnetL1',
            '--l1-contracts-json-path', paths.addresses_json_path, '--signer-index', '15'],
           cwd=paths.sdk_dir, timeout=8*60)
-    ], max_workers=2)
+    ], max_workers=1)
 
 
 def run_commands(commands: list[CommandPreset], max_workers=2):

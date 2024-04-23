@@ -87,6 +87,6 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 		return nil, err
 	}
 
-	log.Info("end getting blob with retry", "id", hex.EncodeToString(frameRefBytes), "data size:", len(blobData), "elapsed time", time.Since(startTime))
+	log.Info("end getting blob with retry", "id", hex.EncodeToString(frameRefBytes), "data size", len(blobData), "elapsed time", time.Since(startTime))
 	return blobData, nil
 }
