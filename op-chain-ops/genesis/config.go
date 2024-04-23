@@ -12,6 +12,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/consensus/misc/eip4844"
 	gstate "github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/log"
@@ -169,9 +170,15 @@ type DeployConfig struct {
 	// as part of the derivation pipeline.
 	OptimismPortalProxy common.Address `json:"optimismPortalProxy"`
 	// GasPriceOracleOverhead represents the initial value of the gas overhead in the GasPriceOracle predeploy.
+	// Deprecated: Since Ecotone, this field is superseded by GasPriceOracleBaseFeeScalar and GasPriceOracleBlobBaseFeeScalar.
 	GasPriceOracleOverhead uint64 `json:"gasPriceOracleOverhead"`
 	// GasPriceOracleScalar represents the initial value of the gas scalar in the GasPriceOracle predeploy.
+	// Deprecated: Since Ecotone, this field is superseded by GasPriceOracleBaseFeeScalar and GasPriceOracleBlobBaseFeeScalar.
 	GasPriceOracleScalar uint64 `json:"gasPriceOracleScalar"`
+	// GasPriceOracleBaseFeeScalar represents the value of the base fee scalar used for fee calculations.
+	GasPriceOracleBaseFeeScalar uint32 `json:"gasPriceOracleBaseFeeScalar"`
+	// GasPriceOracleBlobBaseFeeScalar represents the value of the blob base fee scalar used for fee calculations.
+	GasPriceOracleBlobBaseFeeScalar uint32 `json:"gasPriceOracleBlobBaseFeeScalar"`
 	// EnableGovernance configures whether or not include governance token predeploy.
 	EnableGovernance bool `json:"enableGovernance"`
 	// GovernanceTokenSymbol represents the  ERC20 symbol of the GovernanceToken.
@@ -243,15 +250,18 @@ type DeployConfig struct {
 
 	// UsePlasma is a flag that indicates if the system is using op-plasma
 	UsePlasma bool `json:"usePlasma"`
-	// DaChallengeWindow represents the block interval during which the availability of a data commitment can be challenged.
-	DaChallengeWindow uint64 `json:"daChallengeWindow"`
-	// DaResolveWindow represents the block interval during which a data availability challenge can be resolved.
-	DaResolveWindow uint64 `json:"daResolveWindow"`
-	// DaBondSize represents the required bond size to initiate a data availability challenge.
-	DaBondSize uint64 `json:"daBondSize"`
-	// DaResolverRefundPercentage represents the percentage of the resolving cost to be refunded to the resolver
+	// DAChallengeWindow represents the block interval during which the availability of a data commitment can be challenged.
+	DAChallengeWindow uint64 `json:"daChallengeWindow"`
+	// DAResolveWindow represents the block interval during which a data availability challenge can be resolved.
+	DAResolveWindow uint64 `json:"daResolveWindow"`
+	// DABondSize represents the required bond size to initiate a data availability challenge.
+	DABondSize uint64 `json:"daBondSize"`
+	// DAResolverRefundPercentage represents the percentage of the resolving cost to be refunded to the resolver
 	// such as 100 means 100% refund.
-	DaResolverRefundPercentage uint64 `json:"daResolverRefundPercentage"`
+	DAResolverRefundPercentage uint64 `json:"daResolverRefundPercentage"`
+
+	// DAChallengeProxy represents the L1 address of the DataAvailabilityChallenge contract.
+	DAChallengeProxy common.Address `json:"daChallengeProxy"`
 
 	RSS3TokenName   string         `json:"rss3TokenName"`
 	RSS3TokenSymbol string         `json:"rss3TokenSymbol"`
@@ -357,7 +367,13 @@ func (d *DeployConfig) Check() error {
 		log.Warn("GasPriceOracleOverhead is 0")
 	}
 	if d.GasPriceOracleScalar == 0 {
-		return fmt.Errorf("%w: GasPriceOracleScalar cannot be 0", ErrInvalidDeployConfig)
+		log.Warn("GasPriceOracleScalar is 0")
+	}
+	if d.GasPriceOracleBaseFeeScalar == 0 {
+		log.Warn("GasPriceOracleBaseFeeScalar is 0")
+	}
+	if d.GasPriceOracleBlobBaseFeeScalar == 0 {
+		log.Warn("GasPriceOracleBlobBaseFeeScalar is 0")
 	}
 	if d.EIP1559Denominator == 0 {
 		return fmt.Errorf("%w: EIP1559Denominator cannot be 0", ErrInvalidDeployConfig)
@@ -417,6 +433,17 @@ func (d *DeployConfig) Check() error {
 	if d.DisputeGameFinalityDelaySeconds == 0 {
 		log.Warn("DisputeGameFinalityDelaySeconds is 0")
 	}
+	if d.UsePlasma {
+		if d.DAChallengeWindow == 0 {
+			return fmt.Errorf("%w: DAChallengeWindow cannot be 0 when using plasma mode", ErrInvalidDeployConfig)
+		}
+		if d.DAResolveWindow == 0 {
+			return fmt.Errorf("%w: DAResolveWindow cannot be 0 when using plasma mode", ErrInvalidDeployConfig)
+		}
+		if d.DAChallengeProxy == (common.Address{}) {
+			return fmt.Errorf("%w: DAChallengeContract cannot be empty when using plasma mode", ErrInvalidDeployConfig)
+		}
+	}
 	// checkFork checks that fork A is before or at the same time as fork B
 	checkFork := func(a, b *hexutil.Uint64, aName, bName string) error {
 		if a == nil && b == nil {
@@ -446,6 +473,18 @@ func (d *DeployConfig) Check() error {
 		return err
 	}
 	return nil
+}
+
+// FeeScalar returns the raw serialized fee scalar. Uses pre-Ecotone if legacy config is present,
+// otherwise uses the post-Ecotone scalar serialization.
+func (d *DeployConfig) FeeScalar() [32]byte {
+	if d.GasPriceOracleScalar != 0 {
+		return common.BigToHash(big.NewInt(int64(d.GasPriceOracleScalar)))
+	}
+	return eth.EncodeScalar(eth.EcostoneScalars{
+		BlobBaseFeeScalar: d.GasPriceOracleBlobBaseFeeScalar,
+		BaseFeeScalar:     d.GasPriceOracleBaseFeeScalar,
+	})
 }
 
 // CheckAddresses will return an error if the addresses are not set.
@@ -478,6 +517,7 @@ func (d *DeployConfig) SetDeployments(deployments *L1Deployments) {
 	d.L1ERC721BridgeProxy = deployments.L1ERC721BridgeProxy
 	d.SystemConfigProxy = deployments.SystemConfigProxy
 	d.OptimismPortalProxy = deployments.OptimismPortalProxy
+	d.DAChallengeProxy = deployments.DataAvailabilityChallengeProxy
 }
 
 func (d *DeployConfig) GovernanceEnabled() bool {
@@ -573,7 +613,7 @@ func (d *DeployConfig) RollupConfig(l1StartBlock *types.Block, l2GenesisBlockHas
 			SystemConfig: eth.SystemConfig{
 				BatcherAddr: d.BatchSenderAddress,
 				Overhead:    eth.Bytes32(common.BigToHash(new(big.Int).SetUint64(d.GasPriceOracleOverhead))),
-				Scalar:      eth.Bytes32(common.BigToHash(new(big.Int).SetUint64(d.GasPriceOracleScalar))),
+				Scalar:      eth.Bytes32(d.FeeScalar()),
 				GasLimit:    uint64(d.L2GenesisBlockGasLimit),
 			},
 		},
@@ -592,6 +632,10 @@ func (d *DeployConfig) RollupConfig(l1StartBlock *types.Block, l2GenesisBlockHas
 		EcotoneTime:            d.EcotoneTime(l1StartBlock.Time()),
 		FjordTime:              d.FjordTime(l1StartBlock.Time()),
 		InteropTime:            d.InteropTime(l1StartBlock.Time()),
+		UsePlasma:              d.UsePlasma,
+		DAChallengeAddress:     d.DAChallengeProxy,
+		DAChallengeWindow:      d.DAChallengeWindow,
+		DAResolveWindow:        d.DAResolveWindow,
 	}, nil
 }
 
@@ -877,7 +921,7 @@ func NewL2ImmutableConfig(config *DeployConfig, block *types.Block) (*immutables
 	return &cfg, nil
 }
 
-// NewL2StorageConfig will create a StorageConfig given an instance of a DeployConfig and genesis block.
+// NewL2StorageConfig will create a StorageConfig given an instance of a DeployConfig and genesis L1 anchor block.
 func NewL2StorageConfig(config *DeployConfig, block *types.Block) (state.StorageConfig, error) {
 	storage := make(state.StorageConfig)
 
@@ -915,15 +959,24 @@ func NewL2StorageConfig(config *DeployConfig, block *types.Block) (state.Storage
 		"_initializing": false,
 		"bridge":        predeploys.L2StandardBridgeAddr,
 	}
+
+	excessBlobGas := block.ExcessBlobGas()
+	if excessBlobGas == nil {
+		excessBlobGas = u64ptr(0)
+	}
+
 	storage["L1Block"] = state.StorageValues{
-		"number":         block.Number(),
-		"timestamp":      block.Time(),
-		"basefee":        block.BaseFee(),
-		"hash":           block.Hash(),
-		"sequenceNumber": 0,
-		"batcherHash":    eth.AddressAsLeftPaddedHash(config.BatchSenderAddress),
-		"l1FeeOverhead":  config.GasPriceOracleOverhead,
-		"l1FeeScalar":    config.GasPriceOracleScalar,
+		"number":            block.Number(),
+		"timestamp":         block.Time(),
+		"basefee":           block.BaseFee(),
+		"hash":              block.Hash(),
+		"sequenceNumber":    0,
+		"blobBaseFeeScalar": config.GasPriceOracleBlobBaseFeeScalar,
+		"baseFeeScalar":     config.GasPriceOracleBaseFeeScalar,
+		"batcherHash":       eth.AddressAsLeftPaddedHash(config.BatchSenderAddress),
+		"l1FeeOverhead":     config.GasPriceOracleOverhead,
+		"l1FeeScalar":       config.GasPriceOracleScalar,
+		"blobBaseFee":       eip4844.CalcBlobFee(*excessBlobGas),
 	}
 	storage["LegacyERC20ETH"] = state.StorageValues{
 		"_name":   "Ether",

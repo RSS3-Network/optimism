@@ -89,6 +89,14 @@ enum GameStatus {
     DEFENDER_WINS
 }
 
+/// @notice Represents an L2 output root and the L2 block number at which it was generated.
+/// @custom:field root The output root.
+/// @custom:field l2BlockNumber The L2 block number at which the output root was generated.
+struct OutputRoot {
+    Hash root;
+    uint256 l2BlockNumber;
+}
+
 /// @title GameTypes
 /// @notice A library that defines the IDs of games that can be played.
 library GameTypes {
@@ -97,6 +105,9 @@ library GameTypes {
 
     /// @dev A permissioned dispute game type the uses the cannon vm.
     GameType internal constant PERMISSIONED_CANNON = GameType.wrap(1);
+
+    /// @notice A dispute game type the uses the asterisc VM
+    GameType internal constant ASTERISC = GameType.wrap(2);
 
     /// @notice A dispute game type that uses an alphabet vm.
     ///         Not intended for production use.

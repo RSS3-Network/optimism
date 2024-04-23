@@ -20,6 +20,7 @@ import { OptimismPortal } from "src/L1/OptimismPortal.sol";
 import { OptimismPortal2 } from "src/L1/OptimismPortal2.sol";
 import { DisputeGameFactory } from "src/dispute/DisputeGameFactory.sol";
 import { DelayedWETH } from "src/dispute/weth/DelayedWETH.sol";
+import { AnchorStateRegistry } from "src/dispute/AnchorStateRegistry.sol";
 import { L1CrossDomainMessenger } from "src/L1/L1CrossDomainMessenger.sol";
 import { DeployConfig } from "scripts/DeployConfig.s.sol";
 import { Deploy } from "scripts/Deploy.s.sol";
@@ -41,6 +42,8 @@ import { DataAvailabilityChallenge } from "src/L1/DataAvailabilityChallenge.sol"
 ///      up behind proxies. In the future we will migrate to importing the genesis JSON
 ///      file that is created to set up the L2 contracts instead of setting them up manually.
 contract Setup {
+    error FfiFailed(string);
+
     /// @notice The address of the foundry Vm contract.
     Vm private constant vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
 
@@ -62,6 +65,7 @@ contract Setup {
     ProtocolVersions protocolVersions;
     SuperchainConfig superchainConfig;
     DataAvailabilityChallenge dataAvailabilityChallenge;
+    AnchorStateRegistry anchorStateRegistry;
 
     L2CrossDomainMessenger l2CrossDomainMessenger =
         L2CrossDomainMessenger(payable(Predeploys.L2_CROSS_DOMAIN_MESSENGER));
@@ -114,6 +118,7 @@ contract Setup {
             OptimismMintableERC20Factory(deploy.mustGetAddress("OptimismMintableERC20FactoryProxy"));
         protocolVersions = ProtocolVersions(deploy.mustGetAddress("ProtocolVersionsProxy"));
         superchainConfig = SuperchainConfig(deploy.mustGetAddress("SuperchainConfigProxy"));
+        anchorStateRegistry = AnchorStateRegistry(deploy.mustGetAddress("AnchorStateRegistryProxy"));
 
         vm.label(address(l2OutputOracle), "L2OutputOracle");
         vm.label(deploy.mustGetAddress("L2OutputOracleProxy"), "L2OutputOracleProxy");
@@ -156,7 +161,24 @@ contract Setup {
             args[0] = Executables.bash;
             args[1] = "-c";
             args[2] = string.concat(vm.projectRoot(), "/scripts/generate-l2-genesis.sh");
-            vm.ffi(args);
+            Vm.FfiResult memory result = vm.tryFfi(args);
+            if (result.exitCode != 0) {
+                revert FfiFailed(
+                    string.concat(
+                        "FFI call to generate genesis.json failed with exit code: ",
+                        string(abi.encodePacked(result.exitCode)),
+                        ".\nCommand: ",
+                        Executables.bash,
+                        " -c ",
+                        vm.projectRoot(),
+                        "/scripts/generate-l2-genesis.sh",
+                        ".\nOutput: ",
+                        string(result.stdout),
+                        "\nError: ",
+                        string(result.stderr)
+                    )
+                );
+            }
         }
 
         // Prevent race condition where the genesis.json file is not yet created
