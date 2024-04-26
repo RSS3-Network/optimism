@@ -551,7 +551,6 @@ func (l *BatchSubmitter) calldataTxCandidate(data []byte) (*txmgr.TxCandidate, e
 	if err != nil {
 		l.Log.Warn("unable to submit blob to near da", "err", err)
 		l.Log.Info("fallback to eth da")
-		// fallback to eth da
 		// return nil, err
 	} else {
 		l.Log.Info("blob successfully submitted to near da", "id", hex.EncodeToString(maybeFrameRef))
