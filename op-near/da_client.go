@@ -48,10 +48,10 @@ func (c *DAClient) Submit(data []byte) ([]byte, error) {
 
 	bOff := retry.Exponential()
 	frameRef, err := retry.Do(ctx, defaultSubmitAttempts, bOff, func() ([]byte, error) {
-		result, err := c.Client.ForceSubmit(data)
-		if err != nil {
-			log.Warn("submit blob to near da", "err", err)
-			return nil, err
+		result, er := c.Client.ForceSubmit(data)
+		if er != nil {
+			log.Warn("submit blob to near da", "er", er)
+			return nil, er
 		}
 
 		return result, nil
@@ -74,10 +74,10 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 
 	bOff := retry.Exponential()
 	blobData, err := retry.Do(ctx, defaultGetAttempts, bOff, func() ([]byte, error) {
-		result, err := c.Client.Get(frameRefBytes, txIndex)
-		if err != nil {
-			log.Warn("get blob from near da", "id", hex.EncodeToString(frameRefBytes), "err", err)
-			return nil, err
+		result, er := c.Client.Get(frameRefBytes, txIndex)
+		if er != nil {
+			log.Warn("get blob from near da", "id", hex.EncodeToString(frameRefBytes), "er", er)
+			return nil, er
 		}
 
 		return result, nil
