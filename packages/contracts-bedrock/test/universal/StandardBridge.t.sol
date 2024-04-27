@@ -76,7 +76,7 @@ contract StandardBridge_Stateless_Test is CommonTest {
     ///         This function should return true for both modern and legacy
     ///         OptimismMintableERC20 tokens and false for any accounts that
     ///         do not implement the interface.
-    function test_isOptimismMintableERC20_succeeds() external {
+    function test_isOptimismMintableERC20_succeeds() external view {
         // Both the modern and legacy mintable tokens should return true
         assertTrue(bridge.isOptimismMintableERC20(address(mintable)));
         assertTrue(bridge.isOptimismMintableERC20(address(legacy)));
@@ -109,7 +109,7 @@ contract StandardBridge_Stateless_Test is CommonTest {
     }
 
     /// @notice The bridge by default should be unpaused.
-    function test_paused_succeeds() external {
+    function test_paused_succeeds() external view {
         assertFalse(bridge.paused());
     }
 }
