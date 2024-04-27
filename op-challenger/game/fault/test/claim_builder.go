@@ -63,11 +63,6 @@ func WithParent(claim types.Claim) ClaimOpt {
 		cfg.parentIdx = claim.ContractIndex
 	})
 }
-func WithExpiredClock(gameDuration time.Duration) ClaimOpt {
-	return claimOptFn(func(cfg *claimCfg) {
-		cfg.clockDuration = gameDuration / 2
-	})
-}
 
 func WithExpiredClock(maxClockDuration time.Duration) ClaimOpt {
 	return claimOptFn(func(cfg *claimCfg) {
