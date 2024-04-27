@@ -69,6 +69,12 @@ func WithExpiredClock(gameDuration time.Duration) ClaimOpt {
 	})
 }
 
+func WithExpiredClock(maxClockDuration time.Duration) ClaimOpt {
+	return claimOptFn(func(cfg *claimCfg) {
+		cfg.clockDuration = maxClockDuration
+	})
+}
+
 // ClaimBuilder is a test utility to enable creating claims in a wide range of situations
 type ClaimBuilder struct {
 	require  *require.Assertions

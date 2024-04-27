@@ -103,7 +103,7 @@ contract Deploy is Deployer {
         uint256 chainid = block.chainid;
         if (
             chainid == Chains.Goerli || chainid == Chains.Sepolia || chainid == Chains.LocalDevnet
-            || chainid == Chains.GethDevnet
+                || chainid == Chains.GethDevnet
         ) {
             _;
         }
@@ -223,7 +223,7 @@ contract Deploy is Deployer {
         address proxyAdmin = mustGetAddress("ProxyAdmin");
 
         bytes memory data =
-                            abi.encodeCall(ProxyAdmin.upgradeAndCall, (payable(_proxy), _implementation, _innerCallData));
+            abi.encodeCall(ProxyAdmin.upgradeAndCall, (payable(_proxy), _implementation, _innerCallData));
 
         _callViaSafe({ _target: proxyAdmin, _data: data });
     }
@@ -262,8 +262,7 @@ contract Deploy is Deployer {
 
     function runWithStateDump() public {
         _run();
-
-        vm.dumpState(Config.stateDumpPath(name()));
+        vm.dumpState(Config.stateDumpPath(""));
     }
 
     /// @notice Deploy all L1 contracts and write the state diff to a file.
@@ -273,12 +272,16 @@ contract Deploy is Deployer {
 
     /// @notice Internal function containing the deploy logic.
     function _run() internal {
+        console.log("start of L1 Deploy!");
         deploySafe();
+        console.log("deployed Safe!");
         setupSuperchain();
+        console.log("set up superchain!");
         if (cfg.usePlasma()) {
             setupOpPlasma();
         }
         setupOpChain();
+        console.log("set up op chain!");
     }
 
     ////////////////////////////////////////////////////////////////
@@ -419,7 +422,7 @@ contract Deploy is Deployer {
         signers[0] = msg.sender;
 
         bytes memory initData = abi.encodeWithSelector(
-        Safe.setup.selector, signers, 1, address(0), hex"", address(0), address(0), 0, address(0)
+            Safe.setup.selector, signers, 1, address(0), hex"", address(0), address(0), 0, address(0)
         );
         address safe = address(safeProxyFactory.createProxyWithNonce(address(safeSingleton), initData, block.timestamp));
 
@@ -511,9 +514,9 @@ contract Deploy is Deployer {
         string memory _name,
         address _proxyOwner
     )
-    public
-    broadcast
-    returns (address addr_)
+        public
+        broadcast
+        returns (address addr_)
     {
         console.log(string.concat("Deploying ERC1967 proxy for ", _name));
         Proxy proxy = new Proxy({ _admin: _proxyOwner });
@@ -603,8 +606,7 @@ contract Deploy is Deployer {
 
         OptimismPortal2 portal = new OptimismPortal2{ salt: _implSalt() }({
             _proofMaturityDelaySeconds: cfg.proofMaturityDelaySeconds(),
-            _disputeGameFinalityDelaySeconds: cfg.disputeGameFinalityDelaySeconds(),
-            _initialRespectedGameType: GameType.wrap(uint32(cfg.respectedGameType()))
+            _disputeGameFinalityDelaySeconds: cfg.disputeGameFinalityDelaySeconds()
         });
 
         save("OptimismPortal2", address(portal));
@@ -955,13 +957,13 @@ contract Deploy is Deployer {
                     Constants.DEFAULT_RESOURCE_CONFIG(),
                     cfg.batchInboxAddress(),
                     SystemConfig.Addresses({
-                    l1CrossDomainMessenger: mustGetAddress("L1CrossDomainMessengerProxy"),
-                    l1ERC721Bridge: mustGetAddress("L1ERC721BridgeProxy"),
-                    l1StandardBridge: mustGetAddress("L1StandardBridgeProxy"),
-                    l2OutputOracle: mustGetAddress("L2OutputOracleProxy"),
-                    optimismPortal: mustGetAddress("OptimismPortalProxy"),
-                    optimismMintableERC20Factory: mustGetAddress("OptimismMintableERC20FactoryProxy")
-                })
+                        l1CrossDomainMessenger: mustGetAddress("L1CrossDomainMessengerProxy"),
+                        l1ERC721Bridge: mustGetAddress("L1ERC721BridgeProxy"),
+                        l1StandardBridge: mustGetAddress("L1StandardBridgeProxy"),
+                        l2OutputOracle: mustGetAddress("L2OutputOracleProxy"),
+                        optimismPortal: mustGetAddress("OptimismPortalProxy"),
+                        optimismMintableERC20Factory: mustGetAddress("OptimismMintableERC20FactoryProxy")
+                    })
                 )
             )
         });
@@ -1078,7 +1080,7 @@ contract Deploy is Deployer {
         }
         require(
             keccak256(bytes(proxyAdmin.implementationName(l1CrossDomainMessengerProxy)))
-            == keccak256(bytes(contractName))
+                == keccak256(bytes(contractName))
         );
 
         _upgradeAndCallViaSafe({
@@ -1178,7 +1180,8 @@ contract Deploy is Deployer {
                 (
                     DisputeGameFactory(disputeGameFactoryProxy),
                     SystemConfig(systemConfigProxy),
-                    SuperchainConfig(superchainConfigProxy)
+                    SuperchainConfig(superchainConfigProxy),
+                    GameType.wrap(uint32(cfg.respectedGameType()))
                 )
             )
         });
@@ -1344,7 +1347,7 @@ contract Deploy is Deployer {
         bool _allowUpgrade,
         FaultDisputeGameParams memory _params
     )
-    internal
+        internal
     {
         if (address(_factory.gameImpls(_params.gameType)) != address(0) && !_allowUpgrade) {
             console.log(
@@ -1363,7 +1366,8 @@ contract Deploy is Deployer {
                     _absolutePrestate: _params.absolutePrestate,
                     _maxGameDepth: _params.maxGameDepth,
                     _splitDepth: cfg.faultGameSplitDepth(),
-                    _gameDuration: Duration.wrap(uint64(cfg.faultGameMaxDuration())),
+                    _clockExtension: Duration.wrap(uint64(cfg.faultGameClockExtension())),
+                    _maxClockDuration: Duration.wrap(uint64(cfg.faultGameMaxClockDuration())),
                     _vm: _params.faultVm,
                     _weth: _params.weth,
                     _anchorStateRegistry: _params.anchorStateRegistry,
@@ -1378,7 +1382,8 @@ contract Deploy is Deployer {
                     _absolutePrestate: _params.absolutePrestate,
                     _maxGameDepth: _params.maxGameDepth,
                     _splitDepth: cfg.faultGameSplitDepth(),
-                    _gameDuration: Duration.wrap(uint64(cfg.faultGameMaxDuration())),
+                    _clockExtension: Duration.wrap(uint64(cfg.faultGameClockExtension())),
+                    _maxClockDuration: Duration.wrap(uint64(cfg.faultGameMaxClockDuration())),
                     _vm: _params.faultVm,
                     _weth: _params.weth,
                     _anchorStateRegistry: _params.anchorStateRegistry,
