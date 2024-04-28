@@ -84,8 +84,6 @@ github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1m
 github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
 github.com/envoyproxy/go-control-plane v0.9.10-0.20210907150352-cf90f659a021/go.mod h1:AFq3mo9L8Lqqiid3OhADV3RfLJnjiw63cSpi+fDTRC0=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
-github.com/ethereum-optimism/op-geth v1.101311.0-rc.1 h1:3JE5FyGXNQCnXUuiK3I6ZD3zbB2DBIcEMsXCpjrXUwM=
-github.com/ethereum-optimism/op-geth v1.101311.0-rc.1/go.mod h1:K23yb9efVf9DdUOv/vl/Ux57Tng00rLaFqWYlFF45CA=
 github.com/ethereum-optimism/optimism v1.6.2-0.20240222202618-f707883038d5 h1:Znxv0SuujGbgZocNLXdUAyTJ6/nPNGSo2PvKWEBtrvM=
 github.com/ethereum-optimism/optimism v1.6.2-0.20240222202618-f707883038d5/go.mod h1:CT8RgUDaJuySsnQ/6XTiBYmwVuIys587cE8zMPwflZ8=
 github.com/ethereum-optimism/superchain-registry/superchain v0.0.0-20240418160534-4156733e7232 h1:jRdLJs4E3ilsDGK7+k39QPi3QKL/b1cLnyv8mfOCVo4=
@@ -251,6 +249,8 @@ github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjR
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
 github.com/rs/cors v1.9.0 h1:l9HGsTsHJcvW14Nk7J9KFz8bzeAWXn3CG6bgt7LsrAE=
 github.com/rs/cors v1.9.0/go.mod h1:XyqrcTp5zjWr1wsJ8PIRZssZ8b/WMcMf71DJnit4EMU=
+github.com/rss3-network/op-geth v1.101311.1-rc.2 h1:B80b7qJ0V+7uM83SZpY62w9Cl1pyT+8TseynwQi1kUM=
+github.com/rss3-network/op-geth v1.101311.1-rc.2/go.mod h1:K23yb9efVf9DdUOv/vl/Ux57Tng00rLaFqWYlFF45CA=
 github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf35Ld67mk=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/shirou/gopsutil v3.21.11+incompatible h1:+1+c1VGhc88SSonWP6foOcLhvnKlUeu/erjjvaPEYiI=
