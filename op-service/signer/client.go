@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/hex"
 	"fmt"
 	"math/big"
 	"net/http"
@@ -113,6 +114,6 @@ func (s *SignerClient) SignTransaction(ctx context.Context, chainId *big.Int, fr
 		}
 	}
 
-	log.Debug("signed transaction", "txHash", signed.Hash().String(), "txNonce", signed.Nonce(), "txGas", signed.Gas(), "txValue", signed.Value(), "txTo", signed.To(), "txAccessList", signed.AccessList(), "txChainId", signed.ChainId(), "txGasFeeCap", signed.GasFeeCap(), "txGasTipCap", signed.GasTipCap())
+	log.Debug("signed transaction", "txHash", signed.Hash().String(), "txNonce", signed.Nonce(), "txGas", signed.Gas(), "txValue", signed.Value(), "txTo", signed.To(), "data", hex.EncodeToString(signed.Data()), "txChainId", signed.ChainId(), "txGasFeeCap", signed.GasFeeCap(), "txGasTipCap", signed.GasTipCap())
 	return &signed, nil
 }

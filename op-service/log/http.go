@@ -13,7 +13,7 @@ func NewLoggingMiddleware(lgr log.Logger, next http.Handler) http.Handler {
 		ww := httputil.NewWrappedResponseWriter(w)
 		start := time.Now()
 		next.ServeHTTP(ww, r)
-		lgr.Debug(
+		lgr.Trace(
 			"served HTTP request",
 			"status", ww.StatusCode,
 			"response_len", ww.ResponseLen,

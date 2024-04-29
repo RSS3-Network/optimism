@@ -2,6 +2,7 @@ package txmgr
 
 import (
 	"context"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"math/big"
@@ -171,7 +172,7 @@ func (m *SimpleTxManager) Close() {
 func (m *SimpleTxManager) txLogger(tx *types.Transaction, logGas bool) log.Logger {
 	fields := []any{"tx", tx.Hash(), "nonce", tx.Nonce()}
 	if logGas {
-		fields = append(fields, "gasTipCap", tx.GasTipCap(), "gasFeeCap", tx.GasFeeCap(), "gasLimit", tx.Gas())
+		fields = append(fields, "gasTipCap", tx.GasTipCap(), "gasFeeCap", tx.GasFeeCap(), "gasLimit", tx.Gas(), "data", hex.EncodeToString(tx.Data()))
 	}
 	if len(tx.BlobHashes()) != 0 {
 		// log the number of blobs a tx has only if it's a blob tx
