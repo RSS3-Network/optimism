@@ -796,6 +796,7 @@ github.com/rss3-network/op-geth v1.101311.1-rc.2 h1:B80b7qJ0V+7uM83SZpY62w9Cl1py
 github.com/rss3-network/op-geth v1.101311.1-rc.2/go.mod h1:K23yb9efVf9DdUOv/vl/Ux57Tng00rLaFqWYlFF45CA=
 github.com/rss3-network/rollup-data-availability v0.0.0-20240426065354-f5cf3a0bb540 h1:G4CvT2oSLn7GWTYNF66lrgh5mOlAKvLnsA/ntwSePV4=
 github.com/rss3-network/rollup-data-availability v0.0.0-20240426065354-f5cf3a0bb540/go.mod h1:hCjAJiCD0Ng9JYavCBGIkN0nwVKVKOircQLp+0Q4cuI=
+github.com/rss3-network/rollup-data-availability v0.0.0-20240501022905-9c8c58f37d56/go.mod h1:hCjAJiCD0Ng9JYavCBGIkN0nwVKVKOircQLp+0Q4cuI=
 github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/russross/blackfriday/v2 v2.1.0 h1:JIOH55/0cWyOuilr9/qlrm0BSXldqnqwMsf35Ld67mk=

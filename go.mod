@@ -268,7 +268,8 @@ require (
 
 replace github.com/ethereum/go-ethereum v1.13.14 => github.com/rss3-network/op-geth v1.101311.1-rc.2
 
-replace github.com/near/rollup-data-availability v0.2.3 => github.com/rss3-network/rollup-data-availability v0.0.0-20240426065354-f5cf3a0bb540
+replace github.com/near/rollup-data-availability v0.2.3 => github.com/rss3-network/rollup-data-availability v0.0.0-20240501022905-9c8c58f37d56
+
 
 //replace github.com/near/rollup-data-availability v0.2.3 => ../rollup-data-availability
 
