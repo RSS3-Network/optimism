@@ -270,7 +270,6 @@ replace github.com/ethereum/go-ethereum v1.13.14 => github.com/rss3-network/op-g
 
 replace github.com/near/rollup-data-availability v0.2.3 => github.com/rss3-network/rollup-data-availability v0.0.0-20240501022905-9c8c58f37d56
 
-
 //replace github.com/near/rollup-data-availability v0.2.3 => ../rollup-data-availability
 
 //replace github.com/ethereum-optimism/superchain-registry/superchain => ../superchain-registry/superchain
