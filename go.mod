@@ -254,7 +254,7 @@ require (
 	go.uber.org/zap v1.26.0 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/sys v0.19.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
@@ -268,7 +268,7 @@ require (
 
 replace github.com/ethereum/go-ethereum v1.13.14 => github.com/rss3-network/op-geth v1.101311.1-rc.2
 
-replace github.com/near/rollup-data-availability v0.2.3 => github.com/rss3-network/rollup-data-availability v0.0.0-20240501045537-02eab78299d8
+replace github.com/near/rollup-data-availability v0.2.3 => github.com/rss3-network/rollup-data-availability v0.4.1-rc.1
 
 //replace github.com/near/rollup-data-availability v0.2.3 => ../rollup-data-availability
 
