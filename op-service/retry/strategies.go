@@ -54,6 +54,14 @@ func Exponential() Strategy {
 	}
 }
 
+func ExponentialDA() Strategy {
+	return &ExponentialStrategy{
+		Min:       10,
+		Max:       30 * time.Second,
+		MaxJitter: 250 * time.Millisecond,
+	}
+}
+
 type FixedStrategy struct {
 	Dur time.Duration
 }

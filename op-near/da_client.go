@@ -16,8 +16,8 @@ const (
 	defaultSubmitTimeout = 90 * time.Second
 	defaultGetTimeout    = 90 * time.Second
 
-	defaultSubmitAttempts = 10
-	defaultGetAttempts    = 10
+	defaultSubmitAttempts = 15
+	defaultGetAttempts    = 20
 )
 
 type DAClient struct {
@@ -72,7 +72,7 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultGetTimeout)
 	defer cancel()
 
-	bOff := retry.Exponential()
+	bOff := retry.ExponentialDA()
 	blobData, err := retry.Do(ctx, defaultGetAttempts, bOff, func() ([]byte, error) {
 		result, er := c.Client.Get(frameRefBytes, txIndex)
 		if er != nil {
