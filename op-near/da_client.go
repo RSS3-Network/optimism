@@ -46,7 +46,7 @@ func (c *DAClient) Submit(data []byte) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultSubmitTimeout)
 	defer cancel()
 
-	bOff := retry.Exponential()
+	bOff := retry.ExponentialDA()
 	frameRef, err := retry.Do(ctx, defaultSubmitAttempts, bOff, func() ([]byte, error) {
 		result, er := c.Client.ForceSubmit(data)
 		if er != nil {
