@@ -571,7 +571,7 @@ func (l *BatchSubmitter) submitBlobToNearDA(data []byte) (frameRef []byte, err e
 
 	// finality is achieved which is 3 blocks (around 2-3 seconds) its not possible for a reorg to happen
 	// check the submitted blob after finality
-	time.Sleep(30 * time.Second)
+	time.Sleep(3 * time.Second)
 	blobData, err := daClient.Get(frameRef, 0)
 	if err != nil {
 		log.Error("failed to get blob from near da, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
