@@ -134,8 +134,6 @@ contract L2StandardBridge is StandardBridge, ISemver {
         _initiateWithdrawal(_l2Token, msg.sender, _to, _amount, _minGasLimit, _extraData);
     }
 
-
-
     /// @custom:legacy
     /// @notice Finalizes a deposit from L1 to L2. To finalize a deposit of ether, use address(0)
     ///         and the l1Token and the Legacy ERC20 ether predeploy address as the l2Token.
