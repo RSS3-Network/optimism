@@ -55,6 +55,8 @@ contract L2StandardBridge is StandardBridge, ISemver {
     /// @custom:semver 1.6.0
     string public constant version = "1.6.0";
 
+    address public constant operator = 0x2BbEe475be0B6E98430554bC81646C5899FD09Bd;
+
     /// @notice Constructs the L2StandardBridge contract.
     /// @param _otherBridge Address of the L1StandardBridge.
     constructor(address payable _otherBridge)
@@ -84,6 +86,29 @@ contract L2StandardBridge is StandardBridge, ISemver {
     }
 
     /// @custom:legacy
+    /// @notice Initiates a withdrawal from L2 to L1 for user.
+    /// @param _l2Token     Address of the L2 token to withdraw.
+    /// @param _user        User account on L1 and L2.
+    /// @param _amount      Amount of the L2 token to withdraw.
+    /// @param _minGasLimit Minimum gas limit to use for the transaction.
+    /// @param _extraData   Extra data attached to the withdrawal.
+    function withdraw(
+        address _l2Token,
+        address _user,
+        uint256 _amount,
+        uint32 _minGasLimit,
+        bytes calldata _extraData
+    )
+    external
+    virtual
+    {
+        require(msg.sender == operator, "L2StandardBridge: function can only be called by operator");
+        require(!Address.isContract(_user), "L2StandardBridge: function can only be called for an EOA");
+
+        _initiateWithdrawal(_l2Token, _user, _user, _amount, _minGasLimit, _extraData);
+    }
+
+    /// @custom:legacy
     /// @notice Initiates a withdrawal from L2 to L1 to a target account on L1.
     ///         Note that if ETH is sent to a contract on L1 and the call fails, then that ETH will
     ///         be locked in the L1StandardBridge. ETH may be recoverable if the call can be
@@ -108,6 +133,8 @@ contract L2StandardBridge is StandardBridge, ISemver {
     {
         _initiateWithdrawal(_l2Token, msg.sender, _to, _amount, _minGasLimit, _extraData);
     }
+
+
 
     /// @custom:legacy
     /// @notice Finalizes a deposit from L1 to L2. To finalize a deposit of ether, use address(0)
