@@ -232,6 +232,8 @@ type DeployConfig struct {
 	RSS3TokenSymbol string         `json:"rss3TokenSymbol"`
 	L1RSS3TokenAddr common.Address `json:"l1Rss3TokenAddr"`
 
+	DeveloperListAdmin common.Address `json:"developerListAdmin"`
+
 	// When Cancun activates. Relative to L1 genesis.
 	L1CancunTimeOffset *uint64 `json:"l1CancunTimeOffset,omitempty"`
 }
@@ -384,6 +386,10 @@ func (d *DeployConfig) Check() error {
 	}
 	if d.L1RSS3TokenAddr == (common.Address{}) {
 		return fmt.Errorf("%w: L1RSS3TokenAddr cannot be address(0)", ErrInvalidDeployConfig)
+	}
+
+	if d.DeveloperListAdmin == (common.Address{}) {
+		return fmt.Errorf("%w: DeveloperListAdmin cannot be address(0)", ErrInvalidDeployConfig)
 	}
 
 	return nil
@@ -823,6 +829,7 @@ func NewL2ImmutableConfig(config *DeployConfig, block *types.Block) (*immutables
 			Bridge:      predeploys.L2StandardBridgeAddr,
 			RemoteToken: config.L1RSS3TokenAddr,
 		},
+		DeveloperList: struct{}{},
 	}
 
 	if err := cfg.Check(); err != nil {

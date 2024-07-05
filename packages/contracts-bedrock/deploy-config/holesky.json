@@ -42,5 +42,7 @@
 
   "rss3TokenName": "OPEN",
   "rss3TokenSymbol": "OPEN",
-  "l1Rss3TokenAddr": "0x3Ef1D5be1E2Ce46c583a0c8e511f015706A0ab23"
+  "l1Rss3TokenAddr": "0x3Ef1D5be1E2Ce46c583a0c8e511f015706A0ab23",
+
+  "developerListAdmin": "0xBDa151E7201C7709158dB86B5ea44ca056d964BD"
 }

@@ -45,5 +45,6 @@
   "ISemver",
   "StorageSetter",
   "SuperchainConfig",
-  "RSS3Token"
+  "RSS3Token",
+  "DeveloperList"
 ]
