@@ -832,7 +832,7 @@ func NewL2ImmutableConfig(config *DeployConfig, block *types.Block) (*immutables
 		DeveloperList: struct {
 			Admin common.Address
 		}{
-			Admin : config.DeveloperListAdmin
+			Admin: config.DeveloperListAdmin,
 		},
 	}
 
