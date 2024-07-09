@@ -6,7 +6,7 @@ contract DeveloperList {
     bool public enabled;
     address public admin;
     address public pendingAdmin;
-    mapping(address => bool) private developers;
+    mapping(address => bool) internal _developers;
 
     // events
     event AdminChanging(address indexed newAdmin);
@@ -25,7 +25,11 @@ contract DeveloperList {
         _;
     }
 
-    function initialize(address _admin) external onlyNotInitialized {
+    constructor(address _admin) {
+        initialize(admin);
+    }
+
+    function initialize(address _admin) public onlyNotInitialized {
         admin = _admin;
         initialized = true;
     }
@@ -59,20 +63,20 @@ contract DeveloperList {
     }
 
     function addDeveloper(address addr) external onlyAdmin {
-        require(!developers[addr], "Already added");
-        developers[addr] = true;
+        require(!_developers[addr], "Already added");
+        _developers[addr] = true;
 
         emit DeveloperAdded(addr);
     }
 
     function removeDeveloper(address addr) external onlyAdmin {
-        require(developers[addr], "Not a developer");
-        developers[addr] = false;
+        require(_developers[addr], "Not a developer");
+        _developers[addr] = false;
 
         emit DeveloperRemoved(addr);
     }
 
     function isDeveloper(address addr) external view returns (bool) {
-        return developers[addr];
+        return _developers[addr];
     }
 }

@@ -72,7 +72,9 @@ type PredeploysImmutableConfig struct {
 		Bridge      common.Address
 		RemoteToken common.Address
 	}
-	DeveloperList struct{}
+	DeveloperList struct {
+		Admin common.Address
+	}
 }
 
 // Check will ensure that the required fields are set on the config.
@@ -263,7 +265,11 @@ func l2ImmutableDeployer(backend *backends.SimulatedBackend, opts *bind.Transact
 		}
 		_, tx, _, err = bindings.DeployRSS3Token(opts, backend, bridge, remoteToken)
 	case "DeveloperList":
-		_, tx, _, err = bindings.DeployDeveloperList(opts, backend)
+		admin, ok := deployment.Args[0].(common.Address)
+		if !ok {
+			return nil, fmt.Errorf("invalid type for developerList admin")
+		}
+		_, tx, _, err = bindings.DeployDeveloperList(opts, backend, admin)
 
 	default:
 		return tx, fmt.Errorf("unknown contract: %s", deployment.Name)

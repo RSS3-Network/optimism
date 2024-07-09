@@ -829,7 +829,11 @@ func NewL2ImmutableConfig(config *DeployConfig, block *types.Block) (*immutables
 			Bridge:      predeploys.L2StandardBridgeAddr,
 			RemoteToken: config.L1RSS3TokenAddr,
 		},
-		DeveloperList: struct{}{},
+		DeveloperList: struct {
+			Admin common.Address
+		}{
+			Admin : config.DeveloperListAdmin
+		},
 	}
 
 	if err := cfg.Check(); err != nil {
@@ -899,6 +903,9 @@ func NewL2StorageConfig(config *DeployConfig, block *types.Block) (state.Storage
 	storage["RSS3Token"] = state.StorageValues{
 		"_name":   config.RSS3TokenName,
 		"_symbol": config.RSS3TokenSymbol,
+	}
+	storage["DeveloperList"] = state.StorageValues{
+		"admin": config.DeveloperListAdmin,
 	}
 	return storage, nil
 }
