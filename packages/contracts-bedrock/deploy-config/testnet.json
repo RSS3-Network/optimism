@@ -1,19 +1,19 @@
 {
   "finalSystemOwner": "0x37bbef1f44C80406726bcA43b27e1E8643cbbf1d",
   "superchainConfigGuardian": "0x37bbef1f44C80406726bcA43b27e1E8643cbbf1d",
-  "l1StartingBlockTag": "0x56641a3d31aee2ea0463e8e4c4974e3af2caa9af5f74d5f01d334fa3b07e1ddf",
-  "l1ChainID": 11155111,
-  "l2ChainID": 2331,
+  "l1StartingBlockTag": "0x6a08f91504850c0d067c0d34c16f89935f9cfeaf1a362248983b8b4c0708bfa5",
+  "l1ChainID": 17000,
+  "l2ChainID": 23331,
   "l2BlockTime": 2,
   "l1BlockTime": 12,
   "maxSequencerDrift": 600,
   "sequencerWindowSize": 3600,
   "channelTimeout": 300,
-  "p2pSequencerAddress": "0x3116e1f9bbca57604e1bC0E4C7D1206388E9EA1f",
-  "batchInboxAddress": "0xffFf000000000000000000000000000000002331",
-  "batchSenderAddress": "0x5B80C0A655c42f8b2Fd0c58a75151b6fE05a7010",
+  "p2pSequencerAddress": "0xA18Be50Bc5675Ef7C22567E91940c574F9a720aa",
+  "batchInboxAddress": "0xffff000000000000000000000000000000023331",
+  "batchSenderAddress": "0x22F6286ffDade9AB5Cd5e746903d1Ea3149E02D8",
   "l2OutputOracleSubmissionInterval": 900,
-  "l2OutputOracleStartingTimestamp": 1708660320,
+  "l2OutputOracleStartingTimestamp": 1720599228,
   "l2OutputOracleStartingBlockNumber": 0,
   "l2OutputOracleProposer": "0x06CF45282C6be51726Ed3d29F9b181aE963a2CF4",
   "l2OutputOracleChallenger": "0xDd2cFcfE4557Ada8021B4888701E86c1880f7642",
@@ -40,7 +40,9 @@
   "requiredProtocolVersion": "0x0000000000000000000000000000000000000003000000010000000000000000",
   "recommendedProtocolVersion": "0x0000000000000000000000000000000000000003000000010000000000000000",
 
-  "rss3TokenName": "RSS3",
-  "rss3TokenSymbol": "RSS3",
-  "l1Rss3TokenAddr": "0x3Ef1D5be1E2Ce46c583a0c8e511f015706A0ab23"
+  "rss3TokenName": "OPEN",
+  "rss3TokenSymbol": "OPEN",
+  "l1Rss3TokenAddr": "0xb0eF2ADbF615871fA6B7D6489Be798B522907CF5",
+
+  "developerListAdmin": "0xBDa151E7201C7709158dB86B5ea44ca056d964BD"
 }

@@ -173,7 +173,7 @@ abstract contract Deployer is Script {
         }
 
         console.log("Synced temp deploy files, deleting %s", tempDeploymentsPath);
-        vm.removeFile(tempDeploymentsPath);
+//        vm.removeFile(tempDeploymentsPath);
     }
 
     /// @notice Returns the name of the deployment script. Children contracts

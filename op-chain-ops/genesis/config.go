@@ -905,7 +905,7 @@ func NewL2StorageConfig(config *DeployConfig, block *types.Block) (state.Storage
 		"_symbol": config.RSS3TokenSymbol,
 	}
 	storage["DeveloperList"] = state.StorageValues{
-		"admin": config.DeveloperListAdmin,
+		"enabled": true,
 	}
 	return storage, nil
 }
