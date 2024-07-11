@@ -495,7 +495,7 @@
       "anonymous": false
     }
   ],
-  "address": "0xe1BFb99aA6d6fC88bc47C1319b321bA3293DdD2F",
+  "address": "0x08853728db1fBD849d10D89943bF6D8724dcd848",
   "args": [
     "900",
     "2",
@@ -617,7 +617,7 @@
   "storageLayout": {
     "storage": [
       {
-        "astId": 47332,
+        "astId": 45409,
         "contract": "src/L1/L2OutputOracle.sol:L2OutputOracle",
         "label": "_initialized",
         "offset": 0,
@@ -625,7 +625,7 @@
         "type": "t_uint8"
       },
       {
-        "astId": 47335,
+        "astId": 45412,
         "contract": "src/L1/L2OutputOracle.sol:L2OutputOracle",
         "label": "_initializing",
         "offset": 1,
@@ -633,7 +633,7 @@
         "type": "t_bool"
       },
       {
-        "astId": 76157,
+        "astId": 70646,
         "contract": "src/L1/L2OutputOracle.sol:L2OutputOracle",
         "label": "startingBlockNumber",
         "offset": 0,
@@ -641,7 +641,7 @@
         "type": "t_uint256"
       },
       {
-        "astId": 76160,
+        "astId": 70649,
         "contract": "src/L1/L2OutputOracle.sol:L2OutputOracle",
         "label": "startingTimestamp",
         "offset": 0,
@@ -649,20 +649,20 @@
         "type": "t_uint256"
       },
       {
-        "astId": 76165,
+        "astId": 70654,
         "contract": "src/L1/L2OutputOracle.sol:L2OutputOracle",
         "label": "l2Outputs",
         "offset": 0,
         "slot": "3",
-        "type": "t_array(t_struct(OutputProposal)90240_storage)dyn_storage"
+        "type": "t_array(t_struct(OutputProposal)83388_storage)dyn_storage"
       }
     ],
     "types": {
-      "t_array(t_struct(OutputProposal)90240_storage)dyn_storage": {
+      "t_array(t_struct(OutputProposal)83388_storage)dyn_storage": {
         "encoding": "dynamic_array",
         "label": "struct Types.OutputProposal[]",
         "numberOfBytes": "32",
-        "base": "t_struct(OutputProposal)90240_storage"
+        "base": "t_struct(OutputProposal)83388_storage"
       },
       "t_bool": {
         "encoding": "inplace",
@@ -674,13 +674,13 @@
         "label": "bytes32",
         "numberOfBytes": "32"
       },
-      "t_struct(OutputProposal)90240_storage": {
+      "t_struct(OutputProposal)83388_storage": {
         "encoding": "inplace",
         "label": "struct Types.OutputProposal",
         "numberOfBytes": "64",
         "members": [
           {
-            "astId": 90235,
+            "astId": 83383,
             "contract": "src/L1/L2OutputOracle.sol:L2OutputOracle",
             "label": "outputRoot",
             "offset": 0,
@@ -688,7 +688,7 @@
             "type": "t_bytes32"
           },
           {
-            "astId": 90237,
+            "astId": 83385,
             "contract": "src/L1/L2OutputOracle.sol:L2OutputOracle",
             "label": "timestamp",
             "offset": 0,
@@ -696,7 +696,7 @@
             "type": "t_uint128"
           },
           {
-            "astId": 90239,
+            "astId": 83387,
             "contract": "src/L1/L2OutputOracle.sol:L2OutputOracle",
             "label": "l2BlockNumber",
             "offset": 16,
@@ -722,7 +722,7 @@
       }
     }
   },
-  "transactionHash": "0xb9e864e0d6bb873ea5cd3c3a6765e9bd74db7ca835a6e4454fd7ec2d1b877c86",
+  "transactionHash": "0x2506fd0db9824ea533e41e014f9980949fde3739b2f333ce81f0fb8e3f630690",
   "userdoc": {
     "version": 1,
     "kind": "user",
