@@ -56,8 +56,8 @@ func Exponential() Strategy {
 
 func ExponentialDA() Strategy {
 	return &ExponentialStrategy{
-		Min:       30,
-		Max:       60 * time.Second,
+		Min:       60,
+		Max:       120 * time.Second,
 		MaxJitter: 250 * time.Millisecond,
 	}
 }
