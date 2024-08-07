@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
@@ -124,8 +125,12 @@ func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address,
 					// get blob from near da
 					blob, err := nearDAClient.Get(data[1:], (uint32)(idx))
 					if err != nil {
-						log.Error("failed to get data from near", "id", hex.EncodeToString(data), "index", idx, "err", err)
-						panic(fmt.Errorf("failed to get data from near da, id: %s, txIndex: %d, %w", hex.EncodeToString(data), idx, err))
+						if strings.Contains(err.Error(), "UnknownTransaction") {
+							log.Warn("skip UnknownTransaction", "id", hex.EncodeToString(data), "index", idx, "err", err)
+						} else {
+							log.Error("failed to get data from near", "id", hex.EncodeToString(data), "index", idx, "err", err)
+							panic(fmt.Errorf("failed to get data from near da, id: %s, txIndex: %d, %w", hex.EncodeToString(data), idx, err))
+						}
 					}
 					out = append(out, blob)
 				default:
