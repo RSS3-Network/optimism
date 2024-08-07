@@ -574,7 +574,7 @@ func (l *BatchSubmitter) submitBlobToNearDA(data []byte) (frameRef []byte, err e
 	time.Sleep(3 * time.Second)
 	blobData, err := daClient.Get(frameRef, 0)
 	if err != nil {
-		log.Error("failed to get blob from near da, maybe chain reorg", "id", hex.EncodeToString(data), "err", err)
+		log.Error("failed to get blob from near da, maybe chain reorg", "id", hex.EncodeToString(frameRef), "err", err)
 		return nil, err
 	}
 	if !bytes.Equal(blobData, data) {
