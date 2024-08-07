@@ -16,8 +16,8 @@ const (
 	defaultSubmitTimeout = 90 * time.Second
 	defaultGetTimeout    = 90 * time.Second
 
-	defaultSubmitAttempts = 50
-	defaultGetAttempts    = 10
+	defaultSubmitAttempts = 200
+	defaultGetAttempts    = 20
 )
 
 type DAClient struct {
@@ -35,12 +35,12 @@ func NewDAClient(accountN, contractN, keyN, networkN string, nameSpace uint32) (
 }
 
 func (c *DAClient) FreeDAClient() {
-	log.Info("free NEAR client")
+	log.Info("DAClient: free NEAR client")
 	c.Client.FreeClient()
 }
 
 func (c *DAClient) Submit(data []byte) ([]byte, error) {
-	log.Info("start submitting blob with retry")
+	log.Info("DAClient: start submitting blob with retry")
 	startTime := time.Now()
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultSubmitTimeout)
@@ -50,23 +50,23 @@ func (c *DAClient) Submit(data []byte) ([]byte, error) {
 	frameRef, err := retry.Do(ctx, defaultSubmitAttempts, bOff, func() ([]byte, error) {
 		result, er := c.Client.ForceSubmit(data)
 		if er != nil {
-			log.Warn("submit blob to near da", "er", er)
+			log.Warn("DAClient: submit blob to near da", "er", er)
 			return nil, er
 		}
 
 		return result, nil
 	})
 	if err != nil {
-		log.Error("failed to submit blob to near da", "err", err)
+		log.Error("DAClient: failed to submit blob to near da", "err", err)
 		return nil, err
 	}
 
-	log.Info("end submitting blob with retry", "id", hex.EncodeToString(frameRef), "elapsed time", time.Since(startTime))
+	log.Info("DAClient: end submitting blob with retry", "id", hex.EncodeToString(frameRef), "elapsed time", time.Since(startTime))
 	return frameRef, nil
 }
 
 func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
-	log.Info("start getting blob with retry")
+	log.Info("DAClient: start getting blob with retry")
 	startTime := time.Now()
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultGetTimeout)
@@ -76,17 +76,17 @@ func (c *DAClient) Get(frameRefBytes []byte, txIndex uint32) ([]byte, error) {
 	blobData, err := retry.Do(ctx, defaultGetAttempts, bOff, func() ([]byte, error) {
 		result, er := c.Client.Get(frameRefBytes, txIndex)
 		if er != nil {
-			log.Warn("get blob from near da", "id", hex.EncodeToString(frameRefBytes), "er", er)
+			log.Warn("DAClient: get blob from near da", "id", hex.EncodeToString(frameRefBytes), "er", er)
 			return nil, er
 		}
 
 		return result, nil
 	})
 	if err != nil {
-		log.Error("failed to get blob from near da", "id", hex.EncodeToString(frameRefBytes), "err", err)
+		log.Error("DAClient:  failed to get blob from near da", "id", hex.EncodeToString(frameRefBytes), "err", err)
 		return nil, err
 	}
 
-	log.Info("end getting blob with retry", "id", hex.EncodeToString(frameRefBytes), "data size", len(blobData), "elapsed time", time.Since(startTime))
+	log.Info("DAClient: end getting blob with retry", "id", hex.EncodeToString(frameRefBytes), "data size", len(blobData), "elapsed time", time.Since(startTime))
 	return blobData, nil
 }
