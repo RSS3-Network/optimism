@@ -37,6 +37,8 @@ contract OptimismPortal is Initializable, ResourceMetering, ISemver {
     /// @notice The L2 gas limit set when eth is deposited using the receive() function.
     uint64 internal constant RECEIVE_DEFAULT_GAS_LIMIT = 100_000;
 
+    address public immutable operator;
+
     /// @notice Address of the L2OutputOracle contract. This will be removed in the
     ///         future, use `l2Oracle` instead.
     /// @custom:legacy
@@ -99,9 +101,10 @@ contract OptimismPortal is Initializable, ResourceMetering, ISemver {
     /// @notice Constructs the OptimismPortal contract.
     /// @param _l2Oracle Address of the L2OutputOracle contract.
     /// @param _systemConfig Address of the SystemConfig contract.
-    constructor(L2OutputOracle _l2Oracle, SystemConfig _systemConfig) {
+    constructor(L2OutputOracle _l2Oracle, SystemConfig _systemConfig, address _operator) {
         L2_ORACLE = _l2Oracle;
         SYSTEM_CONFIG = _systemConfig;
+        operator = _operator;
         initialize(SuperchainConfig(address(0)));
     }
 
@@ -321,6 +324,87 @@ contract OptimismPortal is Initializable, ResourceMetering, ISemver {
         //      gas limit specified by the user. If there is not enough gas in the current context
         //      to accomplish this, `callWithMinGas` will revert.
         bool success = SafeCall.callWithMinGas(_tx.target, _tx.gasLimit, _tx.value, _tx.data);
+
+        // Reset the l2Sender back to the default value.
+        l2Sender = Constants.DEFAULT_L2_SENDER;
+
+        // All withdrawals are immediately finalized. Replayability can
+        // be achieved through contracts built on top of this contract
+        emit WithdrawalFinalized(withdrawalHash, success);
+
+        // Reverting here is useful for determining the exact gas cost to successfully execute the
+        // sub call to the target contract if the minimum gas limit specified by the user would not
+        // be sufficient to execute the sub call.
+        if (success == false && tx.origin == Constants.ESTIMATION_ADDRESS) {
+            revert("OptimismPortal: withdrawal failed");
+        }
+    }
+
+    /// @notice Finalizes a withdrawal transaction.
+    /// @param _tx Withdrawal transaction to finalize.
+    /// @param _data Extra data.
+    function finalizeWithdrawalTransaction(
+        Types.WithdrawalTransaction memory _tx,
+        bytes memory _data
+    )
+        external
+        whenNotPaused
+    {
+        require(msg.sender == operator, "OptimismPortal: function can only be called by operator");
+
+        // Make sure that the l2Sender has not yet been set. The l2Sender is set to a value other
+        // than the default value when a withdrawal transaction is being finalized. This check is
+        // a defacto reentrancy guard.
+        require(
+            l2Sender == Constants.DEFAULT_L2_SENDER, "OptimismPortal: can only trigger one withdrawal per transaction"
+        );
+
+        // Grab the proven withdrawal from the `provenWithdrawals` map.
+        bytes32 withdrawalHash = Hashing.hashWithdrawal(_tx);
+        ProvenWithdrawal memory provenWithdrawal = provenWithdrawals[withdrawalHash];
+
+        // A withdrawal can only be finalized if it has been proven. We know that a withdrawal has
+        // been proven at least once when its timestamp is non-zero. Unproven withdrawals will have
+        // a timestamp of zero.
+        require(provenWithdrawal.timestamp != 0, "OptimismPortal: withdrawal has not been proven yet");
+
+        // As a sanity check, we make sure that the proven withdrawal's timestamp is greater than
+        // starting timestamp inside the L2OutputOracle. Not strictly necessary but extra layer of
+        // safety against weird bugs in the proving step.
+        require(
+            provenWithdrawal.timestamp >= L2_ORACLE.startingTimestamp(),
+            "OptimismPortal: withdrawal timestamp less than L2 Oracle starting timestamp"
+        );
+
+        // Grab the OutputProposal from the L2OutputOracle, will revert if the output that
+        // corresponds to the given index has not been proposed yet.
+        Types.OutputProposal memory proposal = L2_ORACLE.getL2Output(provenWithdrawal.l2OutputIndex);
+
+        // Check that the output root that was used to prove the withdrawal is the same as the
+        // current output root for the given output index. An output root may change if it is
+        // deleted by the challenger address and then re-proposed.
+        require(
+            proposal.outputRoot == provenWithdrawal.outputRoot,
+            "OptimismPortal: output root proven is not the same as current output root"
+        );
+
+        // Check that this withdrawal has not already been finalized, this is replay protection.
+        require(finalizedWithdrawals[withdrawalHash] == false, "OptimismPortal: withdrawal has already been finalized");
+
+        // Mark the withdrawal as finalized so it can't be replayed.
+        finalizedWithdrawals[withdrawalHash] = true;
+
+        // Set the l2Sender so contracts know who triggered this withdrawal on L2.
+        l2Sender = _tx.sender;
+
+        // Trigger the call to the target contract. We use a custom low level method
+        // SafeCall.callWithMinGas to ensure two key properties
+        //   1. Target contracts cannot force this call to run out of gas by returning a very large
+        //      amount of data (and this is OK because we don't care about the returndata here).
+        //   2. The amount of gas provided to the execution context of the target is at least the
+        //      gas limit specified by the user. If there is not enough gas in the current context
+        //      to accomplish this, `callWithMinGas` will revert.
+        bool success = SafeCall.callWithMinGas(_tx.target, _tx.gasLimit, _tx.value, _data);
 
         // Reset the l2Sender back to the default value.
         l2Sender = Constants.DEFAULT_L2_SENDER;

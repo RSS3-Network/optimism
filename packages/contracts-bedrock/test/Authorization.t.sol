@@ -139,7 +139,6 @@ contract Authorization_Test is CommonTest {
         _addSpec("OptimismPortal", _getSel("L2_ORACLE()"), false);
         _addSpec("OptimismPortal", _getSel("SYSTEM_CONFIG()"), false);
         _addSpec("OptimismPortal", _getSel("depositTransaction(address,uint256,uint64,bool,bytes)"), false);
-        _addSpec("OptimismPortal", OptimismPortal.finalizeWithdrawalTransaction.selector, true); // pauseable
         _addSpec("OptimismPortal", _getSel("finalizedWithdrawals(bytes32)"), false);
         _addSpec("OptimismPortal", _getSel("guardian()"), false);
         _addSpec("OptimismPortal", _getSel("initialize(address)"), false);
