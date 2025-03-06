@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
 
+// Contracts
 import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+
+// Libraries
 import { Math } from "@openzeppelin/contracts/utils/math/Math.sol";
 import { Burn } from "src/libraries/Burn.sol";
 import { Arithmetic } from "src/libraries/Arithmetic.sol";
@@ -145,6 +148,13 @@ abstract contract ResourceMetering is Initializable {
         if (gasCost > usedGas) {
             Burn.gas(gasCost - usedGas);
         }
+    }
+
+    /// @notice Adds an amount of L2 gas consumed to the prev bought gas params. This is meant to be used
+    ///         when L2 system transactions are generated from L1.
+    /// @param _amount Amount of the L2 gas resource requested.
+    function useGas(uint32 _amount) internal {
+        params.prevBoughtGas += uint64(_amount);
     }
 
     /// @notice Virtual function that returns the resource config.

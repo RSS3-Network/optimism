@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.15;
 
-// Testing utilities
+// Testing
 import { CommonTest } from "test/setup/CommonTest.sol";
 
 // Libraries
 import { Encoding } from "src/libraries/Encoding.sol";
-
-// Target contract
-import { L1Block } from "src/L2/L1Block.sol";
+import { Constants } from "src/libraries/Constants.sol";
+import "src/libraries/L1BlockErrors.sol";
 
 contract L1BlockTest is CommonTest {
     address depositor;
@@ -17,6 +16,24 @@ contract L1BlockTest is CommonTest {
     function setUp() public virtual override {
         super.setUp();
         depositor = l1Block.DEPOSITOR_ACCOUNT();
+    }
+
+    function test_isCustomGasToken_succeeds() external view {
+        assertFalse(l1Block.isCustomGasToken());
+    }
+
+    function test_gasPayingToken_succeeds() external view {
+        (address token, uint8 decimals) = l1Block.gasPayingToken();
+        assertEq(token, Constants.ETHER);
+        assertEq(uint256(decimals), uint256(18));
+    }
+
+    function test_gasPayingTokenName_succeeds() external view {
+        assertEq("Ether", l1Block.gasPayingTokenName());
+    }
+
+    function test_gasPayingTokenSymbol_succeeds() external view {
+        assertEq("ETH", l1Block.gasPayingTokenSymbol());
     }
 }
 
@@ -49,6 +66,21 @@ contract L1BlockBedrock_Test is L1BlockTest {
     /// @dev Tests that `setL1BlockValues` can set max values.
     function test_updateValues_succeeds() external {
         vm.prank(depositor);
+        l1Block.setL1BlockValues({
+            _number: type(uint64).max,
+            _timestamp: type(uint64).max,
+            _basefee: type(uint256).max,
+            _hash: keccak256(abi.encode(1)),
+            _sequenceNumber: type(uint64).max,
+            _batcherHash: bytes32(type(uint256).max),
+            _l1FeeOverhead: type(uint256).max,
+            _l1FeeScalar: type(uint256).max
+        });
+    }
+
+    /// @dev Tests that `setL1BlockValues` reverts if sender address is not the depositor
+    function test_updatesValues_notDepositor_reverts() external {
+        vm.expectRevert("L1Block: only the depositor account can set L1 block values");
         l1Block.setL1BlockValues({
             _number: type(uint64).max,
             _timestamp: type(uint64).max,
@@ -127,8 +159,8 @@ contract L1BlockEcotone_Test is L1BlockTest {
         assertTrue(success, "function call failed");
     }
 
-    /// @dev Tests that `setL1BlockValuesEcotone` fails if sender address is not the depositor
-    function test_setL1BlockValuesEcotone_notDepositor_fails() external {
+    /// @dev Tests that `setL1BlockValuesEcotone` reverts if sender address is not the depositor
+    function test_setL1BlockValuesEcotone_notDepositor_reverts() external {
         bytes memory functionCallDataPacked = Encoding.encodeSetL1BlockValuesEcotone(
             type(uint32).max,
             type(uint32).max,

@@ -5,14 +5,13 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/log"
 	"io"
 
 	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-service/eth"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/log"
 )
 
 var nearDAClient *opnear.DAClient
@@ -49,7 +48,7 @@ type CalldataSource struct {
 
 // NewCalldataSource creates a new calldata source. It suppresses errors in fetching the L1 block if they occur.
 // If there is an error, it will attempt to fetch the result on the next call to `Next`.
-func NewCalldataSource(ctx context.Context, log log.Logger, dsCfg DataSourceConfig, fetcher L1TransactionFetcher, ref eth.L1BlockRef, batcherAddr common.Address) (DataIter, error) {
+func NewCalldataSource(ctx context.Context, log log.Logger, dsCfg DataSourceConfig, fetcher L1TransactionFetcher, ref eth.L1BlockRef, batcherAddr common.Address) DataIter {
 	_, txs, err := fetcher.InfoAndTxsByHash(ctx, ref.Hash)
 	if err != nil {
 		return &CalldataSource{
@@ -59,24 +58,12 @@ func NewCalldataSource(ctx context.Context, log log.Logger, dsCfg DataSourceConf
 			fetcher:     fetcher,
 			log:         log,
 			batcherAddr: batcherAddr,
-		}, nil
-	}
-
-	data, err := DataFromEVMTransactions(dsCfg, batcherAddr, txs, log.New("origin", ref))
-	if err != nil {
-		return &CalldataSource{
-			open:        false,
-			ref:         ref,
-			dsCfg:       dsCfg,
-			fetcher:     fetcher,
-			log:         log,
-			batcherAddr: batcherAddr,
-		}, err
+		}
 	}
 	return &CalldataSource{
 		open: true,
-		data: data,
-	}, nil
+		data: DataFromEVMTransactions(dsCfg, batcherAddr, txs, log.New("origin", ref)),
+	}
 }
 
 // Next returns the next piece of data if it has it. If the constructor failed, this
@@ -86,10 +73,7 @@ func (ds *CalldataSource) Next(ctx context.Context) (eth.Data, error) {
 	if !ds.open {
 		if _, txs, err := ds.fetcher.InfoAndTxsByHash(ctx, ds.ref.Hash); err == nil {
 			ds.open = true
-			ds.data, err = DataFromEVMTransactions(ds.dsCfg, ds.batcherAddr, txs, ds.log)
-			if err != nil {
-				return nil, err
-			}
+			ds.data = DataFromEVMTransactions(ds.dsCfg, ds.batcherAddr, txs, ds.log)
 		} else if errors.Is(err, ethereum.NotFound) {
 			return nil, NewResetError(fmt.Errorf("failed to open calldata source: %w", err))
 		} else {
@@ -108,10 +92,10 @@ func (ds *CalldataSource) Next(ctx context.Context) (eth.Data, error) {
 // DataFromEVMTransactions filters all of the transactions and returns the calldata from transactions
 // that are sent to the batch inbox address from the batch sender address.
 // This will return an empty array if no valid transactions are found.
-func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address, txs types.Transactions, log log.Logger) ([]eth.Data, error) {
-	var out []eth.Data
-	for idx, tx := range txs {
-		if isValidBatchTx(tx, dsCfg.l1Signer, dsCfg.batchInboxAddress, batcherAddr) {
+func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address, txs types.Transactions, log log.Logger) []eth.Data {
+	out := []eth.Data{}
+	for _, tx := range txs {
+		if isValidBatchTx(tx, dsCfg.l1Signer, dsCfg.batchInboxAddress, batcherAddr, log) {
 			data := tx.Data()
 			switch len(data) {
 			case 0:
@@ -134,5 +118,5 @@ func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address,
 			}
 		}
 	}
-	return out, nil
+	return out
 }
