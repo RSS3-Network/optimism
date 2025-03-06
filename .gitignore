@@ -50,3 +50,6 @@ __pycache__
 
 # Ignore echidna artifacts
 crytic-export
+op-node/opnode_peerstore_db
+op-node/opnode_discovery_db
+packages/verified_contracts

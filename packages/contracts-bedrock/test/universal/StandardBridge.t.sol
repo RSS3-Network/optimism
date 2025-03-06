@@ -19,6 +19,8 @@ contract StandardBridgeTester is StandardBridge {
     function isCorrectTokenPair(address _mintableToken, address _otherToken) external view returns (bool) {
         return _isCorrectTokenPair(_mintableToken, _otherToken);
     }
+
+    receive() external payable override { }
 }
 
 /// @title LegacyMintable
