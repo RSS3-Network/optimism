@@ -257,7 +257,9 @@ require (
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
 
-replace github.com/ethereum/go-ethereum v1.13.14 => github.com/rss3-network/op-geth v1.101311.1-rc.2
+//replace github.com/ethereum/go-ethereum v1.13.14 => github.com/rss3-network/op-geth v1.101311.1-rc.2
+replace github.com/ethereum/go-ethereum v1.13.14 => github.com/rss3-network/op-geth v0.0.0-20250306095605-b19675bdd81f
+
 //replace github.com/ethereum/go-ethereum => ../op-geth
 
 replace github.com/near/rollup-data-availability v0.2.3 => github.com/rss3-network/rollup-data-availability v0.0.0-20240807152815-65dae44f36e9
