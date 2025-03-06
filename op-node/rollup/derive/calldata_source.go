@@ -12,6 +12,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/log"
+	"github.com/ethereum/go-ethereum"
+
 )
 
 var nearDAClient *opnear.DAClient
@@ -94,7 +96,7 @@ func (ds *CalldataSource) Next(ctx context.Context) (eth.Data, error) {
 // This will return an empty array if no valid transactions are found.
 func DataFromEVMTransactions(dsCfg DataSourceConfig, batcherAddr common.Address, txs types.Transactions, log log.Logger) []eth.Data {
 	out := []eth.Data{}
-	for _, tx := range txs {
+	for idx, tx := range txs {
 		if isValidBatchTx(tx, dsCfg.l1Signer, dsCfg.batchInboxAddress, batcherAddr, log) {
 			data := tx.Data()
 			switch len(data) {

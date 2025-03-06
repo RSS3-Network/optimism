@@ -7,9 +7,9 @@ import (
 	"math"
 	"time"
 
-	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum/go-ethereum/log"
 
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	altda "github.com/ethereum-optimism/optimism/op-alt-da"
 	"github.com/ethereum-optimism/optimism/op-node/flags"
 	"github.com/ethereum-optimism/optimism/op-node/p2p"
@@ -75,10 +75,11 @@ type Config struct {
 	ConductorRpc        ConductorRPCFunc
 	ConductorRpcTimeout time.Duration
 
-	// Near DA config
-	NearDA opnear.CLIConfig
 	// AltDA config
 	AltDA altda.CLIConfig
+
+	// Near DA config
+	NearDA opnear.CLIConfig
 }
 
 // ConductorRPCFunc retrieves the endpoint. The RPC may not immediately be available.
@@ -182,10 +183,11 @@ func (cfg *Config) Check() error {
 	if err := cfg.AltDA.Check(); err != nil {
 		return fmt.Errorf("altDA config error: %w", err)
 	}
-	if err := cfg.NearDA.Check(); err != nil {
-		return fmt.Errorf("near da config error: %w", err)
 	if cfg.AltDA.Enabled {
 		log.Warn("Alt-DA Mode is a Beta feature of the MIT licensed OP Stack.  While it has received initial review from core contributors, it is still undergoing testing, and may have bugs or other issues.")
+	}
+	if err := cfg.NearDA.Check(); err != nil {
+		return fmt.Errorf("near da config error: %w", err)
 	}
 	return nil
 }
