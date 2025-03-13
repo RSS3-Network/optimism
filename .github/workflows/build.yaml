@@ -29,7 +29,6 @@ jobs:
       matrix:
         target:
           - op-stack-go
-          - proxyd
     steps:
       - name: Checkout
         uses: actions/checkout@v4
