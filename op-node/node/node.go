@@ -132,8 +132,15 @@ func New(ctx context.Context, cfg *Config, log log.Logger, appVersion string, m 
 	return n, nil
 }
 
+func (n *OpNode) initNearDA(ctx context.Context, cfg *Config) error {
+	return driver.SetDAClient(cfg.NearDA)
+}
+
 func (n *OpNode) init(ctx context.Context, cfg *Config) error {
 	n.log.Info("Initializing rollup node", "version", n.appVersion)
+	if err := n.initNearDA(ctx, cfg); err != nil {
+		return err
+	}
 	if err := n.initTracer(ctx, cfg); err != nil {
 		return fmt.Errorf("failed to init the trace: %w", err)
 	}

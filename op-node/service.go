@@ -13,6 +13,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	altda "github.com/ethereum-optimism/optimism/op-alt-da"
+	opnear "github.com/ethereum-optimism/optimism/op-near"
 	"github.com/ethereum-optimism/optimism/op-node/chaincfg"
 	"github.com/ethereum-optimism/optimism/op-node/flags"
 	"github.com/ethereum-optimism/optimism/op-node/node"
@@ -115,6 +116,7 @@ func NewConfig(ctx *cli.Context, log log.Logger) (*node.Config, error) {
 		ConductorRpcTimeout: ctx.Duration(flags.ConductorRpcTimeoutFlag.Name),
 
 		AltDA: altda.ReadCLIConfig(ctx),
+		NearDA: opnear.ReadCLIConfig(ctx),
 	}
 
 	if err := cfg.LoadPersisted(log); err != nil {
