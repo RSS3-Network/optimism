@@ -19,7 +19,7 @@ jobs:
 
       - name: List targets
         id: generate
-        uses: docker/bake-action/subaction/list-targets@v4
+        uses: docker/bake-action/subaction/list-targets@v5
         with:
           target: validate
           files: docker-bake.hcl
@@ -46,7 +46,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/bake-action@v4
+        uses: docker/bake-action@v5
         with:
           push: true
           files: docker-bake.hcl
@@ -66,7 +66,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: all
 
@@ -77,7 +77,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/bake-action@v4
+        uses: docker/bake-action@v5
         with:
           targets: ${{ matrix.target }}
           push: true
