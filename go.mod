@@ -259,7 +259,7 @@ require (
 )
 
 //replace github.com/ethereum/go-ethereum v1.15.1 => github.com/rss3-network/op-geth v1.101311.1-rc.2
-replace github.com/ethereum/go-ethereum v1.15.14 => github.com/rss3-network/op-geth v0.0.0-20250306095605-b19675bdd81f
+replace github.com/ethereum/go-ethereum v1.15.14 => github.com/rss3-network/op-geth v1.101500.2
 
 //replace github.com/ethereum/go-ethereum => ../op-geth
 
