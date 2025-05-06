@@ -4,6 +4,7 @@ package tls
 import (
 	"errors"
 	"fmt"
+	"github.com/ethereum/go-ethereum/log"
 	"strings"
 
 	"github.com/urfave/cli/v2"
@@ -88,6 +89,7 @@ func NewCLIConfig() CLIConfig {
 }
 
 func (c CLIConfig) Check() error {
+	log.Info("Checking TLS config", "TLSEnabled", c.TLSEnabled(), "TLSCaCert", c.TLSCaCert, "TLSCert", c.TLSCert, "TLSKey", c.TLSKey)
 	if c.TLSEnabled() && (c.TLSCaCert == "" || c.TLSCert == "" || c.TLSKey == "") {
 		return errors.New("all tls flags must be set if at least one is set")
 	}
