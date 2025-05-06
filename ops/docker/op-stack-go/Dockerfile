@@ -4,7 +4,7 @@ FROM --platform=$BUILDPLATFORM rss3/da-rpc:latest as rust
 RUN ls /lib
 RUN ls /gopkg/da-rpc
 
-FROM --platform=$BUILDPLATFORM golang:1.22.7 as builder
+FROM --platform=$BUILDPLATFORM golang:1.23.0 as builder
 
 RUN apt-get update && apt-get install -y \
     curl \
