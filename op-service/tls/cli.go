@@ -83,7 +83,7 @@ func NewCLIConfig() CLIConfig {
 		TLSCaCert: defaultTLSCaCert,
 		TLSCert:   defaultTLSCert,
 		TLSKey:    defaultTLSKey,
-		Enabled:   true,
+		Enabled:   false,
 	}
 }
 
