@@ -135,7 +135,7 @@ func (bq *BatchQueue) AddBatch(ctx context.Context, batch Batch, parent eth.L2Bl
 	if validity == BatchDrop {
 		return // if we do drop the batch, CheckBatch will log the drop reason with WARN level.
 	}
-	batch.LogContext(bq.log).Debug("Adding batch")
+	batch.LogContext(bq.log).Info("Adding batch")
 	bq.batches = append(bq.batches, &data)
 }
 
@@ -148,7 +148,7 @@ func (bq *BatchQueue) deriveNextBatch(ctx context.Context, outOfData bool, paren
 		return nil, NewCriticalError(errors.New("cannot derive next batch, no origin was prepared"))
 	}
 	epoch := bq.l1Blocks[0]
-	bq.log.Trace("Deriving the next batch", "epoch", epoch, "parent", parent, "outOfData", outOfData)
+	bq.log.Info("Deriving the next batch", "epoch", epoch, "parent", parent, "outOfData", outOfData)
 
 	// Note: epoch origin can now be one block ahead of the L2 Safe Head
 	// This is in the case where we auto generate all batches in an epoch & advance the epoch

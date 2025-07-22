@@ -190,7 +190,7 @@ func (dp *DerivationPipeline) Step(ctx context.Context, pendingSafeHead eth.L2Bl
 		}
 
 		if err := dp.stages[dp.resetting].Reset(ctx, dp.origin, dp.resetSysConfig); err == io.EOF {
-			dp.log.Debug("reset of stage completed", "stage", dp.resetting, "origin", dp.origin)
+			dp.log.Info("reset of stage completed", "stage", dp.resetting, "origin", dp.origin)
 			dp.resetting += 1
 			return nil, nil
 		} else if err != nil {
