@@ -124,7 +124,7 @@ func (s *L2Client) L2BlockRefByNumber(ctx context.Context, num uint64) (eth.L2Bl
 		// w%: wrap to preserve ethereum.NotFound case
 		return eth.L2BlockRef{}, fmt.Errorf("failed to determine L2BlockRef of height %v, could not get payload: %w", num, err)
 	}
-	ref, err := derive.PayloadToSystemConfig(s.rollupCfg, envelope.ExecutionPayload)
+	ref, err := derive.PayloadToBlockRef(s.rollupCfg, envelope.ExecutionPayload)
 	if err != nil {
 		return eth.L2BlockRef{}, err
 	}
