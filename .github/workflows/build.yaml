@@ -68,13 +68,20 @@ jobs:
       max-parallel: 3
       matrix:
         target: ${{ fromJson(needs.prepare.outputs.targets) }}
-        include:
-          - registry: ghcr.io
-            repository: ${{ github.repository }}
+        registry:
+          - ghcr.io
+          - docker.io
+          - container-registry.us-east-1.cr.aliyuncs.com
+        repository:
+          - ${{ github.repository }}
+          - rss3
+        exclude:
           - registry: docker.io
+            repository: ${{ github.repository }}
+          - registry: ghcr.io
             repository: rss3
           - registry: container-registry.us-east-1.cr.aliyuncs.com
-            repository: rss3
+            repository: ${{ github.repository }}
 
     steps:
       - name: Checkout
