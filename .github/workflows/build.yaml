@@ -73,15 +73,15 @@ jobs:
           - docker.io
           - container-registry.us-east-1.cr.aliyuncs.com
         repository:
-          - ${{ github.repository }}
+          - rss3-network/optimism
           - rss3
         exclude:
           - registry: docker.io
-            repository: ${{ github.repository }}
+            repository: rss3-network/optimism
           - registry: ghcr.io
             repository: rss3
           - registry: container-registry.us-east-1.cr.aliyuncs.com
-            repository: ${{ github.repository }}
+            repository: rss3-network/optimism
 
     steps:
       - name: Checkout
