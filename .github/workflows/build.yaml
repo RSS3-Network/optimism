@@ -8,6 +8,11 @@ on:
 env:
   GIT_COMMIT: ${{ github.sha }}
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -25,6 +30,7 @@ jobs:
           files: docker-bake.hcl
   stack:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         target:
@@ -77,10 +83,6 @@ jobs:
 
   validate:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
     needs:
       - prepare
       - stack
