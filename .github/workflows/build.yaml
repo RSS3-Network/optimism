@@ -38,11 +38,35 @@ jobs:
         with:
           platforms: all
 
+      - uses: aliyun/configure-aliyun-credentials-action@v1
+        id: aliyun-auth
+        with:
+          role-to-assume: "acs:ram::5621254376179407:role/docker"
+          oidc-provider-arn: "acs:ram::5621254376179407:oidc-provider/github"
+          role-session-name: "github-action-session"
+          role-session-expiration: 1800
+          audience: "sts.aliyuncs.com"
+
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to ghcr
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Login to ACR
+        id: login-acr
+        uses: aliyun/acr-login@v2.0.1
+        with:
+          login-server: https://container-registry.us-east-1.cr.aliyuncs.com
+          region-id: "us-east-1"
+          instance-id: cri-0jrfa7tkgiwjzabf
 
       - name: Build and push
         uses: docker/bake-action@v5
@@ -65,21 +89,12 @@ jobs:
       max-parallel: 3
       matrix:
         target: ${{ fromJson(needs.prepare.outputs.targets) }}
-        registry:
-          - docker.io
-          - ghcr.io
-          - container-registry.us-east-1.cr.aliyuncs.com
-        repository:
-          - rss3
-          - ${{ github.repository }}
-        # ghcr.io with github.repository
-        # docker.io and aliyun with rss3
-        exclude:
-          - registry: docker.io
-            repository: ${{ github.repository }}
-          - registry: container-registry.us-east-1.cr.aliyuncs.com
-            repository: ${{ github.repository }}
+        include:
           - registry: ghcr.io
+            repository: ${{ github.repository }}
+          - registry: docker.io
+            repository: rss3
+          - registry: container-registry.us-east-1.cr.aliyuncs.com
             repository: rss3
 
     steps:
@@ -117,10 +132,8 @@ jobs:
         id: login-acr
         uses: aliyun/acr-login@v2.0.1
         with:
+          login-server: https://container-registry.us-east-1.cr.aliyuncs.com
           region-id: "us-east-1"
-          access-key-id: ${{ steps.aliyun-auth.outputs.aliyun-access-key-id }}
-          access-key-secret: ${{ steps.aliyun-auth.outputs.aliyun-access-key-secret }}
-          security-token: ${{ steps.aliyun-auth.outputs.aliyun-security-token }}
           instance-id: cri-0jrfa7tkgiwjzabf
 
       - name: Build and push
