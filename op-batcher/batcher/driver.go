@@ -966,8 +966,13 @@ func (l *BatchSubmitter) calldataTxCandidate(data []byte) *txmgr.TxCandidate {
 	maybeFrameRef, err := l.submitBlobToNearDA(data)
 	if err != nil {
 		l.Log.Warn("unable to submit blob to near da", "err", err)
-		l.Log.Info("fallback to eth da")
-		// return nil, err
+		// eth fallback: try using blobdata otherwise use calldata
+		if candidate, err := l.blobTxCandidate(singleFrameTxData(frameData{data: data})); err != nil {
+			l.Log.Info("blob submission failed; falling back to eth calldata", "err", err)
+		} else {
+			l.Log.Info("blob submission failed; falling back to eth blobdata", "err", err)
+			return candidate, nil
+		}
 	} else {
 		l.Log.Info("blob successfully submitted to near da", "id", hex.EncodeToString(maybeFrameRef))
 		data = append([]byte{opnear.DerivationVersionNear}, maybeFrameRef...)
